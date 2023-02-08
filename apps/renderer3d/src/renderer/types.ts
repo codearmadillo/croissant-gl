@@ -1,4 +1,7 @@
 export type ShaderSource = string;
+export interface Drawable {
+  draw(): void;
+}
 
 export namespace Math {
   export type Vec3 = [ x: number, y: number, z: number ];
@@ -16,22 +19,6 @@ export class Vertex {
 
   constructor(position: Math.Vec3) {
     this.position = position;
-  }
-}
-export class VertexArray {
-  private readonly vertices: Vertex[];
-  constructor(vertices: Vertex[]) {
-    this.vertices = vertices;
-  }
-  asFloat32Array(): Float32Array {
-    const floatArray = new Float32Array(this.vertices.length * Vertex.size);
-    this.vertices.forEach((vertex, index) => {
-      // Position
-      floatArray[index * Vertex.size] = vertex.position[0];
-      floatArray[1 + index * Vertex.size] = vertex.position[1];
-      floatArray[2 + index * Vertex.size] = vertex.position[2];
-    });
-    return floatArray;
   }
 }
 //#endregion
