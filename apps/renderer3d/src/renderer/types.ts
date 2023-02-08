@@ -20,5 +20,11 @@ export class Vertex {
   constructor(position: Math.Vec3) {
     this.position = position;
   }
+
+  serialize(): number[] {
+    return [
+      ...this.position
+    ]
+  }
 }
 //#endregion

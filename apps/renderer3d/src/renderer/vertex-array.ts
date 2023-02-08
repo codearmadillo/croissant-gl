@@ -15,11 +15,12 @@ export class VertexArray {
   private attachData() {
     // Create float array from provided vertices
     const floatArray = new Float32Array(this.vertices.length * Vertex.size);
-    this.vertices.forEach((vertex, index) => {
-      // Position
-      floatArray[index * Vertex.size] = vertex.position[0];
-      floatArray[1 + index * Vertex.size] = vertex.position[1];
-      floatArray[2 + index * Vertex.size] = vertex.position[2];
+    this.vertices.forEach((vertex, vertexIndex) => {
+      const serializedVertex = vertex.serialize();
+      const vertexStride = vertexIndex * Vertex.size;
+      serializedVertex.forEach((value, valueIndex) => {
+        floatArray[valueIndex + vertexStride] = value;
+      });
     });
 
     // Bind buffer
