@@ -1,6 +1,11 @@
 import {gl} from "./context";
 
-export abstract class Shader {
+export interface ShaderProgram {
+  bind(): void;
+  unbind(): void;
+}
+
+export abstract class Shader implements ShaderProgram {
   private _shaders: Map<GLenum, WebGLProgram> = new Map();
   private _program: WebGLProgram | null = null;
   public get program() {
