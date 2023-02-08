@@ -1,0 +1,31 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #f3f3f3;
+}
+
+#main {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+}
+#canvas {
+  width: 560px;
+  aspect-ratio: 1;
+  background: #fff;
+  border-radius: 4px;
+  filter: drop-shadow(0 0 0.75rem #d5d5d5);
+}
+
+@media (prefers-color-scheme: light) {
+  body, html {
+    background: #1a1f26;
+  }
+  #canvas {
+    filter: drop-shadow(0 0 0.75rem #1a1f26);
+  }
+}
