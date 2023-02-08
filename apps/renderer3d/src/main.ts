@@ -1,5 +1,6 @@
 import {gl} from "./renderer/context";
 import {defaultShader} from "./example/default-shader";
+import {Vertex, VertexArray} from "./renderer/types";
 
 if (gl === null || gl === undefined) {
   throw new Error(`WebGl2 is not supported`);
@@ -30,12 +31,13 @@ class Square implements Drawable {
   protected defineVertices() {
     gl.bindVertexArray(this.vao);
 
-    const vertices = new Float32Array([
-      0.5, -0.5, 0,
-      0.5, 0.5, 0,
-      -0.5, 0.5, 0,
-      -0.5, -0.5, 0
+    const vertexArray: VertexArray = new VertexArray([
+      new Vertex([  0.5, -0.5, 0 ]),
+      new Vertex([  0.5, 0.5, 0, ]),
+      new Vertex([ -0.5, 0.5, 0, ]),
+      new Vertex([ -0.5, -0.5, 0 ]),
     ]);
+    const vertices = vertexArray.asFloat32Array();
 
     const vbo = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
