@@ -17,15 +17,17 @@ jobs:
         with:
           node-version: 16
           cache: 'npm'
+          registry-url: 'https://npm.pkg.github.com'
       - name: Install
         run: npm ci
       - name: Test
         run: npm test
       - name: Build
         run: npm run build
+      - run: ls
       - name: Copy publish configuration
         run: |
-          echo '//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN  }}' > ${{ github.workspace }}/dist/libs/croissant-gl/.npmrc
+          echo '//registry.npmjs.org/:_authToken=${{ secrets.PUBLISH_TOKEN  }}' > ${{ github.workspace }}/dist/libs/croissant-gl/.npmrc
           cat .npmrc
       - run: cd dist/libs/croissant-gl
       - name: Publish
