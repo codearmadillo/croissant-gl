@@ -36,11 +36,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: mkdir -p _publish
+      - run: mkdir -p publish
       - uses: actions/download-artifact@v3
         with:
           name: croissant-gl-build
-          path: _publish/
-      - run: cd _publish
-      - name: Display files
-        run: ls -R
+          path: publish/
+      - uses: actions/setup-node@v3
+        working-directory: ./publish
+        with:
+          node-version: 16
+          cache: 'npm'
+          registry-url: 'https://npm.pkg.github.com'
+      - run: ls -R
+        working-directory: ./publish
