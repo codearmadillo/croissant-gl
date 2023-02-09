@@ -28,19 +28,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: croissant-gl
-          path: dist/libs/croissant-gl
+          path: dist/libs/croissant-gl/
           retention-days: 7
-  delivery:
-    needs: bakery
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: croissant-gl
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          cache: 'npm'
-          registry-url: 'https://npm.pkg.github.com'
-      - run: ls
