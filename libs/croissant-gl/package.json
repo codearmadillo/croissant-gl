@@ -6,6 +6,6 @@
     "url": "https://github.com/jiriKralovec/croissant-gl.git"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/jiriKralovec"
+    "registry": "https://npm.pkg.github.com"
   }
 }
