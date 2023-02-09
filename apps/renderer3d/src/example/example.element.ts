@@ -1,7 +1,7 @@
 import './example.element.css';
 import {BlazeRenderer} from "../renderer/blaze";
-import {Square} from "./square";
 import {DefaultShader} from "./default-shader";
+import {Cube} from "./cube";
 
 export class ExampleElement extends HTMLElement {
   private blaze!: BlazeRenderer;
@@ -17,7 +17,8 @@ export class ExampleElement extends HTMLElement {
   private startBlaze() {
     this.blaze = new BlazeRenderer(this.canvas);
     this.blaze.setShader(new DefaultShader());
-    this.blaze.addDrawable(new Square());
+    // this.blaze.addDrawable(new Square());
+    this.blaze.addDrawable(new Cube());
     this.blaze.start();
   }
 }
