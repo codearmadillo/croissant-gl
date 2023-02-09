@@ -39,4 +39,4 @@ jobs:
         with:
           name: croissant-gl-build
       - name: Display files
-        runs: ls -R
+        run: ls -R
