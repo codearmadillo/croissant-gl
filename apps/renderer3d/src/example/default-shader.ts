@@ -25,13 +25,11 @@ void main() {
 }
 `;
 
-class DefaultShader extends Shader {
+export class DefaultShader extends Shader {
   constructor() {
     super();
-    this.defineSource(fragmentShaderSource, gl.FRAGMENT_SHADER);
-    this.defineSource(vertexShaderSource, gl.VERTEX_SHADER);
+    this.defineSource(fragmentShaderSource, gl().FRAGMENT_SHADER);
+    this.defineSource(vertexShaderSource, gl().VERTEX_SHADER);
     this.compile();
   }
 }
-
-export const defaultShader = new DefaultShader();

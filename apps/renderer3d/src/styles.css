@@ -3,27 +3,20 @@ body, html {
   padding: 0;
   width: 100vw;
   height: 100vh;
-  background: #f3f3f3;
+  background: #1a1f26;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: 1fr;
+  grid-template-areas: "sidebar main";
 }
 
 #main {
-  width: 100vw;
-  height: 100vh;
-  display: grid;
-  align-items: center;
-  justify-content: center;
+  grid-area: main;
 }
-#canvas {
-  background: #fff;
-  border-radius: 4px;
-  filter: drop-shadow(0 0 0.75rem #d5d5d5);
-}
-
-@media (prefers-color-scheme: light) {
-  body, html {
-    background: #1a1f26;
-  }
-  #canvas {
-    filter: drop-shadow(0 0 0.75rem #1a1f26);
-  }
+#aside {
+  grid-area: sidebar;
+  width: 26rem;
+  padding: 0.5rem;
+  box-sizing: border-box;
 }

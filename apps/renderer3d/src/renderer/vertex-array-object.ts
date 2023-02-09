@@ -8,7 +8,7 @@ export class VertexArrayObject {
   private ibo: IndexArray | null = null;
   private readonly vao: WebGLVertexArrayObject;
   constructor() {
-    this.vao = gl.createVertexArray() as WebGLVertexArrayObject;
+    this.vao = gl().createVertexArray() as WebGLVertexArrayObject;
     if (this.vao == null) {
       throw new Error(`Failed to create VAO`);
     }
@@ -30,17 +30,17 @@ export class VertexArrayObject {
     this.unbind();
   }
   bind() {
-    gl.bindVertexArray(this.vao);
+    gl().bindVertexArray(this.vao);
   }
   unbind() {
-    gl.bindVertexArray(null);
+    gl().bindVertexArray(null);
   }
   draw() {
     if (this.vbo === null || this.ibo === null) {
       throw new Error(`Failed to draw - IBO or VBO missing`);
     }
-    gl.bindVertexArray(this.vao);
-    gl.drawElements(gl.TRIANGLES, this.ibo.elements, gl.UNSIGNED_SHORT, 0);
-    gl.bindVertexArray(null);
+    gl().bindVertexArray(this.vao);
+    gl().drawElements(gl().TRIANGLES, this.ibo.elements, gl().UNSIGNED_SHORT, 0);
+    gl().bindVertexArray(null);
   }
 }

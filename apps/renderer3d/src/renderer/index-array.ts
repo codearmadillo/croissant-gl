@@ -13,14 +13,14 @@ export class IndexArray {
     }
     this.indices = new Uint16Array(indices);
     this.elements = indices.length;
-    this.buffer = gl.createBuffer();
+    this.buffer = gl().createBuffer();
     if (this.buffer === null) {
       throw new Error(`Tried creating IBO but createBuffer failed`);
     }
     this.attachData();
   }
   private attachData() {
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.indices, gl.STATIC_DRAW);
+    gl().bindBuffer(gl().ELEMENT_ARRAY_BUFFER, this.buffer);
+    gl().bufferData(gl().ELEMENT_ARRAY_BUFFER, this.indices, gl().STATIC_DRAW);
   }
 }

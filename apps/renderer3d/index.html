@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Renderer3d</title>
+    <title>Blaze</title>
     <base href="/" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -10,8 +10,11 @@
     <link rel="stylesheet" href="/src/styles.css" />
   </head>
   <body>
+    <aside id="aside">
+      <webgl2-editor></webgl2-editor>
+    </aside>
     <main id="main">
-      <canvas id="canvas" width="560" height="560"></canvas>
+      <webgl2-example></webgl2-example>
     </main>
     <script type="module" src="/src/main.ts"></script>
   </body>
