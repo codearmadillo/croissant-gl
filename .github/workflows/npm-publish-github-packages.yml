@@ -28,7 +28,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: croissant-gl-build
-          path: dist/libs/croissant-gl/
+          path: dist/libs/croissant-gl
           retention-days: 7
 
   distribution:
@@ -36,11 +36,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: mkdir -p path/to/artifact
-
+      - run: mkdir -p _publish
       - uses: actions/download-artifact@v3
         with:
           name: croissant-gl-build
-          path: path/to/artifact/
+          path: _publish/
+      - run: cd _publish
       - name: Display files
         run: ls -R
