@@ -1,13 +1,13 @@
-import { Vec3 } from "./alg";
 import { SizeOf } from "./sizeof";
+import * as glMatrix from 'gl-matrix';
 
 export type ShaderSource = string;
 export interface Drawable {
   draw(): void;
 }
 export class Vertex {
-  readonly position: Vec3.Vec3;
-  readonly color: Vec3.Vec3;
+  readonly position: glMatrix.vec3;
+  readonly color: glMatrix.vec3;
 
   // Float size of vector
   static get size() {
@@ -18,7 +18,7 @@ export class Vertex {
     return this.size * SizeOf.FLOAT;
   }
 
-  constructor(position: Vec3.Vec3, color: Vec3.Vec3 = [ 0.0, 0.0, 0.0 ]) {
+  constructor(position: glMatrix.vec3, color: glMatrix.vec3 = [ 0.0, 0.0, 0.0 ]) {
     this.position = position;
     this.color = color;
   }
