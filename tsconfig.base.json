@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@webgl2/croissant": ["libs/croissant/src/index.ts"]
+      "@webgl2/croissant": ["libs/croissant/src/index.ts"],
+      "@webgl2/croissant-gl": ["libs/croissant-gl/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
