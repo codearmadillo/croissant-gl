@@ -16,15 +16,15 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - run: npm ci
-      - run: npm test
+      - run: npm run ci
+      - run: npm run test
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: croissantgl
-          path: dist/libs/croissant-gl/
+          path: ./dist/libs/croissant-gl/
 
-  publish-gpr:
+  publish:
     needs: build
     runs-on: ubuntu-latest
     permissions:
