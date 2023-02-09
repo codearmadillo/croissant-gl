@@ -34,6 +34,8 @@ jobs:
   distribution:
     needs: bakery
     runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
     steps:
       - uses: actions/checkout@v3
       - run: mkdir -p publish
@@ -41,18 +43,14 @@ jobs:
         with:
           name: croissant-gl-build
           path: publish/
-      - name: Setup npmrc
-        uses: ferluisxd/create-npmrc@3
-        with:
-          org_name: jiriKralovec
-          auth_token: ${{ secrets.PUBLISH_TOKEN }}
-          env:
-            AUTH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
-      - run: cd publish
       - uses: actions/setup-node@v3
         with:
           node-version: 16
           cache: 'npm'
           registry-url: 'https://npm.pkg.github.com'
+      - name: Publish Packages
+        run: |
+          echo '//npm.pkg.github.com/:_authToken=${{ secrets.PUBLISH_TOKEN  }}' > ${{ github.workspace }}/publish/.npmrc
+          cat .npmrc
       - run: ls -R
         working-directory: ./publish
