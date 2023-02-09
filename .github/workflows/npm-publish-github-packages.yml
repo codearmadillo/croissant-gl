@@ -41,8 +41,8 @@ jobs:
         with:
           name: croissant-gl-build
           path: publish/
+      - cd publish
       - uses: actions/setup-node@v3
-        working-directory: ./publish
         with:
           node-version: 16
           cache: 'npm'
