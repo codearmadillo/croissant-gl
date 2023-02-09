@@ -41,6 +41,14 @@ jobs:
         with:
           name: croissant-gl-build
           path: publish/
+      - name: Setup npmrc
+        working-directory: ./publish
+        uses: ferluisxd/create-npmrc@3
+        with:
+          org_name: lig0
+          auth_token: ${{ secrets.PUBLISH_TOKEN }}
+          env:
+            AUTH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
       - run: cd publish
       - uses: actions/setup-node@v3
         with:
