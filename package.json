@@ -4,7 +4,8 @@
   "license": "MIT",
   "scripts": {
     "serve": "nx serve renderer3d",
-    "build": "nx build croissant-gl"
+    "ci": "nx build croissant-gl",
+    "test": "nx test croissant-gl"
   },
   "private": true,
   "devDependencies": {
