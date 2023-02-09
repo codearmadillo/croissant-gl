@@ -6,6 +6,7 @@ export interface ShaderProgram {
 }
 
 export abstract class Shader implements ShaderProgram {
+  private _uniformLocations: Map<string, WebGLUniformLocation> = new Map();
   private _shaders: Map<GLenum, WebGLProgram> = new Map();
   private _program: WebGLProgram | null = null;
   public get program() {
@@ -52,5 +53,16 @@ export abstract class Shader implements ShaderProgram {
   }
   public unbind() {
     gl.useProgram(null);
+  }
+  public getUniformLocation(name: string): WebGLUniformLocation {
+    if (!this._uniformLocations.has(name)) {
+      const location = gl.getUniformLocation(this.program as WebGLProgram, name);
+      if (location === null) {
+        throw new Error("Failed to obtain uniform location");
+      } else {
+        this._uniformLocations.set(name, location);
+      }
+    }
+    return this._uniformLocations.get(name) as WebGLUniformLocation;
   }
 }
