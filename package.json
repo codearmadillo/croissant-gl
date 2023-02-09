@@ -4,11 +4,12 @@
   "license": "MIT",
   "scripts": {
     "serve": "nx serve renderer3d",
-    "ci": "nx build croissant-gl",
+    "build": "nx build croissant-gl",
     "test": "nx test croissant-gl"
   },
   "private": true,
   "devDependencies": {
+    "@nrwl/cli": "^15.6.3",
     "@nrwl/cypress": "15.6.3",
     "@nrwl/eslint-plugin-nx": "15.6.3",
     "@nrwl/jest": "15.6.3",
