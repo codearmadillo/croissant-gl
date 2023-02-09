@@ -52,5 +52,5 @@ jobs:
         run: |
           echo '//npm.pkg.github.com/:_authToken=${{ secrets.PUBLISH_TOKEN  }}' > ${{ github.workspace }}/publish/.npmrc
           cat publish/.npmrc
-      - run: ls -R
+      - run: npm publish
         working-directory: ./publish
