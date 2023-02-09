@@ -50,7 +50,7 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
       - name: Publish Packages
         run: |
-          echo '//npm.pkg.github.com/:_authToken=${{ secrets.PUBLISH_TOKEN  }}' > ${{ github.workspace }}/publish/.npmrc
+          echo '//npm.pkg.github.com/jiriKralovec/:_authToken=${{ secrets.PUBLISH_TOKEN  }}' > ${{ github.workspace }}/publish/.npmrc
           cat publish/.npmrc
       - run: npm publish
         working-directory: ./publish
