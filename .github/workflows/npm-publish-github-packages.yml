@@ -24,13 +24,9 @@ jobs:
         run: npm test
       - name: Build
         run: npm run build
-      - name: Copy publish configuration
-        run: |
-          echo '//registry.npmjs.org/:_authToken=${{ secrets.PUBLISH_TOKEN  }}' > ${{ github.workspace }}/dist/libs/croissant-gl/.npmrc
-      - run: cd dist/libs/croissant-gl
-      - run: ls
-      - name: Publish
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
-          NPM_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
+      - name: Archive
+        uses: actions/upload-artifact@v3
+        with:
+          name: croissant-gl
+          path: dist/libs/croissant-gl
+          retention-days: 7
