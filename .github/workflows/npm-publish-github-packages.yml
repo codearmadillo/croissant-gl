@@ -23,6 +23,11 @@ jobs:
         run: npm test
       - name: Build
         run: npm run build
+      - name: Copy publish configuration
+        uses: canastro/copy-file-action@master
+        with:
+          source: ".npmrc"
+          target: "dist/libs/croissant-gl/.npmrc"
       - run: cd dist/libs/croissant-gl
       - name: Publish
         run: npm publish
