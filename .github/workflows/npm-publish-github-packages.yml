@@ -31,6 +31,7 @@ jobs:
           path: dist/libs/croissant-gl
           retention-days: 7
   delivery:
+    needs: bakery
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
