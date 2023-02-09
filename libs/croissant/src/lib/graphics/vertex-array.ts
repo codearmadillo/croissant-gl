@@ -1,5 +1,6 @@
-import {TypeSize, Vertex} from "./types";
+import { Vertex } from "../types/graphics";
 import {gl} from "./context";
+import {SizeOf} from "../types/sizeof";
 
 export class VertexArray {
   private readonly buffer: WebGLBuffer | null;
@@ -32,7 +33,7 @@ export class VertexArray {
     gl().enableVertexAttribArray(0);
 
     // Color
-    gl().vertexAttribPointer(1, 3, gl().FLOAT, false, Vertex.bytesize, 3 * TypeSize.FLOAT);
+    gl().vertexAttribPointer(1, 3, gl().FLOAT, false, Vertex.bytesize, 3 * SizeOf.FLOAT);
     gl().enableVertexAttribArray(1);
   }
 }

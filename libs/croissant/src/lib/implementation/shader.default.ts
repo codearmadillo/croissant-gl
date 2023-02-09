@@ -1,6 +1,6 @@
-import {Shader} from "../renderer/shader";
-import {ShaderSource} from "../renderer/types";
-import {gl} from "../renderer/context";
+import {ShaderSource} from "../types/graphics";
+import {Shader} from "../graphics/shader";
+import {gl} from "../graphics/context";
 
 const fragmentShaderSource: ShaderSource = `#version 300 es
 precision highp float;
@@ -19,21 +19,21 @@ layout (location = 1) in vec3 a_Color;
 
 out vec3 vertColor;
 
-uniform mat4 u_model;
-uniform mat4 u_view;
-uniform mat4 u_projection;
-
 void main() {
-  gl_Position = a_Position * u_model;
+  gl_Position = a_Position;
   vertColor = a_Color;
 }
 `;
 
-export class DefaultShader extends Shader {
+class DefaultShader extends Shader {
   constructor() {
     super();
+  }
+  bootstrap() {
     this.defineSource(fragmentShaderSource, gl().FRAGMENT_SHADER);
     this.defineSource(vertexShaderSource, gl().VERTEX_SHADER);
     this.compile();
   }
 }
+
+export const defaultShader = new DefaultShader();

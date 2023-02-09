@@ -1,7 +1,7 @@
 import {gl} from "./context";
 import {IndexArray} from "./index-array";
 import {VertexArray} from "./vertex-array";
-import {Vertex} from "./types";
+import {Vertex} from "../types/graphics";
 
 export class VertexArrayObject {
   private vbo: VertexArray | null = null;

@@ -1,9 +1,9 @@
-import {Drawable, Vertex} from "../renderer/types";
-import {VertexArrayObject} from "../renderer/vertex-array-object";
+import {Drawable, Vertex} from "../lib/types/graphics";
+import {VertexArrayObject} from "../lib/graphics/vertex-array-object";
 
-export class Cube implements Drawable {
+export abstract class Cube implements Drawable {
   protected readonly vao: VertexArrayObject;
-  constructor() {
+  public constructor() {
     this.vao = new VertexArrayObject();
     this.vao.addVertices([
       new Vertex([+0.5, -0.5, +0.5], [1.0, 0.0, 0.0]),
@@ -34,3 +34,24 @@ export class Cube implements Drawable {
     this.vao.draw();
   }
 }
+
+export abstract class Square implements Drawable {
+  protected readonly vao: VertexArrayObject;
+  public constructor() {
+    this.vao = new VertexArrayObject();
+    this.vao.addVertices([
+      new Vertex([  0.5, -0.5, 0 ], [ 1.0, 0.0, 0.0 ]),
+      new Vertex([  0.5, 0.5, 0, ], [ 0.0, 1.0, 0.0 ]),
+      new Vertex([ -0.5, 0.5, 0, ], [ 0.0, 0.0, 1.0 ]),
+      new Vertex([ -0.5, -0.5, 0 ], [ 1.0, 0.0, 1.0 ])
+    ]);
+    this.vao.addIndices([
+      0, 1, 2,
+      0, 2, 3
+    ]);
+  }
+  draw() {
+    this.vao.draw();
+  }
+}
+

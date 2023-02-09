@@ -48,6 +48,7 @@ export abstract class Shader implements ShaderProgram {
 
     this._shaders.set(type, shader);
   }
+  public abstract bootstrap(): void;
   public bind() {
     gl().useProgram(this.program);
   }
