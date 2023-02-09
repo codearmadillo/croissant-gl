@@ -28,3 +28,4 @@ jobs:
         working-directory: dist/libs/croissant-gl
         env:
           NODE_AUTH_TOKEN: ${{secrets.PUBLISH_TOKEN}}
+          NPM_TOKEN: ${{secrets.PUBLISH_TOKEN}}
