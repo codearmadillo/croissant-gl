@@ -1,4 +1,4 @@
-import {Vertex} from "./types";
+import {TypeSize, Vertex} from "./types";
 import {gl} from "./context";
 
 export class VertexArray {
@@ -27,8 +27,12 @@ export class VertexArray {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
     gl.bufferData(gl.ARRAY_BUFFER, floatArray, gl.STATIC_DRAW);
 
-    // Attributes
-    gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+    // Position
+    gl.vertexAttribPointer(0, 3, gl.FLOAT, false, Vertex.bytesize, 0);
     gl.enableVertexAttribArray(0);
+
+    // Color
+    gl.vertexAttribPointer(1, 3, gl.FLOAT, false, Vertex.bytesize, 3 * TypeSize.FLOAT);
+    gl.enableVertexAttribArray(1);
   }
 }

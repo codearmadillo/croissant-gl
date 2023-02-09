@@ -2,7 +2,6 @@ import {gl} from "./context";
 import {IndexArray} from "./index-array";
 import {VertexArray} from "./vertex-array";
 import {Vertex} from "./types";
-import {defaultShader} from "../example/default-shader";
 
 export class VertexArrayObject {
   private vbo: VertexArray | null = null;
@@ -41,9 +40,6 @@ export class VertexArrayObject {
       throw new Error(`Failed to draw - IBO or VBO missing`);
     }
     gl.bindVertexArray(this.vao);
-
-    gl.uniform3fv(defaultShader.getUniformLocation("u_color"), new Float32Array([ 1.0, 0.5, 0.5 ]));
-
     gl.drawElements(gl.TRIANGLES, this.ibo.elements, gl.UNSIGNED_SHORT, 0);
     gl.bindVertexArray(null);
   }

@@ -15,13 +15,13 @@ void main() {
 
 const vertexShaderSource: ShaderSource = `#version 300 es
 layout (location = 0) in vec4 a_Position;
-uniform vec3 u_color;
+layout (location = 1) in vec3 a_Color;
 
 out vec3 vertColor;
 
 void main() {
   gl_Position = a_Position;
-  vertColor = u_color;
+  vertColor = a_Color;
 }
 `;
 
