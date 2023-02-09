@@ -18,6 +18,11 @@ jobs:
           node-version: 16
       - run: npm ci
       - run: npm test
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: croissantgl
+          path: dist/libs/croissant-gl/
 
   publish-gpr:
     needs: build
@@ -31,7 +36,10 @@ jobs:
         with:
           node-version: 16
           registry-url: https://npm.pkg.github.com/
-      - run: cd dist/libs/croissant-gl
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: croissantgl
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.PUBLISH_TOKEN}}
