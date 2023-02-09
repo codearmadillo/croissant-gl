@@ -1,6 +1,6 @@
 import {gl, WebGL2} from "./context";
 import {Shader} from "./shader";
-import {Drawable} from "./types";
+import {Drawable, Math} from "./types";
 import {BlazeEvent} from "./blaze-event";
 
 export class BlazeRenderer {
@@ -27,9 +27,25 @@ export class BlazeRenderer {
   }
   setShader(shader: Shader) {
     this.shader = shader;
+    this.setCamera();
   }
   addDrawable(drawable: Drawable) {
     this.drawables.push(drawable);
+  }
+  private setCamera() {
+    this.shader.bind();
+    const model: Math.Mat4 = Math.Mat4Utils.identity();
+    gl().uniformMatrix4fv(
+      this.shader.getUniformLocation("u_model"),
+      false,
+      new Float32Array(Math.Mat4Utils.toColumnArray(model))
+    );
+    const view: Math.Mat4 = Math.Mat4Utils.identity();
+    gl().uniformMatrix4fv(
+      this.shader.getUniformLocation("u_view"),
+      false,
+      new Float32Array(Math.Mat4Utils.toColumnArray(view))
+    );
   }
   private setPresets() {
     gl().clearColor(1, 1, 1, 1);

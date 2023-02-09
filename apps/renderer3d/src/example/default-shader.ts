@@ -19,8 +19,12 @@ layout (location = 1) in vec3 a_Color;
 
 out vec3 vertColor;
 
+uniform mat4 u_model;
+uniform mat4 u_view;
+uniform mat4 u_projection;
+
 void main() {
-  gl_Position = a_Position;
+  gl_Position = a_Position * u_model;
   vertColor = a_Color;
 }
 `;

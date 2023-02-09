@@ -58,11 +58,11 @@ export abstract class Shader implements ShaderProgram {
     if (!this._uniformLocations.has(name)) {
       const location = gl().getUniformLocation(this.program as WebGLProgram, name);
       if (location === null) {
-        throw new Error("Failed to obtain uniform location");
+        console.error("Failed to obtain uniform location");
       } else {
         this._uniformLocations.set(name, location);
       }
     }
-    return this._uniformLocations.get(name) as WebGLUniformLocation;
+    return this._uniformLocations.get(name) as WebGLUniformLocation ?? null;
   }
 }
