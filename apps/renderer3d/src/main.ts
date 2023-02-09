@@ -9,7 +9,7 @@ if (gl === null || gl === undefined) {
 defaultShader.bind();
 
 gl.clearColor(1, 1, 1, 1);
-gl.clear(gl.COLOR_BUFFER_BIT);
+gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 const mySquare = new Square();
 mySquare.draw();

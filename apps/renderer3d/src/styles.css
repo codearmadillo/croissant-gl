@@ -14,8 +14,6 @@ body, html {
   justify-content: center;
 }
 #canvas {
-  width: 560px;
-  aspect-ratio: 1;
   background: #fff;
   border-radius: 4px;
   filter: drop-shadow(0 0 0.75rem #d5d5d5);
