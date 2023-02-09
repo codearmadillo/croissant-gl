@@ -1,5 +1,5 @@
 import './example.element.css';
-import { Croissant, CroissantDrawables } from "@webgl2/croissant";
+import { Croissant, CroissantDrawables } from "@webgl2/croissant-gl";
 
 class MySquare extends CroissantDrawables.Square { }
 
