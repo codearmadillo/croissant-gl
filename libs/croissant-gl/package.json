@@ -1,6 +1,6 @@
 {
-  "name": "@jiriKralovec/croissant-gl",
-  "version": "0.0.1",
+  "name": "croissant-gl",
+  "version": "0.0.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/jiriKralovec/croissant-gl.git"
