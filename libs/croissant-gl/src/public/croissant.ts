@@ -4,6 +4,7 @@ import {Constants} from "../lib/constants";
 import {defaultShader} from "../lib/implementation/shader.default";
 
 let rendering = false;
+let bootstrapped = false;
 const drawables: Drawable[] = [];
 
 export function bootstrap(canvas: HTMLCanvasElement) {
@@ -18,6 +19,10 @@ export function bootstrap(canvas: HTMLCanvasElement) {
     }
     drawables.forEach((d) => d.draw());
   }, 1000 / Constants.TARGET_FRAMES);
+  bootstrapped = true;
+}
+export function ready() {
+  return bootstrapped;
 }
 export function start() {
   rendering = true;
