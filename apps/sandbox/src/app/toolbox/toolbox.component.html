@@ -1,4 +1,10 @@
+<webgl2-foldable-section title="Camera" [open]="false">
+  <webgl2-toggle name="checkbox-enable-disable" [(ngModel)]="usePerspective" (ngModelChange)="onCameraModeChange()">
+    <span class="text-slate-700 hover:text-slate-800 transition">Use perspective projection</span>
+  </webgl2-toggle>
+</webgl2-foldable-section>
+
 <webgl2-foldable-section title="Create element" [open]="true">
-  <button class="button button--primary" (click)="createSquare()">Create square</button>
+  <button class="button button--primary" (click)="onCreateSquare()">Create square</button>
 </webgl2-foldable-section>
 

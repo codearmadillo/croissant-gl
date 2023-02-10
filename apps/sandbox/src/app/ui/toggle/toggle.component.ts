@@ -1,4 +1,4 @@
-import {Component, OnInit, Input, forwardRef} from '@angular/core';
+import {Component, OnInit, Input, forwardRef, HostBinding} from '@angular/core';
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR, NgControl, ReactiveFormsModule} from "@angular/forms";
 import {Optional, Self} from "@angular/core";
 import {NgClass} from "@angular/common";
@@ -19,6 +19,10 @@ export class ToggleComponent implements ControlValueAccessor {
 
   onChange: any = () => {};
   onTouched: any = () => {};
+
+  @HostBinding("class") get class() {
+    return "";
+  }
 
   constructor(
     @Self()

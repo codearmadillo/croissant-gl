@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
-import { Croissant } from "@webgl2/croissant-gl"
+import {Croissant, CroissantDrawables} from "@webgl2/croissant-gl"
 @Component({
   selector: 'webgl2-viewport',
   templateUrl: './viewport.component.html',
@@ -18,6 +18,7 @@ export class ViewportComponent implements AfterViewInit {
   ngAfterViewInit() {
     Croissant.bootstrap(this.canvasElement);
     Croissant.start();
+    Croissant.addDrawable(new CroissantDrawables.Rect([ 50, 50 ]));
   }
 
   onEnabledChanged() {
