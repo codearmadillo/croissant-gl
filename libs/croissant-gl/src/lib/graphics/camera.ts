@@ -1,8 +1,11 @@
 import {defaultShader} from "../implementation/shader.default";
-import {glMatrix, mat4} from "gl-matrix";
+import {glMatrix, mat4, quat, vec3} from "gl-matrix";
 import {gl} from "./context";
 
 class Camera {
+  private viewRotationQuat: quat = quat.create();
+  private viewRotation: vec3 = [ 0, 0, 0 ];
+  private viewTranslation: vec3 = [ 0, 0, 0 ];
   private perspectiveFov = 45;
   private perspectiveNear = 0.1;
   private perspectiveFar = 1000;
@@ -21,8 +24,11 @@ class Camera {
   bootstrap() {
     this.viewMatrixLocation = defaultShader.getUniformLocation("u_view");
     this.projectionMatrixLocation = defaultShader.getUniformLocation("u_projection");
+    this.setViewRotationMatrix();
   }
   bind() {
+    // update view
+    mat4.fromRotationTranslation(this.viewMatrix, this.viewRotationQuat, this.viewTranslation);
     // update perspective
     mat4.perspective(this.projectionMatrix, this.perspectiveFov, gl().canvas.width / gl().canvas.height, this.perspectiveNear, this.perspectiveFar);
     // update viewport
@@ -32,21 +38,26 @@ class Camera {
     gl().uniformMatrix4fv(this.projectionMatrixLocation, false, this.projectionMatrix);
   }
   translate(x: number, y: number, z: number) {
+    this.viewTranslation = [ x, y, z ];
     mat4.fromTranslation(this.viewMatrix, [ x, y, z ]);
   }
   rotateX(degrees: number) {
-    mat4.fromXRotation(this.viewMatrix, glMatrix.toRadian(degrees));
+    this.viewRotation[0] = degrees;
+    this.setViewRotationMatrix();
   }
   rotateY(degrees: number) {
-    mat4.fromYRotation(this.viewMatrix, glMatrix.toRadian(degrees));
+    this.viewRotation[1] = degrees;
+    this.setViewRotationMatrix();
   }
   rotateZ(degrees: number) {
-    mat4.fromZRotation(this.viewMatrix, glMatrix.toRadian(degrees));
+    this.viewRotation[2] = degrees;
+    this.setViewRotationMatrix();
   }
   rotate(xDegrees: number, yDegrees: number, zDegrees: number) {
     this.rotateX(xDegrees);
     this.rotateY(yDegrees);
     this.rotateZ(zDegrees);
+    this.setViewRotationMatrix();
   }
   setPerspectiveFov(degrees: number) {
     this.perspectiveFov = glMatrix.toRadian(degrees);
@@ -56,6 +67,9 @@ class Camera {
   }
   setPerspectiveFar(value: number) {
     this.perspectiveFar = value;
+  }
+  private setViewRotationMatrix() {
+    quat.fromEuler(this.viewRotationQuat, this.viewRotation[0], this.viewRotation[1], this.viewRotation[2]);
   }
 }
 export const defaultCamera = new Camera();
