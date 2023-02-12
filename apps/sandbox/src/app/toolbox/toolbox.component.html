@@ -1,26 +1,16 @@
-<ng-template #rangeInputTemplate let-label="label" let-min="min" let-max="max" let-step="step" let-id="stateKey">
-  <label for="minmax-range" class="block text-xs font-medium text-gray-900 mt-2">{{label}}</label>
-  <input id="minmax-range" type="range" [ngModel]="getModel(id)" (ngModelChange)="setModel(id, $event); modelChanged(id)" [min]="min" [max]="max" [step]="step" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
-  <div class="flex justify-between w-full mt-0.5">
-    <span class="min-w-[1.5rem] text-center text-xs text-gray-600 inline-block rounded-md bg-gray-200 p-1">{{min}}</span>
-    <span>{{getModel(id)}}</span>
-    <span class="min-w-[1.5rem] text-center text-xs text-gray-600 inline-block rounded-md rounded-xs bg-gray-200 p-1">{{max}}</span>
-  </div>
-</ng-template>
-
 <webgl2-foldable-section title="Camera" [open]="getUiModel('cameraOpen')" (openStateChanged)="setUiModel('cameraOpen', $event); uiModelChanged()">
-  <ng-container *ngTemplateOutlet="rangeInputTemplate; context: { label: 'X rotation', min: -180, max: 180, step: 0.5, stateKey: 'camera_rotation_x' }"></ng-container>
-  <ng-container *ngTemplateOutlet="rangeInputTemplate; context: { label: 'Y rotation', min: -180, max: 180, step: 0.5, stateKey: 'camera_rotation_y' }"></ng-container>
-  <ng-container *ngTemplateOutlet="rangeInputTemplate; context: { label: 'Z rotation', min: -180, max: 180, step: 0.5, stateKey: 'camera_rotation_z' }"></ng-container>
-  <ng-container *ngTemplateOutlet="rangeInputTemplate; context: { label: 'X offset', min: -100, max: 100, step: 1, stateKey: 'camera_position_x' }"></ng-container>
-  <ng-container *ngTemplateOutlet="rangeInputTemplate; context: { label: 'Y offset', min: -100, max: 100, step: 1, stateKey: 'camera_position_y' }"></ng-container>
-  <ng-container *ngTemplateOutlet="rangeInputTemplate; context: { label: 'Z offset', min: -100, max: 100, step: 1, stateKey: 'camera_position_z' }"></ng-container>
+  <webgl2-range-input fieldName="camera_rotation_x" label="X rotation" [min]="-359" [max]="359" [step]="1" [ngModel]="getModel('camera_rotation_x')" (ngModelChange)="setModel('camera_rotation_x', $event); modelChanged('camera_rotation_x')"></webgl2-range-input>
+  <webgl2-range-input fieldName="camera_rotation_y" label="Y rotation" [min]="-359" [max]="359" [step]="1" [ngModel]="getModel('camera_rotation_y')" (ngModelChange)="setModel('camera_rotation_y', $event); modelChanged('camera_rotation_y')"></webgl2-range-input>
+  <webgl2-range-input fieldName="camera_rotation_z" label="Z rotation" [min]="-359" [max]="359" [step]="1" [ngModel]="getModel('camera_rotation_z')" (ngModelChange)="setModel('camera_rotation_z', $event); modelChanged('camera_rotation_z')"></webgl2-range-input>
+  <webgl2-range-input fieldName="camera_position_x" label="X position" [min]="-200" [max]="200" [step]="1" [ngModel]="getModel('camera_position_x')" (ngModelChange)="setModel('camera_position_x', $event); modelChanged('camera_position_x')"></webgl2-range-input>
+  <webgl2-range-input fieldName="camera_position_y" label="Y position" [min]="-200" [max]="200" [step]="1" [ngModel]="getModel('camera_position_y')" (ngModelChange)="setModel('camera_position_y', $event); modelChanged('camera_position_y')"></webgl2-range-input>
+  <webgl2-range-input fieldName="camera_position_z" label="Z position" [min]="-200" [max]="200" [step]="1" [ngModel]="getModel('camera_position_z')" (ngModelChange)="setModel('camera_position_z', $event); modelChanged('camera_position_z')"></webgl2-range-input>
 </webgl2-foldable-section>
 
 <webgl2-foldable-section title="Perspective" [open]="getUiModel('perspectiveOpen')" (openStateChanged)="setUiModel('perspectiveOpen', $event); uiModelChanged()">
-  <ng-container *ngTemplateOutlet="rangeInputTemplate; context: { label: 'FOV in degrees', min: -180, max: 180, step: 1, stateKey: 'camera_angle' }"></ng-container>
-  <ng-container *ngTemplateOutlet="rangeInputTemplate; context: { label: 'Near', min: 0, max: 50, step: 0.1, stateKey: 'camera_near' }"></ng-container>
-  <ng-container *ngTemplateOutlet="rangeInputTemplate; context: { label: 'Far', min: -100, max: 1000, step: 1, stateKey: 'camera_far' }"></ng-container>
+  <webgl2-range-input fieldName="camera_angle" label="FOV (degrees)" [min]="-359" [max]="359" [step]="1" [ngModel]="getModel('camera_angle')" (ngModelChange)="setModel('camera_angle', $event); modelChanged('camera_angle')"></webgl2-range-input>
+  <webgl2-range-input fieldName="camera_near" label="Near" [min]="0" [max]="10" [step]="0.1" [ngModel]="getModel('camera_near')" (ngModelChange)="setModel('camera_near', $event); modelChanged('camera_near')"></webgl2-range-input>
+  <webgl2-range-input fieldName="camera_far" label="Far" [min]="-100" [max]="400" [step]="1" [ngModel]="getModel('camera_far')" (ngModelChange)="setModel('camera_far', $event); modelChanged('camera_far')"></webgl2-range-input>
 </webgl2-foldable-section>
 
 <webgl2-foldable-section title="Objects" [open]="getUiModel('objectsOpen')" (openStateChanged)="setUiModel('objectsOpen', $event); uiModelChanged()">

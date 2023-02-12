@@ -4,7 +4,5 @@ export class FancyCube extends croissantDrawables.Cube {
   constructor(size: [number, number, number]) {
     super(size);
   }
-  frame(deltaTime: number) {
-    this.rotateX(5 * deltaTime);
-  }
+  frame(deltaTime: number) { }
 }
