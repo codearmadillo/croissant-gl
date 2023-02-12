@@ -1,35 +1,46 @@
+import {croissantBackend} from "../lib/croissant";
 import {Drawable} from "../lib/types/graphics";
-import {gl, WebGL2} from "../lib/graphics/context";
-import {Constants} from "../lib/constants";
-import {defaultShader} from "../lib/implementation/shader.default";
-
-let rendering = false;
-let bootstrapped = false;
-const drawables: Drawable[] = [];
+import {defaultCamera} from "../lib/graphics/camera";
 
 export function bootstrap(canvas: HTMLCanvasElement) {
-  WebGL2.setContextFromCanvas(canvas);
-  gl().clearColor(1, 1, 1, 1);
-  defaultShader.bootstrap();
-  setInterval(() => {
-    defaultShader.bind();
-    gl().clear(gl().COLOR_BUFFER_BIT | gl().DEPTH_BUFFER_BIT);
-    if (!rendering) {
-      return;
-    }
-    drawables.forEach((d) => d.draw());
-  }, 1000 / Constants.TARGET_FRAMES);
-  bootstrapped = true;
-}
-export function ready() {
-  return bootstrapped;
-}
-export function start() {
-  rendering = true;
+  croissantBackend.bootstrap(canvas);
 }
 export function stop() {
-  rendering = false;
+  croissantBackend.stop();
 }
-export function addDrawable(drawable: Drawable) {
-  drawables.push(drawable);
+export function start() {
+  croissantBackend.start();
+}
+export function ready() {
+  return croissantBackend.ready;
+}
+export function create(drawable: Drawable) {
+  croissantBackend.drawables.push(drawable);
+}
+
+export namespace camera {
+  export function translate(x: number, y: number, z: number) {
+    defaultCamera.translate(x, y, z);
+  }
+  export function rotate(xDegrees: number, yDegrees: number, zDegrees: number) {
+    defaultCamera.rotate(xDegrees, yDegrees, zDegrees);
+  }
+  export function rotateX(degrees: number) {
+    defaultCamera.rotateX(degrees);
+  }
+  export function rotateY(degrees: number) {
+    defaultCamera.rotateY(degrees);
+  }
+  export function rotateZ(degrees: number) {
+    defaultCamera.rotateZ(degrees);
+  }
+  export function perspective_fov(degrees: number) {
+    defaultCamera.setPerspectiveFov(degrees);
+  }
+  export function perspective_near(value: number) {
+    defaultCamera.setPerspectiveNear(value);
+  }
+  export function perspective_far(value: number) {
+    defaultCamera.setPerspectiveFar(value);
+  }
 }

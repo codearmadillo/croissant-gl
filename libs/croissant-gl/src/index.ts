@@ -1,2 +1,2 @@
-export * as Croissant from "./public/croissant";
-export * as CroissantDrawables from "./public/drawables";
+export * as croissantGl from "./public/croissant";
+export * as croissantDrawables from "./public/drawables";

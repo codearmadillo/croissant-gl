@@ -1,4 +1,4 @@
-<header class="items-center bg-slate-100 transition text-sm text-semibold cursor-pointer box-border px-2 py-1.5 grid grid-cols-[1fr_min-content]" (click)="open = !open">
+<header class="items-center bg-slate-100 transition text-sm text-semibold cursor-pointer box-border px-2 py-1.5 grid grid-cols-[1fr_min-content]" (click)="open = !open; openStateChanged.emit(open)">
   <span>{{title}}</span>
   <span>
     <svg-icon [svgClass]="'transition w-3.5 h-3.5 fill-slate-900 ' + (open ? 'rotate-180' : '')" name="chevron-down"></svg-icon>

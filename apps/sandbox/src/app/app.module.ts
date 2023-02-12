@@ -10,14 +10,13 @@ import { FoldableSectionComponent } from './tools/foldable-section/foldable-sect
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { AngularSvgIconPreloaderModule } from 'angular-svg-icon-preloader';
 import { HttpClientModule } from '@angular/common/http';
-import { SliderComponent } from './ui/slider/slider.component';
+import {SliderComponent} from "./ui/slider/slider.component";
 
 @NgModule({
   declarations: [
     AppComponent,
     ToolboxComponent,
     ViewportComponent,
-    SliderComponent,
   ],
   imports: [
     BrowserModule,
@@ -30,6 +29,7 @@ import { SliderComponent } from './ui/slider/slider.component';
     AngularSvgIconPreloaderModule.forRoot({
       configUrl: '../assets/icons.json',
     }),
+    SliderComponent,
   ],
   providers: [],
   bootstrap: [AppComponent],
