@@ -20,4 +20,14 @@
 <webgl2-foldable-section title="Perspective" [open]="getUiModel('perspectiveOpen')" (openStateChanged)="setUiModel('perspectiveOpen', $event); uiModelChanged()">
   <ng-container *ngTemplateOutlet="rangeInputTemplate; context: { label: 'FOV in degrees', min: -180, max: 180, step: 1, stateKey: 'camera_angle' }"></ng-container>
   <ng-container *ngTemplateOutlet="rangeInputTemplate; context: { label: 'Near', min: 0, max: 50, step: 0.1, stateKey: 'camera_near' }"></ng-container>
-  <ng-container *ngTemplateOutlet="rangeInputTemplate; context: { label: 'Far', min: -100, max: 1000, step: 1, stateKey: 'camera_far' }"></ng-container></webgl2-foldable-section>
+  <ng-container *ngTemplateOutlet="rangeInputTemplate; context: { label: 'Far', min: -100, max: 1000, step: 1, stateKey: 'camera_far' }"></ng-container>
+</webgl2-foldable-section>
+
+<webgl2-foldable-section title="Objects" [open]="getUiModel('objectsOpen')" (openStateChanged)="setUiModel('objectsOpen', $event); uiModelChanged()">
+  <webgl2-foldable-section title="Create" [open]="getUiModel('objectsCreateOpen')" (openStateChanged)="setUiModel('objectsCreateOpen', $event); uiModelChanged()">
+
+  </webgl2-foldable-section>
+  <webgl2-foldable-section title="List" [open]="getUiModel('objectsListOpen')" (openStateChanged)="setUiModel('objectsListOpen', $event); uiModelChanged()">
+
+  </webgl2-foldable-section>
+</webgl2-foldable-section>

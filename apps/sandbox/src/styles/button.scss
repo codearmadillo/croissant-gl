@@ -2,6 +2,6 @@
 
 @layer components {
   .button {
-    @apply flex text-xs items-center px-4 py-2 space-x-3 text-gray-600 transition-colors duration-300 transform border rounded-lg hover:bg-gray-100 focus:outline-none;
+    @apply flex text-xs justify-center items-center px-4 py-2 space-x-3 text-gray-600 transition-colors duration-300 transform border rounded-lg hover:bg-gray-100 focus:outline-none;
   }
 }

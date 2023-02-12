@@ -1,3 +1,3 @@
 export namespace Constants {
-  export const TARGET_FRAMES = 16;
+  export const TARGET_FRAMES = 60;
 }

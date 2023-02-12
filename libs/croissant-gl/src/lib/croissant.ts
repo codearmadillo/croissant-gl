@@ -8,6 +8,7 @@ class CroissantBackend {
   public readonly drawables: Drawable[] = [];
   private running = true;
   private bootstrapped = false;
+  private lastFrame: number;
   get ready() {
     return this.bootstrapped;
   }
@@ -24,8 +25,10 @@ class CroissantBackend {
     defaultCamera.bootstrap();
     // initialize presets
     gl().enable(gl().DEPTH_TEST);
+    // frame
+    this.lastFrame = new Date().getTime();
     // start rendering loop
-    this.startLoop();
+    this.drawScene();
   }
   stop() {
     this.running = false;
@@ -33,8 +36,12 @@ class CroissantBackend {
   start() {
     this.running = true;
   }
-  private startLoop() {
+  private drawScene() {
     setInterval(() => {
+      // calculate deltaTime
+      const now = new Date().getTime() * 0.001;
+      const deltaTime = now - this.lastFrame;
+      this.lastFrame = now;
       // clear canvas
       gl().clearColor(1, 1, 1, 1);
       gl().clear(gl().COLOR_BUFFER_BIT | gl().DEPTH_BUFFER_BIT);
@@ -42,13 +49,17 @@ class CroissantBackend {
       if (!this.running) {
         return;
       }
+      // update objects
+      this.drawables.forEach((drawable) => {
+        drawable.frame(deltaTime);
+      });
       // bind viewport and camera
       defaultCamera.bind();
       // render drawables
       this.drawables.forEach((drawable) => {
         drawable.draw();
       });
-    }, 1000 / Constants.TARGET_FRAMES);
+    }, 1000 / 5);
   }
 }
 export const croissantBackend = new CroissantBackend();

@@ -12,7 +12,10 @@ export class ToolboxComponent {
   private readonly MODEL_STORAGE_KEY: string = "model_storage";
   private readonly uiModel: UiConfiguration = {
     cameraOpen: true,
-    perspectiveOpen: true
+    perspectiveOpen: true,
+    objectsOpen: true,
+    objectsCreateOpen: true,
+    objectsListOpen: true
   }
   private readonly model: CroissantConfiguration = {
     camera_rotation_x: 0,

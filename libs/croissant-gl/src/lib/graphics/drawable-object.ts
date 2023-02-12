@@ -48,4 +48,5 @@ export abstract class DrawableObject implements Drawable {
   scale(scale: ReadonlyVec3) {
     mat4.fromScaling(this.model, scale);
   }
+  abstract frame(deltaTime: number): void;
 }

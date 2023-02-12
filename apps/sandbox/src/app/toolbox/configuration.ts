@@ -13,4 +13,7 @@ export interface CroissantConfiguration {
 export interface UiConfiguration {
   cameraOpen: boolean;
   perspectiveOpen: boolean;
+  objectsOpen: boolean;
+  objectsCreateOpen: boolean;
+  objectsListOpen: boolean;
 }

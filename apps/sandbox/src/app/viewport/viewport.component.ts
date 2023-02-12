@@ -1,5 +1,6 @@
 import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
 import {croissantGl, croissantDrawables} from "@webgl2/croissant-gl"
+import {FancyCube} from "../3d/cube";
 @Component({
   selector: 'webgl2-viewport',
   templateUrl: './viewport.component.html',
@@ -18,8 +19,7 @@ export class ViewportComponent implements AfterViewInit {
   ngAfterViewInit() {
     croissantGl.bootstrap(this.canvasElement);
     croissantGl.start();
-    croissantGl.create(new croissantDrawables.Cube([ 25, 25, 25 ]));
-    // croissantGl.create(new croissantDrawables.Rect([50, 50]));
+    croissantGl.create(new FancyCube([25, 25, 25]));
   }
 
   onEnabledChanged() {
