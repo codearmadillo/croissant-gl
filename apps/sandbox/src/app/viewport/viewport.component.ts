@@ -18,7 +18,8 @@ export class ViewportComponent implements AfterViewInit {
   ngAfterViewInit() {
     croissantGl.bootstrap(this.canvasElement);
     croissantGl.start();
-    croissantGl.create(new croissantDrawables.Rect([50, 50]));
+    croissantGl.create(new croissantDrawables.Cube([ 25, 25, 25 ]));
+    // croissantGl.create(new croissantDrawables.Rect([50, 50]));
   }
 
   onEnabledChanged() {
