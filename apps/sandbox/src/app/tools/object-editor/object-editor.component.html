@@ -1,0 +1,12 @@
+<header class="flex justify-between items-center">
+  <span class="text-xs">{{croissantObject.type}} #{{croissantObject.id}}</span>
+  <input class="checkbox" type="checkbox" [(ngModel)]="enabled" (ngModelChange)="onChangeObjectVisibility()" [name]="'enabled_' + croissantObject.id" />
+</header>
+<section>
+  <webgl2-range-input fieldName="rotation_x" label="X rotation" [min]="-359" [max]="359" [step]="1" [(ngModel)]="rotation_x" (ngModelChange)="onModelChanged('rotation')"></webgl2-range-input>
+  <webgl2-range-input fieldName="rotation_y" label="Y rotation" [min]="-359" [max]="359" [step]="1" [(ngModel)]="rotation_y" (ngModelChange)="onModelChanged('rotation')"></webgl2-range-input>
+  <webgl2-range-input fieldName="rotation_z" label="Z rotation" [min]="-359" [max]="359" [step]="1" [(ngModel)]="rotation_z" (ngModelChange)="onModelChanged('rotation')"></webgl2-range-input>
+  <webgl2-range-input fieldName="position_x" label="X position" [min]="-200" [max]="200" [step]="1" [(ngModel)]="position_x" (ngModelChange)="onModelChanged('position')"></webgl2-range-input>
+  <webgl2-range-input fieldName="position_y" label="Y position" [min]="-200" [max]="200" [step]="1" [(ngModel)]="position_y" (ngModelChange)="onModelChanged('position')"></webgl2-range-input>
+  <webgl2-range-input fieldName="position_z" label="Z position" [min]="-200" [max]="200" [step]="1" [(ngModel)]="position_z" (ngModelChange)="onModelChanged('position')"></webgl2-range-input>
+</section>
