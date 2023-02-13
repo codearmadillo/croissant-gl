@@ -7,6 +7,9 @@ class Camera {
   private viewRotation: vec3 = [ 0, 0, 0 ];
   private viewTranslation: vec3 = [ 0, 0, 0 ];
   private perspectiveFov = 45;
+  private perspectiveNearMin = 10;
+  private perspectiveNearMax = 10;
+  private perspectiveNearStep = 0.1;
   private perspectiveNear = 0.1;
   private perspectiveFar = 1000;
   private viewMatrixLocation: WebGLUniformLocation | null = null;
@@ -25,6 +28,7 @@ class Camera {
     this.viewMatrixLocation = defaultShader.getUniformLocation("u_view");
     this.projectionMatrixLocation = defaultShader.getUniformLocation("u_projection");
     this.setViewRotationMatrix();
+    this.setCanvasListeners();
   }
   bind() {
     // update view
@@ -67,6 +71,16 @@ class Camera {
   }
   setPerspectiveFar(value: number) {
     this.perspectiveFar = value;
+  }
+
+  private setCanvasListeners() {
+    gl().canvas.addEventListener("wheel", (e) => {
+      if (e.deltaY < 0) {
+        console.log("ZOOM IN");
+      } else {
+        console.log("ZOOM OUT");
+      }
+    });
   }
   private setViewRotationMatrix() {
     quat.fromEuler(this.viewRotationQuat, this.viewRotation[0], this.viewRotation[1], this.viewRotation[2]);

@@ -1,6 +1,8 @@
 import {croissantBackend} from "../lib/croissant";
 import {Drawable} from "../lib/types/graphics";
 import {defaultCamera} from "../lib/graphics/camera";
+import {EventType} from "../lib/types/events";
+import {eventBroker} from "../lib/event-broker";
 
 export function bootstrap(canvas: HTMLCanvasElement) {
   croissantBackend.bootstrap(canvas);
@@ -14,8 +16,9 @@ export function start() {
 export function ready() {
   return croissantBackend.ready;
 }
-export function create(drawable: Drawable) {
-  croissantBackend.drawables.push(drawable);
+
+export function on(eventType: EventType, callback: (...args: any[]) => any) {
+  eventBroker.registerCallback(eventType, callback);
 }
 
 export namespace camera {
@@ -43,4 +46,9 @@ export namespace camera {
   export function perspective_far(value: number) {
     defaultCamera.setPerspectiveFar(value);
   }
+}
+
+// TEMPORARY API FOR CREATING OBJECTS
+export function create(drawable: Drawable) {
+  croissantBackend.drawables.push(drawable);
 }
