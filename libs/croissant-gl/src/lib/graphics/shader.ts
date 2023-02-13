@@ -1,11 +1,33 @@
 import {gl} from "./context";
 
-export interface ShaderProgram {
-  bind(): void;
-  unbind(): void;
-}
+const fragmentShaderSource = `#version 300 es
+precision highp float;
 
-export abstract class Shader implements ShaderProgram {
+out vec4 fragColor;
+in vec3 vertColor;
+
+void main() {
+  fragColor = vec4(vertColor, 1.0);
+}
+`;
+
+const vertexShaderSource = `#version 300 es
+layout (location = 0) in vec4 a_Position;
+layout (location = 1) in vec3 a_Color;
+
+uniform mat4 u_model;
+uniform mat4 u_view;
+uniform mat4 u_projection;
+
+out vec3 vertColor;
+
+void main() {
+  gl_Position = u_projection * u_view * u_model * vec4(a_Position.xyz, 1.0);
+  vertColor = a_Color;
+}
+`;
+
+class Shader {
   private _uniformLocations: Map<string, WebGLUniformLocation> = new Map();
   private _shaders: Map<GLenum, WebGLProgram> = new Map();
   private _program: WebGLProgram | null = null;
@@ -48,7 +70,11 @@ export abstract class Shader implements ShaderProgram {
 
     this._shaders.set(type, shader);
   }
-  public abstract bootstrap(): void;
+  public bootstrap() {
+    this.defineSource(fragmentShaderSource, gl().FRAGMENT_SHADER);
+    this.defineSource(vertexShaderSource, gl().VERTEX_SHADER);
+    this.compile();
+  }
   public bind() {
     gl().useProgram(this.program);
   }
@@ -67,3 +93,5 @@ export abstract class Shader implements ShaderProgram {
     return this._uniformLocations.get(name) as WebGLUniformLocation ?? null;
   }
 }
+
+export const defaultShader = new Shader();

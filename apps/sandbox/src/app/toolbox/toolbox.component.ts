@@ -1,6 +1,7 @@
 import {Component, HostBinding} from '@angular/core';
-import { croissantGl, croissantDrawables } from "@webgl2/croissant-gl"
+import { croissantGl } from "@webgl2/croissant-gl"
 import { CroissantConfiguration, UiConfiguration} from "./configuration";
+import {ObjectService} from "../services/object.service";
 
 @Component({
   selector: 'webgl2-toolbox',
@@ -33,7 +34,9 @@ export class ToolboxComponent {
     return "p-3 box-border";
   }
 
-  constructor() {
+  constructor(
+    public readonly objectService: ObjectService
+  ) {
     // Load Model
     const storedModel = localStorage.getItem(this.MODEL_STORAGE_KEY);
     if (storedModel !== null && storedModel !== undefined) {

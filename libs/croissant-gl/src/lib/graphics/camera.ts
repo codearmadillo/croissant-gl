@@ -1,6 +1,6 @@
-import {defaultShader} from "../implementation/shader.default";
 import {glMatrix, mat4, quat, vec3} from "gl-matrix";
 import {gl} from "./context";
+import {defaultShader} from "./shader";
 
 class Camera {
   private viewRotationQuat: quat = quat.create();
@@ -61,7 +61,6 @@ class Camera {
     this.rotateX(xDegrees);
     this.rotateY(yDegrees);
     this.rotateZ(zDegrees);
-    this.setViewRotationMatrix();
   }
   setPerspectiveFov(degrees: number) {
     this.perspectiveFov = glMatrix.toRadian(degrees);

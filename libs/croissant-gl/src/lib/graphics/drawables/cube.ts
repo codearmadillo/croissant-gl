@@ -1,17 +1,30 @@
-import {Vertex} from "../lib/types/graphics";
-import * as glMatrix from "gl-matrix";
-import {DrawableObject} from "../lib/graphics/drawable-object";
+import { Drawable } from "../../types/drawable";
+import {mat4, vec3} from "gl-matrix";
+import {VertexArrayObject} from "../vertex-array-object";
+import {Vertex} from "../../types/graphics";
+import {defaultShader} from "../shader";
+import {gl} from "../context";
+import {BaseSceneObject} from "../../types/object";
 
-export abstract class Cube extends DrawableObject {
-  private readonly size: glMatrix.vec3;
-  private readonly initialPosition: glMatrix.vec3;
-  constructor(size: glMatrix.vec3, position: glMatrix.vec3 = [ 0, 0, 0 ]) {
-    super();
+
+export class Cube extends BaseSceneObject implements Drawable {
+  private readonly size: vec3;
+  private readonly initialPosition: vec3;
+  public get type() {
+    return "cube";
+  }
+  constructor(size: vec3, position: vec3 = [ 0, 0, 0 ], rotation: vec3 = [ 0, 0, 0 ]) {
+    super(position, rotation);
+
+    this.vao = new VertexArrayObject();
+
     this.size = size;
     this.initialPosition = position;
-    this.compile();
+
+    this.vao.addVertices(this.getVertices());
+    this.vao.addIndices(this.getIndices());
   }
-  protected getVertices(): Vertex[] {
+  private getVertices(): Vertex[] {
     return [
       new Vertex([ -this.size[0] / 2 + this.initialPosition[0], -this.size[1] / 2 + this.initialPosition[1],  -this.size[2] / 2 + this.initialPosition[2] ], [ 1.0, 0.0, 0.0 ]),
       new Vertex([ this.size[0] / 2 + this.initialPosition[0],  -this.size[1] / 2 + this.initialPosition[1],  -this.size[2] / 2 + this.initialPosition[2] ], [ 0.0, 1.0, 0.0 ]),
@@ -23,7 +36,7 @@ export abstract class Cube extends DrawableObject {
       new Vertex([ -this.size[0] / 2 + this.initialPosition[0], this.size[1] / 2 + this.initialPosition[1],   this.size[2] / 2 + this.initialPosition[2] ], [ 1.0, 0.0, 1.0 ])
     ];
   }
-  protected getIndices(): number[] {
+  private getIndices(): number[] {
     return [
       0, 1, 2,
       0, 2, 3,

@@ -1,8 +1,12 @@
-import {croissantBackend} from "../lib/croissant";
-import {Drawable} from "../lib/types/graphics";
+import {croissantBackend} from "../lib/backend";
 import {defaultCamera} from "../lib/graphics/camera";
 import {EventType} from "../lib/types/events";
 import {eventBroker} from "../lib/event-broker";
+import {vec3, vec2} from "gl-matrix";
+import {Cube} from "../lib/graphics/drawables/cube";
+import {SceneObject} from "../lib/types/scene-object";
+
+export type CroissantSceneObject = SceneObject;
 
 export function bootstrap(canvas: HTMLCanvasElement) {
   croissantBackend.bootstrap(canvas);
@@ -48,7 +52,10 @@ export namespace camera {
   }
 }
 
-// TEMPORARY API FOR CREATING OBJECTS
-export function create(drawable: Drawable) {
-  croissantBackend.drawables.push(drawable);
+export namespace create {
+  export function cube(position: vec3, size: vec3): CroissantSceneObject {
+    const object = new Cube(size, position);
+    croissantBackend.drawables.push(object);
+    return object;
+  }
 }

@@ -1,11 +1,6 @@
 import { SizeOf } from "./sizeof";
 import * as glMatrix from 'gl-matrix';
 
-export type ShaderSource = string;
-export interface Drawable {
-  draw(): void;
-  frame(deltaTime: number): void;
-}
 export class Vertex {
   readonly position: glMatrix.vec3;
   readonly color: glMatrix.vec3;

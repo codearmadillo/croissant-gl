@@ -1,8 +1,7 @@
 import {gl, WebGL2} from "./graphics/context";
-import {defaultShader} from "./implementation/shader.default";
 import { defaultCamera} from "./graphics/camera";
-import {Drawable} from "./types/graphics";
-import {Constants} from "./constants";
+import {defaultShader} from "./graphics/shader";
+import {Drawable} from "./types/drawable";
 
 class CroissantBackend {
   public readonly drawables: Drawable[] = [];
@@ -49,17 +48,15 @@ class CroissantBackend {
       if (!this.running) {
         return;
       }
-      // update objects
-      this.drawables.forEach((drawable) => {
-        drawable.frame(deltaTime);
-      });
       // bind viewport and camera
       defaultCamera.bind();
       // render drawables
       this.drawables.forEach((drawable) => {
-        drawable.draw();
+        if (drawable.enabled) {
+          drawable.draw();
+        }
       });
-    }, 1000 / 5);
+    }, 1000 / 15);
   }
 }
 export const croissantBackend = new CroissantBackend();

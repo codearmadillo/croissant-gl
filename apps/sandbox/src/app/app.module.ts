@@ -10,7 +10,8 @@ import { FoldableSectionComponent } from './tools/foldable-section/foldable-sect
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { AngularSvgIconPreloaderModule } from 'angular-svg-icon-preloader';
 import { HttpClientModule } from '@angular/common/http';
-import {RangeInputComponent} from "./ui/range-input/range-input.component";
+import { RangeInputComponent } from './ui/range-input/range-input.component';
+import {ObjectEditorComponent} from "./tools/object-editor/object-editor.component";
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import {RangeInputComponent} from "./ui/range-input/range-input.component";
       configUrl: '../assets/icons.json',
     }),
     RangeInputComponent,
+    ObjectEditorComponent,
   ],
   providers: [],
   bootstrap: [AppComponent],

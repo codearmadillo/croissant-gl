@@ -18,6 +18,7 @@
 
   </webgl2-foldable-section>
   <webgl2-foldable-section title="List" [open]="getUiModel('objectsListOpen')" (openStateChanged)="setUiModel('objectsListOpen', $event); uiModelChanged()">
-
+    <webgl2-object-editor *ngFor="let croissantObject of objectService.objects$ | async" [croissantObject]="croissantObject">
+    </webgl2-object-editor>
   </webgl2-foldable-section>
 </webgl2-foldable-section>
