@@ -42,7 +42,7 @@ export class ToolboxComponent {
   }
 
   @HostBinding("class") get class() {
-    return "box-border relative";
+    return "box-border relative overflow-hidden";
   }
 
   constructor(public readonly objectService: ObjectService) {
@@ -137,6 +137,10 @@ export class ToolboxComponent {
     this.model.camera_far = this.defaultModel.camera_far;
 
     this.loadPresets();
+  }
+
+  printDebugInformation() {
+    console.table(croissantGl.debug.info());
   }
 
   private loadPresets() {

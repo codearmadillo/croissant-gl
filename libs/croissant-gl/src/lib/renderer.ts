@@ -10,8 +10,14 @@ import {objectBroker} from "./object-broker";
 import {objectPropertiesBroker} from "./object-properties-broker";
 
 class Renderer {
+    private _passes = 0;
     private dirty = true;
     private vao: (VertexArrayObject | null)[] = [];
+
+    public get passes() {
+        return this._passes;
+    }
+
     constructor() {
         for (let i = 0; i < MAX_OBJECTS; i++) {
             this.vao[i] = null;
@@ -41,6 +47,7 @@ class Renderer {
         if (!objectPropertiesBroker.isDirty() && !defaultCamera.isDirty()) {
             return;
         }
+        this._passes++;
         // clear buffer
         gl().clear(gl().COLOR_BUFFER_BIT | gl().DEPTH_BUFFER_BIT);
         // bind shader

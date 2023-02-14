@@ -9,6 +9,7 @@ import {DrawableType} from "../lib/graphics/drawable-type";
 import {objectPropertiesBroker} from "../lib/object-properties-broker";
 import {CameraInfo} from "../lib/types/camera";
 import {ObjectInfo} from "../lib/types/object";
+import {DebugInfo} from "../lib/types/debug";
 
 export function bootstrap(canvas: HTMLCanvasElement) {
   croissantBackend.bootstrap(canvas);
@@ -24,6 +25,15 @@ export function ready() {
 }
 export function on(eventType: EventType, callback: (...args: any[]) => any) {
   eventBroker.registerCallback(eventType, callback);
+}
+
+export namespace debug {
+  export function info(): DebugInfo {
+    return {
+      entities: objectBroker.entityCount,
+      renderPasses: renderer.passes
+    }
+  }
 }
 
 export namespace camera {
