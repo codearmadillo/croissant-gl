@@ -7,6 +7,8 @@ import {objectBroker} from "../lib/object-broker";
 import {renderer} from "../lib/renderer";
 import {DrawableType} from "../lib/graphics/drawable-type";
 import {objectPropertiesBroker} from "../lib/object-properties-broker";
+import {CameraInfo} from "../lib/types/camera";
+import {ObjectInfo} from "../lib/types/object";
 
 export function bootstrap(canvas: HTMLCanvasElement) {
   croissantBackend.bootstrap(canvas);
@@ -34,6 +36,9 @@ export namespace camera {
   export function perspective(fov: number, near: number, far: number) {
     defaultCamera.perspective(fov, near, far);
   }
+  export function info(): CameraInfo {
+    return defaultCamera.info();
+  }
 }
 
 export namespace object {
@@ -45,6 +50,25 @@ export namespace object {
     renderer.create(entity, type);
     return entity;
   }
+  export function info(object: number): ObjectInfo {
+    return {
+      id: object,
+      type: objectPropertiesBroker.getType(object),
+      translation: objectPropertiesBroker.getTranslation(object),
+      rotation: objectPropertiesBroker.getRotation(object),
+      scale: objectPropertiesBroker.getScale(object),
+      enabled: objectPropertiesBroker.getEnabled(object)
+    }
+  }
+  export function setTranslation(object: number, translation: vec3) {
+    objectPropertiesBroker.setTranslation(object, translation);
+  }
+  export function setRotation(object: number, rotation: vec3) {
+    objectPropertiesBroker.setRotation(object, rotation);
+  }
+  export function setScale(object: number, scale: vec3) {
+    objectPropertiesBroker.setScale(object, scale);
+  }
   export function translate(object: number, translation: vec3) {
     objectPropertiesBroker.translate(object, translation);
   }
@@ -53,5 +77,11 @@ export namespace object {
   }
   export function scale(object: number, scale: vec3) {
     objectPropertiesBroker.scale(object, scale);
+  }
+  export function enable(object: number) {
+    objectPropertiesBroker.enable(object);
+  }
+  export function disable(object: number) {
+    objectPropertiesBroker.disable(object);
   }
 }

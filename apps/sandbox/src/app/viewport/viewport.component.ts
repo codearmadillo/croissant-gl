@@ -1,5 +1,6 @@
 import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
 import {croissantGl} from "@webgl2/croissant-gl"
+import {ObjectService} from "../services/object.service";
 
 @Component({
   selector: 'webgl2-viewport',
@@ -16,6 +17,9 @@ export class ViewportComponent implements AfterViewInit {
     return this.canvasElementRef?.nativeElement as HTMLCanvasElement;
   }
 
+  constructor(private readonly objectService: ObjectService) {
+  }
+
   ngAfterViewInit() {
     croissantGl.bootstrap(this.canvasElement);
     croissantGl.start();
@@ -27,9 +31,10 @@ export class ViewportComponent implements AfterViewInit {
       rotation: [ 0, 0, 0, ],
       scale: [ 1, 1, 1 ]
     });
+    this.objectService.add(cube);
     // start interval
     setInterval(() => {
-      croissantGl.object.rotate(cube, [ 0, 0.5, 0 ]);
+      // croissantGl.object.rotate(cube, [ 0, 0.5, 0 ]);
     }, 1000 / 60);
   }
 

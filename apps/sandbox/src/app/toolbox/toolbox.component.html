@@ -14,10 +14,7 @@
 </webgl2-foldable-section>
 
 <webgl2-foldable-section title="Objects" [open]="getUiModel('objectsOpen')" (openStateChanged)="setUiModel('objectsOpen', $event); uiModelChanged()">
-  <webgl2-foldable-section title="Create" [open]="getUiModel('objectsCreateOpen')" (openStateChanged)="setUiModel('objectsCreateOpen', $event); uiModelChanged()">
-
-  </webgl2-foldable-section>
-  <webgl2-foldable-section title="List" [open]="getUiModel('objectsListOpen')" (openStateChanged)="setUiModel('objectsListOpen', $event); uiModelChanged()">
-    objects...
+  <webgl2-foldable-section *ngFor="let object of objectService.objects$ | async" [title]="'Object #' + getObjectId(object)" [open]="true">
+    <webgl2-object-editor [object]="object"></webgl2-object-editor>
   </webgl2-foldable-section>
 </webgl2-foldable-section>

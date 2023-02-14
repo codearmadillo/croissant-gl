@@ -1,6 +1,8 @@
 import {glMatrix, mat4, quat, vec3} from "gl-matrix";
 import {gl} from "./context";
 import {defaultShader} from "./shader";
+import {CameraInfo} from "../types/camera";
+
 
 class Camera {
   private dirty = true;
@@ -8,9 +10,6 @@ class Camera {
   private viewRotation: vec3 = [ 0, 0, 0 ];
   private viewTranslation: vec3 = [ 0, 0, 0 ];
   private perspectiveFov = 45;
-  private perspectiveNearMin = 10;
-  private perspectiveNearMax = 10;
-  private perspectiveNearStep = 0.1;
   private perspectiveNear = 0.1;
   private perspectiveFar = 1000;
   private viewMatrixLocation: WebGLUniformLocation | null = null;
@@ -62,6 +61,15 @@ class Camera {
   }
   isDirty() {
     return this.dirty;
+  }
+  info(): CameraInfo {
+    return {
+      translation: [ this.viewTranslation[0], this.viewTranslation[1], this.viewTranslation[2] ],
+      rotation: [ this.viewRotation[0], this.viewRotation[1], this.viewRotation[2] ],
+      clipFar: this.perspectiveFar,
+      clipNear: this.perspectiveNear,
+      angle: this.perspectiveFov
+    }
   }
 
   private setCanvasListeners() {

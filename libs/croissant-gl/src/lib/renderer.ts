@@ -49,6 +49,9 @@ class Renderer {
         defaultCamera.bind();
         // iterate through objects
         objectBroker.each((entity: number) => {
+            if (!objectPropertiesBroker.getEnabled(entity)) {
+                return;
+            }
             // bind model and other properties
             objectPropertiesBroker.bind(entity);
             // bind vao

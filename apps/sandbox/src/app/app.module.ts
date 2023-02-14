@@ -12,6 +12,7 @@ import { AngularSvgIconPreloaderModule } from 'angular-svg-icon-preloader';
 import { HttpClientModule } from '@angular/common/http';
 import { RangeInputComponent } from './ui/range-input/range-input.component';
 import {ObjectEditorComponent} from "./tools/object-editor/object-editor.component";
+import {CommonModule} from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import {ObjectEditorComponent} from "./tools/object-editor/object-editor.compone
     ViewportComponent,
   ],
   imports: [
+    CommonModule,
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,

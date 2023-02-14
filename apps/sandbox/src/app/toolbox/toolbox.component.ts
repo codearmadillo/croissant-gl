@@ -1,6 +1,7 @@
 import {Component, HostBinding} from '@angular/core';
 import { croissantGl } from "@webgl2/croissant-gl"
 import { CroissantConfiguration, UiConfiguration} from "./configuration";
+import {ObjectService} from "../services/object.service";
 
 @Component({
   selector: 'webgl2-toolbox',
@@ -33,19 +34,29 @@ export class ToolboxComponent {
     return "p-3 box-border";
   }
 
-  constructor() {
+  constructor(public readonly objectService: ObjectService) {
     // Load Model
     const storedModel = localStorage.getItem(this.MODEL_STORAGE_KEY);
     if (storedModel !== null && storedModel !== undefined) {
       this.model = JSON.parse(storedModel as string) as CroissantConfiguration;
+      this.loadPresets();
+    } else {
+      const info = croissantGl.camera.info();
+      this.model.camera_position_x = info.translation[0];
+      this.model.camera_position_y = info.translation[1];
+      this.model.camera_position_z = info.translation[2];
+      this.model.camera_rotation_x = info.rotation[0];
+      this.model.camera_rotation_y = info.rotation[1];
+      this.model.camera_rotation_z = info.rotation[2];
+      this.model.camera_angle = info.angle;
+      this.model.camera_near = info.clipNear;
+      this.model.camera_far = info.clipFar;
     }
     // Load UiModel
     const storedUiModel = localStorage.getItem(this.UI_MODEL_STORAGE_KEY);
     if (storedUiModel !== null && storedUiModel !== undefined) {
       this.uiModel = JSON.parse(storedUiModel as string) as UiConfiguration;
     }
-    // Load presets
-    this.loadPresets();
   }
 
   setModel(key: string, value: any) {
@@ -85,6 +96,10 @@ export class ToolboxComponent {
 
   uiModelChanged() {
     localStorage.setItem(this.UI_MODEL_STORAGE_KEY, JSON.stringify(this.uiModel));
+  }
+
+  getObjectId(object: number) {
+    return croissantGl.object.info(object)?.id;
   }
 
   private loadPresets() {
