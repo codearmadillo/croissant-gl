@@ -1,5 +1,5 @@
-<label for="minmax-range" class="block text-xs font-medium text-gray-900 mt-2">{{label}}</label>
-<input [disabled]="disabled" [id]="fieldName" type="range" [ngModel]="value" (ngModelChange)="onModelChange($event)" [min]="min" [max]="max" [step]="step" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+<label [for]="fieldName" class="block text-xs font-medium text-gray-900 mt-2">{{label}}</label>
+<input [disabled]="disabled" [name]="fieldName" [id]="fieldName" type="range" [ngModel]="value" (ngModelChange)="onModelChange($event)" [min]="min" [max]="max" [step]="step" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
 <div class="flex justify-between w-full mt-0.5">
   <span class="min-w-[1.5rem] text-center text-xs text-gray-600 inline-block rounded-md bg-gray-200 p-1">{{min}}</span>
   <span>{{value}}</span>
