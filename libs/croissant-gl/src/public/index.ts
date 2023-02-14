@@ -3,10 +3,10 @@ import {defaultCamera} from "../lib/graphics/camera";
 import {EventType} from "../lib/types/events";
 import {eventBroker} from "../lib/event-broker";
 import {vec3, vec2} from "gl-matrix";
-import {Cube} from "../lib/graphics/drawables/cube";
-import {SceneObject} from "../lib/types/scene-object";
-
-export type CroissantSceneObject = SceneObject;
+import {objectBroker} from "../lib/object-broker";
+import {renderer} from "../lib/renderer";
+import {DrawableType} from "../lib/graphics/drawable-type";
+import {objectPropertiesBroker} from "../lib/object-properties-broker";
 
 export function bootstrap(canvas: HTMLCanvasElement) {
   croissantBackend.bootstrap(canvas);
@@ -20,7 +20,6 @@ export function start() {
 export function ready() {
   return croissantBackend.ready;
 }
-
 export function on(eventType: EventType, callback: (...args: any[]) => any) {
   eventBroker.registerCallback(eventType, callback);
 }
@@ -32,30 +31,27 @@ export namespace camera {
   export function rotate(xDegrees: number, yDegrees: number, zDegrees: number) {
     defaultCamera.rotate(xDegrees, yDegrees, zDegrees);
   }
-  export function rotateX(degrees: number) {
-    defaultCamera.rotateX(degrees);
-  }
-  export function rotateY(degrees: number) {
-    defaultCamera.rotateY(degrees);
-  }
-  export function rotateZ(degrees: number) {
-    defaultCamera.rotateZ(degrees);
-  }
-  export function perspective_fov(degrees: number) {
-    defaultCamera.setPerspectiveFov(degrees);
-  }
-  export function perspective_near(value: number) {
-    defaultCamera.setPerspectiveNear(value);
-  }
-  export function perspective_far(value: number) {
-    defaultCamera.setPerspectiveFar(value);
+  export function perspective(fov: number, near: number, far: number) {
+    defaultCamera.perspective(fov, near, far);
   }
 }
 
-export namespace create {
-  export function cube(position: vec3, size: vec3): CroissantSceneObject {
-    const object = new Cube(size, position);
-    croissantBackend.drawables.push(object);
-    return object;
+export namespace object {
+  export function create(type: DrawableType): number {
+    const entity = objectBroker.create();
+    // Add entity to properties broker
+    objectPropertiesBroker.create(entity, type);
+    // Add entity to renderer - Configuration will follow later
+    renderer.create(entity, type);
+    return entity;
+  }
+  export function translate(object: number, translation: vec3) {
+    objectPropertiesBroker.translate(object, translation);
+  }
+  export function rotate(object: number, rotation: vec3) {
+    objectPropertiesBroker.rotate(object, rotation);
+  }
+  export function scale(object: number, scale: vec3) {
+    objectPropertiesBroker.scale(object, scale);
   }
 }

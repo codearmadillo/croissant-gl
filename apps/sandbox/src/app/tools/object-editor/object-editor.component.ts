@@ -13,7 +13,7 @@ import {RangeInputComponent} from "../../ui/range-input/range-input.component";
   ]
 })
 export class ObjectEditorComponent implements OnInit {
-  @Input() croissantObject: croissantGl.CroissantSceneObject;
+  @Input() croissantObject: any;
 
   enabled: boolean;
   rotation_x: number;

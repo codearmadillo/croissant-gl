@@ -1,7 +1,6 @@
 import {Component, HostBinding} from '@angular/core';
 import { croissantGl } from "@webgl2/croissant-gl"
 import { CroissantConfiguration, UiConfiguration} from "./configuration";
-import {ObjectService} from "../services/object.service";
 
 @Component({
   selector: 'webgl2-toolbox',
@@ -34,9 +33,7 @@ export class ToolboxComponent {
     return "p-3 box-border";
   }
 
-  constructor(
-    public readonly objectService: ObjectService
-  ) {
+  constructor() {
     // Load Model
     const storedModel = localStorage.getItem(this.MODEL_STORAGE_KEY);
     if (storedModel !== null && storedModel !== undefined) {
@@ -65,22 +62,14 @@ export class ToolboxComponent {
         croissantGl.camera.translate(this.model.camera_position_x, this.model.camera_position_y, this.model.camera_position_z);
         break;
       case "camera_rotation_x":
-        croissantGl.camera.rotateX(this.model.camera_rotation_x);
-        break;
       case "camera_rotation_y":
-        croissantGl.camera.rotateY(this.model.camera_rotation_y);
-        break;
       case "camera_rotation_z":
-        croissantGl.camera.rotateZ(this.model.camera_rotation_z);
+        croissantGl.camera.rotate(this.model.camera_rotation_x, this.model.camera_rotation_z, this.model.camera_rotation_z);
         break;
       case "camera_angle":
-        croissantGl.camera.perspective_fov(this.model.camera_angle);
-        break;
       case "camera_near":
-        croissantGl.camera.perspective_near(this.model.camera_near);
-        break;
       case "camera_far":
-        croissantGl.camera.perspective_far(this.model.camera_far);
+        croissantGl.camera.perspective(this.model.camera_angle, this.model.camera_near, this.model.camera_far);
         break;
     }
     localStorage.setItem(this.MODEL_STORAGE_KEY, JSON.stringify(this.model));
@@ -101,8 +90,6 @@ export class ToolboxComponent {
   private loadPresets() {
     croissantGl.camera.rotate(this.model.camera_rotation_x, this.model.camera_rotation_y, this.model.camera_rotation_z);
     croissantGl.camera.translate(this.model.camera_position_x, this.model.camera_position_y, this.model.camera_position_z);
-    croissantGl.camera.perspective_fov(this.model.camera_angle);
-    croissantGl.camera.perspective_near(this.model.camera_near);
-    croissantGl.camera.perspective_far(this.model.camera_far);
+    croissantGl.camera.perspective(this.model.camera_angle, this.model.camera_near, this.model.camera_far);
   }
 }

@@ -3,6 +3,7 @@ import {gl} from "./context";
 import {defaultShader} from "./shader";
 
 class Camera {
+  private dirty = true;
   private viewRotationQuat: quat = quat.create();
   private viewRotation: vec3 = [ 0, 0, 0 ];
   private viewTranslation: vec3 = [ 0, 0, 0 ];
@@ -27,12 +28,14 @@ class Camera {
   bootstrap() {
     this.viewMatrixLocation = defaultShader.getUniformLocation("u_view");
     this.projectionMatrixLocation = defaultShader.getUniformLocation("u_projection");
-    this.setViewRotationMatrix();
     this.setCanvasListeners();
   }
   bind() {
-    // update view
-    mat4.fromRotationTranslation(this.viewMatrix, this.viewRotationQuat, this.viewTranslation);
+    if (this.dirty) {
+      quat.fromEuler(this.viewRotationQuat, this.viewRotation[0], this.viewRotation[1], this.viewRotation[2]);
+      mat4.fromRotationTranslation(this.viewMatrix, this.viewRotationQuat, this.viewTranslation);
+      this.dirty = false;
+    }
     // update perspective
     mat4.perspective(this.projectionMatrix, this.perspectiveFov, gl().canvas.width / gl().canvas.height, this.perspectiveNear, this.perspectiveFar);
     // update viewport
@@ -43,33 +46,22 @@ class Camera {
   }
   translate(x: number, y: number, z: number) {
     this.viewTranslation = [ x, y, z ];
-    mat4.fromTranslation(this.viewMatrix, [ x, y, z ]);
-  }
-  rotateX(degrees: number) {
-    this.viewRotation[0] = degrees;
-    this.setViewRotationMatrix();
-  }
-  rotateY(degrees: number) {
-    this.viewRotation[1] = degrees;
-    this.setViewRotationMatrix();
-  }
-  rotateZ(degrees: number) {
-    this.viewRotation[2] = degrees;
-    this.setViewRotationMatrix();
+    this.dirty = true;
   }
   rotate(xDegrees: number, yDegrees: number, zDegrees: number) {
-    this.rotateX(xDegrees);
-    this.rotateY(yDegrees);
-    this.rotateZ(zDegrees);
+    this.viewRotation[0] = xDegrees;
+    this.viewRotation[1] = yDegrees;
+    this.viewRotation[2] = zDegrees;
+    this.dirty = true;
   }
-  setPerspectiveFov(degrees: number) {
-    this.perspectiveFov = glMatrix.toRadian(degrees);
+  perspective(fovDegrees: number, near: number, far: number) {
+    this.perspectiveFov = glMatrix.toRadian(fovDegrees);
+    this.perspectiveNear = near;
+    this.perspectiveFar = far;
+    this.dirty = true;
   }
-  setPerspectiveNear(value: number) {
-    this.perspectiveNear = value;
-  }
-  setPerspectiveFar(value: number) {
-    this.perspectiveFar = value;
+  isDirty() {
+    return this.dirty;
   }
 
   private setCanvasListeners() {
@@ -80,9 +72,6 @@ class Camera {
         console.log("ZOOM OUT");
       }
     });
-  }
-  private setViewRotationMatrix() {
-    quat.fromEuler(this.viewRotationQuat, this.viewRotation[0], this.viewRotation[1], this.viewRotation[2]);
   }
 }
 export const defaultCamera = new Camera();
