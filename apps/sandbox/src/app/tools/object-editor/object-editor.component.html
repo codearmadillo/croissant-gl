@@ -13,7 +13,7 @@
   <webgl2-range-input fieldName="translation_z" label="Z translation" [min]="-400" [max]="400" [step]="1" [(ngModel)]="translation_z" (ngModelChange)="translate()"></webgl2-range-input>
 </section>
 <section>
-  <webgl2-range-input fieldName="scale_x" label="X scale" [min]="-10" [max]="10" [step]="1" [(ngModel)]="scale_x" (ngModelChange)="scale()"></webgl2-range-input>
-  <webgl2-range-input fieldName="scale_y" label="Y scale" [min]="-10" [max]="10" [step]="1" [(ngModel)]="scale_y" (ngModelChange)="scale()"></webgl2-range-input>
-  <webgl2-range-input fieldName="scale_z" label="Z scale" [min]="-10" [max]="10" [step]="1" [(ngModel)]="scale_z" (ngModelChange)="scale()"></webgl2-range-input>
+  <webgl2-range-input fieldName="scale_x" label="X scale" [min]="-10" [max]="10" [step]="0.1" [(ngModel)]="scale_x" (ngModelChange)="scale()"></webgl2-range-input>
+  <webgl2-range-input fieldName="scale_y" label="Y scale" [min]="-10" [max]="10" [step]="0.1" [(ngModel)]="scale_y" (ngModelChange)="scale()"></webgl2-range-input>
+  <webgl2-range-input fieldName="scale_z" label="Z scale" [min]="-10" [max]="10" [step]="0.1" [(ngModel)]="scale_z" (ngModelChange)="scale()"></webgl2-range-input>
 </section>

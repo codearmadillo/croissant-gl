@@ -86,6 +86,9 @@ class ObjectPropertiesBroker {
         }
         gl().uniformMatrix4fv(defaultShader.getUniformLocation("u_model"), false, this.models[entity] as mat4);
     }
+    unbind() {
+      gl().uniformMatrix4fv(defaultShader.getUniformLocation("u_model"), false, mat4.create());
+    }
     enable(entity: number) {
         this.enabled[entity] = true;
         this.dirty.add(entity);

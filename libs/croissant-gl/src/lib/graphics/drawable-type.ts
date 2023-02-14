@@ -1,11 +1,18 @@
-import {vec3} from "gl-matrix";
+import {vec2, vec3} from "gl-matrix";
 
-type DrawableCubeType = {
-    type: "cube",
-    position: vec3,
-    rotation: vec3,
-    scale: vec3,
-    size: vec3
+type TransformableType = {
+  position: vec3,
+  rotation: vec3,
+  scale: vec3,
 }
 
-export type DrawableType = DrawableCubeType;
+type DrawableCubeType = TransformableType & {
+    type: "cube",
+    size: vec3
+}
+type DrawablePlaneType = TransformableType & {
+  type: "plane",
+  size: vec2
+}
+
+export type DrawableType = DrawableCubeType | DrawablePlaneType;

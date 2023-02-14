@@ -35,12 +35,21 @@ export class VertexArrayObject {
   unbind() {
     gl().bindVertexArray(null);
   }
-  draw() {
+  drawElements() {
     if (this.vbo === null || this.ibo === null) {
       throw new Error(`Failed to draw - IBO or VBO missing`);
     }
     gl().bindVertexArray(this.vao);
     gl().drawElements(gl().TRIANGLES, this.ibo.elements, gl().UNSIGNED_SHORT, 0);
+    gl().bindVertexArray(null);
+  }
+  drawLines() {
+    if (this.vbo === null || this.ibo === null) {
+      throw new Error(`Failed to draw - IBO or VBO missing`);
+    }
+    gl().bindVertexArray(this.vao);
+    gl().drawElements(gl().LINES, this.ibo.elements, gl().UNSIGNED_SHORT, 0);
+    // gl().drawElements(gl().TRIANGLES, this.ibo.elements, gl().UNSIGNED_SHORT, 0);
     gl().bindVertexArray(null);
   }
 }

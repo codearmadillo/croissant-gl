@@ -98,7 +98,7 @@ export class ToolboxComponent {
       case "camera_rotation_x":
       case "camera_rotation_y":
       case "camera_rotation_z":
-        croissantGl.camera.rotate(this.model.camera_rotation_x, this.model.camera_rotation_z, this.model.camera_rotation_z);
+        croissantGl.camera.rotate(this.model.camera_rotation_x, this.model.camera_rotation_y, this.model.camera_rotation_z);
         break;
       case "camera_angle":
       case "camera_near":

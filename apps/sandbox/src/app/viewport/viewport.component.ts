@@ -26,8 +26,8 @@ export class ViewportComponent implements AfterViewInit {
 
     const cube = croissantGl.object.create({
       type: "cube",
-      size: [ 25, 25, 25 ],
-      position: [ 0, 0, 0 ],
+      size: [ 32, 32, 32 ],
+      position: [ 0, -16, 0 ],
       rotation: [ 0, 0, 0, ],
       scale: [ 1, 1, 1 ]
     });

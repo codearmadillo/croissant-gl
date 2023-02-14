@@ -1,6 +1,6 @@
 import {DrawableType} from "./drawable-type";
 import {Vertex} from "../types/graphics";
-import {vec3} from "gl-matrix";
+import {vec2, vec3} from "gl-matrix";
 
 export function getCubeVerticesIndices(size: vec3, position: vec3): [ Vertex[], number[] ] {
     return [
@@ -36,9 +36,18 @@ export function getCubeVerticesIndices(size: vec3, position: vec3): [ Vertex[], 
     ]
 }
 
-export function getVerticesIndices(type: DrawableType): [ Vertex[], number[] ] {
-    switch(type.type) {
-        case "cube":
-            return getCubeVerticesIndices(type.size, type.position);
-    }
+export function getPlaneVerticesIndices(size: vec2, position: vec3): [ Vertex[], number[] ] {
+
+  return [
+    [
+      new Vertex([ -size[0] / 2 + position[0], position[1],  -size[1] / 2 + position[1] ], [ 1.0, 1.0, 1.0 ]),
+      new Vertex([ size[0] / 2 + position[0],  position[1],  -size[1] / 2 + position[1] ], [ 1.0, 1.0, 1.0 ]),
+      new Vertex([ size[0] / 2 + position[0],  position[1],  size[1] / 2 + position[1] ], [ 1.0, 1.0, 1.0 ]),
+      new Vertex([ -size[0] / 2 + position[0], position[1],  size[1] / 2 + position[1] ], [ 1.0, 1.0, 1.0 ]),
+    ],
+    [
+      0, 1, 2,
+      0, 2, 3,
+    ]
+  ]
 }
