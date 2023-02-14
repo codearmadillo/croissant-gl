@@ -29,19 +29,42 @@ export class ToolboxComponent {
     camera_near: 0.1,
     camera_far: 1000
   }
+  private readonly defaultModel: CroissantConfiguration = {
+    camera_rotation_x: 0,
+    camera_rotation_y: 0,
+    camera_rotation_z: 0,
+    camera_position_x: 0,
+    camera_position_y: 0,
+    camera_position_z: 0,
+    camera_angle: 45,
+    camera_near: 0.1,
+    camera_far: 1000
+  }
 
   @HostBinding("class") get class() {
-    return "p-3 box-border";
+    return "box-border relative";
   }
 
   constructor(public readonly objectService: ObjectService) {
+    // Load default values
+    const info = croissantGl.camera.info();
+    {
+      this.defaultModel.camera_position_x = info.translation[0];
+      this.defaultModel.camera_position_y = info.translation[1];
+      this.defaultModel.camera_position_z = info.translation[2];
+      this.defaultModel.camera_rotation_x = info.rotation[0];
+      this.defaultModel.camera_rotation_y = info.rotation[1];
+      this.defaultModel.camera_rotation_z = info.rotation[2];
+      this.defaultModel.camera_angle = info.angle;
+      this.defaultModel.camera_near = info.clipNear;
+      this.defaultModel.camera_far = info.clipFar;
+    }
     // Load Model
     const storedModel = localStorage.getItem(this.MODEL_STORAGE_KEY);
     if (storedModel !== null && storedModel !== undefined) {
       this.model = JSON.parse(storedModel as string) as CroissantConfiguration;
       this.loadPresets();
     } else {
-      const info = croissantGl.camera.info();
       this.model.camera_position_x = info.translation[0];
       this.model.camera_position_y = info.translation[1];
       this.model.camera_position_z = info.translation[2];
@@ -100,6 +123,20 @@ export class ToolboxComponent {
 
   getObjectId(object: number) {
     return croissantGl.object.info(object)?.id;
+  }
+
+  resetCameraToDefault() {
+    this.model.camera_position_x = this.defaultModel.camera_position_x;
+    this.model.camera_position_y = this.defaultModel.camera_position_y;
+    this.model.camera_position_z = this.defaultModel.camera_position_z;
+    this.model.camera_rotation_x = this.defaultModel.camera_rotation_x;
+    this.model.camera_rotation_y = this.defaultModel.camera_rotation_y;
+    this.model.camera_rotation_z = this.defaultModel.camera_rotation_z;
+    this.model.camera_angle = this.defaultModel.camera_angle;
+    this.model.camera_near = this.defaultModel.camera_near;
+    this.model.camera_far = this.defaultModel.camera_far;
+
+    this.loadPresets();
   }
 
   private loadPresets() {

@@ -1,0 +1,21 @@
+@tailwind components;
+
+@layer components {
+  .slim-scrollbar {
+    & {
+      scrollbar-width: auto;
+      scrollbar-color: #c4c4c4 #ffffff;
+    }
+    &::-webkit-scrollbar {
+      width: 13px;
+    }
+    &::-webkit-scrollbar-track {
+      background: #ffffff;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: #c4c4c4;
+      border-radius: 10px;
+      border: 3px solid #ffffff;
+    }
+  }
+}
