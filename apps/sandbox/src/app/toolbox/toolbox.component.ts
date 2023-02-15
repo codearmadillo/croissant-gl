@@ -42,8 +42,8 @@ export class ToolboxComponent {
     camera_near: 0.1,
     camera_far: 1000
   }
-  scene_xyAxis = true;
   scene_xzAxis = true;
+  scene_xyAxis = true;
   scene_yzAxis = true;
 
   @HostBinding("class") get class() {
@@ -89,8 +89,8 @@ export class ToolboxComponent {
     const sceneModel = localStorage.getItem(this.MODEL_SCENE_STORAGE_KEY);
     if (sceneModel !== null && sceneModel !== undefined) {
       const sceneModelParsed = JSON.parse(sceneModel) as boolean[];
-      this.scene_xyAxis = sceneModelParsed[0];
-      this.scene_xzAxis = sceneModelParsed[1];
+      this.scene_xzAxis = sceneModelParsed[0];
+      this.scene_xyAxis = sceneModelParsed[1];
       this.scene_yzAxis = sceneModelParsed[2];
       this.onSceneAxisUpdate();
     }

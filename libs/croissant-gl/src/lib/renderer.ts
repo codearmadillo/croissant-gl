@@ -83,6 +83,7 @@ class Renderer {
         // unbind uniforms
         objectPropertiesBroker.unbind();
         // render grid
+        gl().lineWidth(1);
         this.planes.forEach((plane, i) => {
             if (this.visiblePlanes[i]) {
                 plane.drawLines();
