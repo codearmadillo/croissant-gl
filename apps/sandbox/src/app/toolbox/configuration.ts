@@ -1,11 +1,8 @@
 export interface CroissantConfiguration {
-  camera_rotation_x: number;
-  camera_rotation_y: number;
-  camera_rotation_z: number;
-  camera_position_x: number;
-  camera_position_y: number;
-  camera_position_z: number;
-  camera_angle: number;
+  camera_distance: number;
+  camera_orbit_angle: number;
+  camera_height: number;
+  camera_field_of_view: number;
   camera_near: number;
   camera_far: number;
   camera_focalPoint_x: number;

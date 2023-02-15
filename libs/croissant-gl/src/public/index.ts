@@ -10,6 +10,7 @@ import {objectPropertiesBroker} from "../lib/object-properties-broker";
 import {CameraInfo} from "../lib/types/camera";
 import {ObjectInfo} from "../lib/types/object";
 import {DebugInfo} from "../lib/types/debug";
+import defaultTasksRunner from "nx/src/tasks-runner/default-tasks-runner";
 
 /**
  * Bootstraps renderer to provided canvas and starts the renderer.
@@ -75,34 +76,27 @@ export namespace debug {
 
 export namespace camera {
   /**
-   * Changes camera translation by provided value
-   * @param translation Value to translate by
+   * Sets camera height
+   * @param height Camera height
    */
-  export function translate(translation: vec3) {
-    defaultCamera.translate(translation);
-  }
-  /**
-   * Changes camera rotation by provided value
-   * @param rotation Value to rotate by
-   */
-  export function rotate(rotation: vec3) {
-    defaultCamera.rotate(rotation);
+  export function setHeight(height: number) {
+    defaultCamera.setHeight(height);
   }
 
   /**
-   * Changes camera rotation to provided value
-   * @param rotation New camera rotation value
+   * Sets camera distance from focal point
+   * @param distance Distance from focal point
    */
-  export function setRotation(rotation: vec3) {
-    defaultCamera.setRotation(rotation);
+  export function setDistance(distance: number) {
+    defaultCamera.setDistance(distance);
   }
 
   /**
-   * Changes camera translation to provided value
-   * @param translation New camera translation value
+   * Sets camera orbit angle relative to focal point
+   * @param degrees Orbit angle in degrees
    */
-  export function setTranslation(translation: vec3) {
-    defaultCamera.setTranslation(translation);
+  export function setOrbitAngle(degrees: number) {
+    defaultCamera.setOrbitAngle(degrees);
   }
 
   /**

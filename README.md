@@ -52,33 +52,26 @@ Enables/disables individual axis planes
 ## Camera API
 API for manipulating camera properties.
 
-### `camera.translate(translation: vec3): void`
-Changes camera translation by provided value 
+### `camera.setHeight(height: number): void`
+Sets camera height
 #### Arguments
-| Name         | Type   | Description        | Default value |
-|--------------|--------|--------------------| --- |
-| translation  | `vec3` | Translation change | `n/a` |
+| Name   | Type     | Description   | Default value   |
+|--------|----------|---------------|-----------------|
+| height | `number` | Camera height | `n/a` |
 
-### `camera.setTranslation(translation: vec3): void`
-Sets camera translation to provided value
+### `camera.setDistance(distance: number): void`
+Sets camera distance from focal point
 #### Arguments
-| Name         | Type   | Description            | Default value |
-|--------------|--------|------------------------| --- |
-| translation  | `vec3` | New camera translation | `n/a` |
+| Name     | Type     | Description               | Default value   |
+|----------|----------|---------------------------|-----------------|
+| distance | `number` | Distance from focal point | `n/a` |
 
-### `camera.rotate(rotation: vec3): void`
-Changes camera rotation by provided value
+### `camera.setOrbitAngle(angle: number): void`
+Sets camera orbit angle relative to focal point
 #### Arguments
-| Name      | Type   | Description     | Default value |
-|-----------|--------|-----------------| --- |
-| rotation  | `vec3` | Rotation change | `n/a` |
-
-### `camera.setRotation(rotation: vec3): void`
-Sets camera rotation to provided value
-#### Arguments
-| Name      | Type   | Description            | Default value |
-|-----------|--------|------------------------| --- |
-| rotation  | `vec3` | New camera rotation | `n/a` |
+| Name   | Type     | Description            | Default value   |
+|--------|----------|------------------------|-----------------|
+| angle | `number` | Orbit angle in degrees | `n/a` |
 
 ### `camera.info(): CameraInfo`
 Returns information about current state of camera (see [`CameraInfo`](#Types))
@@ -152,11 +145,14 @@ interface DebugInfo {
 ```ts
 interface CameraInfo {
     
-    // Camera's translation
-    translation: vec3;
+    // Camera distance from focal point
+    distance: number;
     
-    // Camera's rotation in degrees
-    rotation: vec3;
+    // Camera orbit angle relative to focal point
+    orbitAngle: number;
+    
+    // Camera height
+    height: number;
     
     // Camera's near clip plane
     clipNear: number;
@@ -164,8 +160,8 @@ interface CameraInfo {
     // Camera's far clip plane
     clipFar: number;
     
-    // Camera's field of view angle
-    angle: number;
+    // Camera's field of view angle in degrees
+    fieldOfView: number;
     
     // Camera's focal point position
     focalPoint: vec3;

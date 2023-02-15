@@ -24,16 +24,16 @@ export class ViewportComponent implements AfterViewInit {
     croissantGl.bootstrap(this.canvasElement);
     croissantGl.start();
 
-    /*
     const cube = croissantGl.object.create({
       type: "cube",
       size: [ 32, 32, 32 ],
-      position: [ 0, -16, 0 ],
+      position: [ 0, 16, 0 ],
       rotation: [ 0, 0, 0, ],
       scale: [ 1, 1, 1 ]
     });
     this.objectService.add(cube);
     // start interval
+    /*
     setInterval(() => {
       // croissantGl.object.rotate(cube, [ 0, 0.5, 0 ]);
     }, 1000 / 60);

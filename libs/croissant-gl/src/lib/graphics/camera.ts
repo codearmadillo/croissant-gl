@@ -1,13 +1,13 @@
-import {glMatrix, mat4, quat, vec3} from "gl-matrix";
+import {glMatrix, mat4, quat, ReadonlyVec3, vec3} from "gl-matrix";
 import {gl} from "./context";
 import {defaultShader} from "./shader";
 import {CameraInfo} from "../types/camera";
 
 class Camera {
   private dirty = true;
-  private viewRotationQuat: quat = quat.create();
-  private viewRotation: vec3 = [ 0, 0, 0 ];
-  private viewTranslation: vec3 = [ 0, 0, 0 ];
+  private viewDistance = 200;
+  private viewOrbit = 0;
+  private viewHeight = 50;
   private focalPointTranslation: vec3 = [ 0, 0, 0, ];
   private perspectiveFov = 45;
   private perspectiveNear = 0.1;
@@ -32,36 +32,24 @@ class Camera {
   }
   bind() {
     if (this.dirty) {
-      // update view
-      quat.fromEuler(this.viewRotationQuat, this.viewRotation[0], this.viewRotation[1], this.viewRotation[2]);
-      mat4.fromRotationTranslation(this.viewMatrix, this.viewRotationQuat, this.viewTranslation);
+      // update projection
       if (this.mode === "perspective") {
         this.projectionMatrix = mat4.perspective(mat4.create(), this.perspectiveFov, gl().canvas.width / gl().canvas.height, this.perspectiveNear, this.perspectiveFar);
       } else {
         this.projectionMatrix = mat4.ortho(mat4.create(), 0, gl().canvas.width, gl().canvas.height, 0, this.perspectiveNear, this.perspectiveFar);
       }
+      // update camera
+      {
+        const upVector: vec3 = [ 0, 1, 0 ];
+        const [ cameraX, cameraZ ] = [ Math.cos(this.viewOrbit), Math.sin(this.viewOrbit) ];
+
+        const cameraPosition: ReadonlyVec3 = [ cameraX * this.viewDistance, this.viewHeight, cameraZ * this.viewDistance ];
+        const cameraView = mat4.fromTranslation(mat4.create(), cameraPosition);
+
+        this.viewMatrix = mat4.lookAt(cameraView, cameraPosition, this.focalPointTranslation, upVector);
+      }
       // set recalculate flag to false
       this.dirty = false;
-    }
-
-    {
-      // PERSPECTIVE
-      const angle = glMatrix.toRadian(45);
-      const near = 0.1;
-      const far = 1000;
-      const aspect = gl().canvas.width / gl().canvas.height;
-      this.projectionMatrix = mat4.perspective(mat4.create(), angle, aspect, near, far);
-
-      // CAMERA
-      const viewRotationQuat = quat.fromEuler(quat.create(), this.viewRotation[0], this.viewRotation[1], this.viewRotation[2]);
-      const viewMatrixFromInput = mat4.fromRotationTranslation(mat4.create(), viewRotationQuat, this.viewTranslation);
-      this.viewMatrix = mat4.lookAt(viewMatrixFromInput, this.viewTranslation, this.focalPointTranslation, [ 0, 1, 0 ]);
-      /*
-      const radius = 200;
-      let cameraMatrix = mat4.fromYRotation(mat4.create(), glMatrix.toRadian(45));
-      cameraMatrix = mat4.fromTranslation(cameraMatrix, this.viewTranslation);
-      this.viewMatrix = mat4.lookAt(mat4.create(), this.viewTranslation, this.focalPointTranslation, [ 0, 1, 0 ]);
-       */
     }
 
     // update viewport
@@ -69,30 +57,6 @@ class Camera {
     // push uniforms
     gl().uniformMatrix4fv(this.viewMatrixLocation, false, this.viewMatrix);
     gl().uniformMatrix4fv(this.projectionMatrixLocation, false, this.projectionMatrix);
-  }
-  translate(translation: vec3) {
-    this.viewTranslation[0] += translation[0];
-    this.viewTranslation[1] += translation[1];
-    this.viewTranslation[2] += translation[2];
-    this.dirty = true;
-  }
-  rotate(rotation: vec3) {
-    this.viewRotation[0] += rotation[0];
-    this.viewRotation[1] += rotation[1];
-    this.viewRotation[2] += rotation[2];
-    this.dirty = true;
-  }
-  setTranslation(translation: vec3) {
-    this.viewTranslation[0] = translation[0];
-    this.viewTranslation[1] = translation[1];
-    this.viewTranslation[2] = translation[2];
-    this.dirty = true;
-  }
-  setRotation(rotation: vec3) {
-    this.viewRotation[0] = rotation[0];
-    this.viewRotation[1] = rotation[1];
-    this.viewRotation[2] = rotation[2];
-    this.dirty = true;
   }
   translateFocalPoint(translation: vec3) {
     this.focalPointTranslation[0] = translation[0];
@@ -119,16 +83,31 @@ class Camera {
     this.mode = mode;
     this.dirty = true;
   }
+  setHeight(height: number) {
+    this.viewHeight = height;
+    this.dirty = true;
+  }
+
+  setDistance(distance: number) {
+    this.viewDistance = distance;
+    this.dirty = true;
+  }
+
+  setOrbitAngle(degrees: number) {
+    this.viewOrbit = glMatrix.toRadian(degrees);
+    this.dirty = true;
+  }
   isDirty() {
     return this.dirty;
   }
   info(): CameraInfo {
     return {
-      translation: [ this.viewTranslation[0], this.viewTranslation[1], this.viewTranslation[2] ],
-      rotation: [ this.viewRotation[0], this.viewRotation[1], this.viewRotation[2] ],
+      distance: this.viewDistance,
+      orbitAngle: this.viewOrbit,
+      height: this.viewHeight,
       clipFar: this.perspectiveFar,
       clipNear: this.perspectiveNear,
-      angle: this.perspectiveFov,
+      fieldOfView: this.perspectiveFov,
       focalPoint: this.focalPointTranslation,
       perspective: this.mode === 'perspective'
     }
@@ -142,6 +121,21 @@ class Camera {
         console.log("ZOOM OUT");
       }
     });
+
+    {
+      let zoomMode = false;
+      gl().canvas.addEventListener("mousedown", (e) => {
+        zoomMode = true;
+      });
+      gl().canvas.addEventListener("mouseup", () => {
+        zoomMode = false;
+      });
+      gl().canvas.addEventListener("mousemove", () => {
+        if (zoomMode) {
+          console.log("move");
+        }
+      });
+    }
   }
 }
 export const defaultCamera = new Camera();

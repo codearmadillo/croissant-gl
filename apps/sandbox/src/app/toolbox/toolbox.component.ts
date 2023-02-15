@@ -21,34 +21,28 @@ export class ToolboxComponent {
     sceneOpen: true
   }
   private readonly model: CroissantConfiguration = {
-    camera_rotation_x: 0,
-    camera_rotation_y: 0,
-    camera_rotation_z: 0,
-    camera_position_x: 0,
-    camera_position_y: 0,
-    camera_position_z: 0,
-    camera_angle: 45,
+    camera_field_of_view: 45,
     camera_near: 0.1,
     camera_far: 1000,
     camera_focalPoint_x: 0,
     camera_focalPoint_y: 0,
     camera_focalPoint_z: 0,
-    camera_perspective: 1
+    camera_perspective: 1,
+    camera_distance: 0,
+    camera_orbit_angle: 0,
+    camera_height: 0,
   }
   private readonly defaultModel: CroissantConfiguration = {
-    camera_rotation_x: 0,
-    camera_rotation_y: 0,
-    camera_rotation_z: 0,
-    camera_position_x: 0,
-    camera_position_y: 0,
-    camera_position_z: 0,
-    camera_angle: 45,
+    camera_field_of_view: 45,
     camera_near: 0.1,
     camera_far: 1000,
     camera_focalPoint_x: 0,
     camera_focalPoint_y: 0,
     camera_focalPoint_z: 0,
-    camera_perspective: 1
+    camera_perspective: 1,
+    camera_distance: 0,
+    camera_orbit_angle: 0,
+    camera_height: 0,
   }
   scene_xzAxis = true;
   scene_xyAxis = true;
@@ -62,19 +56,16 @@ export class ToolboxComponent {
     // Load default values
     const info = croissantGl.camera.info();
     {
-      this.defaultModel.camera_position_x = info.translation[0];
-      this.defaultModel.camera_position_y = info.translation[1];
-      this.defaultModel.camera_position_z = info.translation[2];
-      this.defaultModel.camera_rotation_x = info.rotation[0];
-      this.defaultModel.camera_rotation_y = info.rotation[1];
-      this.defaultModel.camera_rotation_z = info.rotation[2];
-      this.defaultModel.camera_angle = info.angle;
+      this.defaultModel.camera_field_of_view = info.fieldOfView;
       this.defaultModel.camera_near = info.clipNear;
       this.defaultModel.camera_far = info.clipFar;
       this.defaultModel.camera_focalPoint_x = info.focalPoint[0];
       this.defaultModel.camera_focalPoint_y = info.focalPoint[1];
       this.defaultModel.camera_focalPoint_z = info.focalPoint[2];
       this.defaultModel.camera_perspective = info.perspective ? 1 : 0;
+      this.defaultModel.camera_distance = info.distance;
+      this.defaultModel.camera_orbit_angle = info.orbitAngle;
+      this.defaultModel.camera_height = info.height;
     }
     // Load Model
     const storedModel = localStorage.getItem(this.MODEL_STORAGE_KEY);
@@ -82,19 +73,16 @@ export class ToolboxComponent {
       this.model = JSON.parse(storedModel as string) as CroissantConfiguration;
       this.loadPresets();
     } else {
-      this.model.camera_position_x = info.translation[0];
-      this.model.camera_position_y = info.translation[1];
-      this.model.camera_position_z = info.translation[2];
-      this.model.camera_rotation_x = info.rotation[0];
-      this.model.camera_rotation_y = info.rotation[1];
-      this.model.camera_rotation_z = info.rotation[2];
-      this.model.camera_angle = info.angle;
+      this.model.camera_field_of_view = info.fieldOfView;
       this.model.camera_near = info.clipNear;
       this.model.camera_far = info.clipFar;
       this.model.camera_focalPoint_x = info.focalPoint[0];
       this.model.camera_focalPoint_y = info.focalPoint[1];
       this.model.camera_focalPoint_z = info.focalPoint[2];
       this.model.camera_perspective = info.perspective ? 1 : 0;
+      this.model.camera_distance = info.distance;
+      this.model.camera_orbit_angle = info.orbitAngle;
+      this.model.camera_height = info.height;
     }
     // Load UiModel
     const storedUiModel = localStorage.getItem(this.UI_MODEL_STORAGE_KEY);
@@ -118,20 +106,20 @@ export class ToolboxComponent {
   getModel(key: string) {
     return this.model[key as keyof CroissantConfiguration];
   }
+
   modelChanged(key: string) {
     switch (key as keyof CroissantConfiguration) {
-      case "camera_position_x":
-      case "camera_position_y":
-      case "camera_position_z":
-        croissantGl.camera.setTranslation([this.model.camera_position_x, this.model.camera_position_y, this.model.camera_position_z]);
+      case "camera_distance":
+        croissantGl.camera.setDistance(this.model.camera_distance);
         break;
-      case "camera_rotation_x":
-      case "camera_rotation_y":
-      case "camera_rotation_z":
-        croissantGl.camera.setRotation([this.model.camera_rotation_x, this.model.camera_rotation_y, this.model.camera_rotation_z]);
+      case "camera_orbit_angle":
+        croissantGl.camera.setOrbitAngle(this.model.camera_orbit_angle);
         break;
-      case "camera_angle":
-        croissantGl.camera.setPerspectiveFieldOfView(this.model.camera_angle);
+      case "camera_height":
+        croissantGl.camera.setHeight(this.model.camera_height);
+        break;
+      case "camera_field_of_view":
+        croissantGl.camera.setPerspectiveFieldOfView(this.model.camera_field_of_view);
         break;
       case "camera_near":
       case "camera_far":
@@ -166,13 +154,7 @@ export class ToolboxComponent {
   }
 
   resetCameraToDefault() {
-    this.model.camera_position_x = this.defaultModel.camera_position_x;
-    this.model.camera_position_y = this.defaultModel.camera_position_y;
-    this.model.camera_position_z = this.defaultModel.camera_position_z;
-    this.model.camera_rotation_x = this.defaultModel.camera_rotation_x;
-    this.model.camera_rotation_y = this.defaultModel.camera_rotation_y;
-    this.model.camera_rotation_z = this.defaultModel.camera_rotation_z;
-    this.model.camera_angle = this.defaultModel.camera_angle;
+    this.model.camera_field_of_view = this.defaultModel.camera_field_of_view;
     this.model.camera_near = this.defaultModel.camera_near;
     this.model.camera_far = this.defaultModel.camera_far;
     this.model.camera_focalPoint_x = this.defaultModel.camera_focalPoint_x;
@@ -194,9 +176,10 @@ export class ToolboxComponent {
 
   private loadPresets() {
     croissantGl.camera.focalPoint.setTranslation([this.model.camera_focalPoint_x, this.model.camera_focalPoint_y, this.model.camera_focalPoint_z]);
-    croissantGl.camera.setRotation([this.model.camera_rotation_x, this.model.camera_rotation_y, this.model.camera_rotation_z]);
-    croissantGl.camera.setTranslation([this.model.camera_position_x, this.model.camera_position_y, this.model.camera_position_z]);
     croissantGl.camera.setClipPlanes(this.model.camera_near, this.model.camera_far);
-    croissantGl.camera.setPerspectiveFieldOfView(this.model.camera_angle);
+    croissantGl.camera.setPerspectiveFieldOfView(this.model.camera_field_of_view);
+    croissantGl.camera.setDistance(this.model.camera_distance);
+    croissantGl.camera.setOrbitAngle(this.model.camera_orbit_angle);
+    croissantGl.camera.setHeight(this.model.camera_height);
   }
 }
