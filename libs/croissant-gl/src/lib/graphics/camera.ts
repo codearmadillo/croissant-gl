@@ -1,4 +1,4 @@
-import {glMatrix, mat4, quat, ReadonlyVec3, vec3} from "gl-matrix";
+import {glMatrix, mat4, quat, ReadonlyVec3, vec2, vec3} from "gl-matrix";
 import {gl} from "./context";
 import {defaultShader} from "./shader";
 import {CameraInfo} from "../types/camera";
@@ -6,6 +6,7 @@ import {CameraInfo} from "../types/camera";
 class Camera {
   private dirty = true;
   private viewDistance = 200;
+  private viewDistanceMouseIncrease = 10;
   private viewOrbit = 0;
   private viewHeight = 50;
   private focalPointTranslation: vec3 = [ 0, 0, 0, ];
@@ -28,7 +29,6 @@ class Camera {
   bootstrap() {
     this.viewMatrixLocation = defaultShader.getUniformLocation("u_view");
     this.projectionMatrixLocation = defaultShader.getUniformLocation("u_projection");
-    this.setCanvasListeners();
   }
   bind() {
     if (this.dirty) {
@@ -110,31 +110,6 @@ class Camera {
       fieldOfView: this.perspectiveFov,
       focalPoint: this.focalPointTranslation,
       perspective: this.mode === 'perspective'
-    }
-  }
-
-  private setCanvasListeners() {
-    gl().canvas.addEventListener("wheel", (e) => {
-      if (e.deltaY < 0) {
-        console.log("ZOOM IN");
-      } else {
-        console.log("ZOOM OUT");
-      }
-    });
-
-    {
-      let zoomMode = false;
-      gl().canvas.addEventListener("mousedown", (e) => {
-        zoomMode = true;
-      });
-      gl().canvas.addEventListener("mouseup", () => {
-        zoomMode = false;
-      });
-      gl().canvas.addEventListener("mousemove", () => {
-        if (zoomMode) {
-          console.log("move");
-        }
-      });
     }
   }
 }
