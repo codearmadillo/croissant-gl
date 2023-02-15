@@ -9,6 +9,7 @@ class Camera {
   private viewRotationQuat: quat = quat.create();
   private viewRotation: vec3 = [ 0, 0, 0 ];
   private viewTranslation: vec3 = [ 0, 0, 0 ];
+  private focalPointTranslation: vec3 = [ 0, 0, 0, ];
   private perspectiveFov = 45;
   private perspectiveNear = 0.1;
   private perspectiveFar = 1000;
@@ -43,14 +44,28 @@ class Camera {
     gl().uniformMatrix4fv(this.viewMatrixLocation, false, this.viewMatrix);
     gl().uniformMatrix4fv(this.projectionMatrixLocation, false, this.projectionMatrix);
   }
-  translate(x: number, y: number, z: number) {
-    this.viewTranslation = [ x, y, z ];
+  translate(translation: vec3) {
+    this.viewTranslation[0] = translation[0];
+    this.viewTranslation[1] = translation[1];
+    this.viewTranslation[2] = translation[2];
     this.dirty = true;
   }
-  rotate(xDegrees: number, yDegrees: number, zDegrees: number) {
-    this.viewRotation[0] = xDegrees;
-    this.viewRotation[1] = yDegrees;
-    this.viewRotation[2] = zDegrees;
+  rotate(rotation: vec3) {
+    this.viewRotation[0] = rotation[0];
+    this.viewRotation[1] = rotation[1];
+    this.viewRotation[2] = rotation[2];
+    this.dirty = true;
+  }
+  setTranslation(translation: vec3) {
+    this.viewTranslation[0] = translation[0];
+    this.viewTranslation[1] = translation[1];
+    this.viewTranslation[2] = translation[2];
+    this.dirty = true;
+  }
+  setRotation(rotation: vec3) {
+    this.viewRotation[0] = rotation[0];
+    this.viewRotation[1] = rotation[1];
+    this.viewRotation[2] = rotation[2];
     this.dirty = true;
   }
   perspective(fovDegrees: number, near: number, far: number) {
@@ -68,7 +83,8 @@ class Camera {
       rotation: [ this.viewRotation[0], this.viewRotation[1], this.viewRotation[2] ],
       clipFar: this.perspectiveFar,
       clipNear: this.perspectiveNear,
-      angle: this.perspectiveFov
+      angle: this.perspectiveFov,
+      focalPoint: this.focalPointTranslation
     }
   }
 

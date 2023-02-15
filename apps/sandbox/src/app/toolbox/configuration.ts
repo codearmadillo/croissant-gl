@@ -8,6 +8,9 @@ export interface CroissantConfiguration {
   camera_angle: number;
   camera_near: number;
   camera_far: number;
+  camera_focalPoint_x: number;
+  camera_focalPoint_y: number;
+  camera_focalPoint_z: number;
 }
 
 export interface UiConfiguration {

@@ -43,11 +43,17 @@ export namespace debug {
 }
 
 export namespace camera {
-  export function translate(x: number, y: number, z: number) {
-    defaultCamera.translate(x, y, z);
+  export function translate(translation: vec3) {
+    defaultCamera.translate(translation);
   }
-  export function rotate(xDegrees: number, yDegrees: number, zDegrees: number) {
-    defaultCamera.rotate(xDegrees, yDegrees, zDegrees);
+  export function rotate(rotation: vec3) {
+    defaultCamera.rotate(rotation);
+  }
+  export function setRotation(rotation: vec3) {
+    defaultCamera.setRotation(rotation);
+  }
+  export function setTranslation(translation: vec3) {
+    defaultCamera.setTranslation(translation);
   }
   export function perspective(fov: number, near: number, far: number) {
     defaultCamera.perspective(fov, near, far);
