@@ -17,6 +17,7 @@ class Camera {
   private projectionMatrixLocation: WebGLUniformLocation | null = null;
   private readonly viewMatrix: mat4;
   private readonly projectionMatrix: mat4;
+  private mode: 'perspective' | 'orthographic' = 'perspective';
   constructor() {
     this.viewMatrix = mat4.create();
     mat4.identity(this.viewMatrix);
@@ -88,6 +89,10 @@ class Camera {
     this.perspectiveFar = far;
     this.dirty = true;
   }
+  setMode(mode: 'perspective' | 'orthographic') {
+    this.mode = mode;
+    this.dirty = true;
+  }
   isDirty() {
     return this.dirty;
   }
@@ -98,7 +103,8 @@ class Camera {
       clipFar: this.perspectiveFar,
       clipNear: this.perspectiveNear,
       angle: this.perspectiveFov,
-      focalPoint: this.focalPointTranslation
+      focalPoint: this.focalPointTranslation,
+      perspective: this.mode === 'perspective'
     }
   }
 

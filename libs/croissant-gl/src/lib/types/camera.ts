@@ -7,4 +7,5 @@ export interface CameraInfo {
     clipFar: number;
     angle: number;
     focalPoint: vec3;
+    perspective: boolean;
 }

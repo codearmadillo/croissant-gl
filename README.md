@@ -92,6 +92,13 @@ Re-calculates camera perspective to match provided values
 ### `camera.info(): CameraInfo`
 Returns information about current state of camera (see [`CameraInfo`](#Types))
 
+### `camera.setMode(mode: 'perspective' | 'orthographic'): void`
+Changes camera mode to perspective or orthographic
+#### Arguments
+| Name | Type                         | Description   | Default value   |
+|------|------------------------------|---------------|-----------------|
+| mode | `perspective / orthographic` | New camera mode | `n/a` |
+
 ### `camera.focalPoint.translate(translation: vec3): void`
 Changes camera's focal point translation by provided value
 #### Arguments

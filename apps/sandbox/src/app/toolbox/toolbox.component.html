@@ -11,23 +11,35 @@
   </webgl2-foldable-section>
 
   <webgl2-foldable-section title="Camera" [open]="getUiModel('cameraOpen')" (openStateChanged)="setUiModel('cameraOpen', $event); uiModelChanged()">
-    <webgl2-range-input fieldName="camera_rotation_x" label="X rotation" [min]="-359" [max]="359" [step]="1" [ngModel]="getModel('camera_rotation_x')" (ngModelChange)="setModel('camera_rotation_x', $event); modelChanged('camera_rotation_x')"></webgl2-range-input>
-    <webgl2-range-input fieldName="camera_rotation_y" label="Y rotation" [min]="-359" [max]="359" [step]="1" [ngModel]="getModel('camera_rotation_y')" (ngModelChange)="setModel('camera_rotation_y', $event); modelChanged('camera_rotation_y')"></webgl2-range-input>
-    <webgl2-range-input fieldName="camera_rotation_z" label="Z rotation" [min]="-359" [max]="359" [step]="1" [ngModel]="getModel('camera_rotation_z')" (ngModelChange)="setModel('camera_rotation_z', $event); modelChanged('camera_rotation_z')"></webgl2-range-input>
+    <section class="mt-3 mb-4">
+      <webgl2-toggle name="camera_perspective" [ngModel]="getModel('camera_perspective')" (ngModelChange)="setModel('camera_perspective', $event ? 1 : 0); modelChanged('camera_perspective')">Perspective mode</webgl2-toggle>
+    </section>
 
-    <webgl2-range-input fieldName="camera_position_x" label="X position" [min]="-200" [max]="200" [step]="1" [ngModel]="getModel('camera_position_x')" (ngModelChange)="setModel('camera_position_x', $event); modelChanged('camera_position_x')"></webgl2-range-input>
-    <webgl2-range-input fieldName="camera_position_y" label="Y position" [min]="-200" [max]="200" [step]="1" [ngModel]="getModel('camera_position_y')" (ngModelChange)="setModel('camera_position_y', $event); modelChanged('camera_position_y')"></webgl2-range-input>
-    <webgl2-range-input fieldName="camera_position_z" label="Z position" [min]="-400" [max]="200" [step]="1" [ngModel]="getModel('camera_position_z')" (ngModelChange)="setModel('camera_position_z', $event); modelChanged('camera_position_z')"></webgl2-range-input>
+    <section class="mb-8">
+      <webgl2-range-input fieldName="camera_rotation_x" label="X rotation" [min]="-359" [max]="359" [step]="1" [ngModel]="getModel('camera_rotation_x')" (ngModelChange)="setModel('camera_rotation_x', $event); modelChanged('camera_rotation_x')"></webgl2-range-input>
+      <webgl2-range-input fieldName="camera_rotation_y" label="Y rotation" [min]="-359" [max]="359" [step]="1" [ngModel]="getModel('camera_rotation_y')" (ngModelChange)="setModel('camera_rotation_y', $event); modelChanged('camera_rotation_y')"></webgl2-range-input>
+      <webgl2-range-input fieldName="camera_rotation_z" label="Z rotation" [min]="-359" [max]="359" [step]="1" [ngModel]="getModel('camera_rotation_z')" (ngModelChange)="setModel('camera_rotation_z', $event); modelChanged('camera_rotation_z')"></webgl2-range-input>
+    </section>
 
-    <webgl2-range-input fieldName="camera_angle" label="FOV (degrees)" [min]="-359" [max]="359" [step]="1" [ngModel]="getModel('camera_angle')" (ngModelChange)="setModel('camera_angle', $event); modelChanged('camera_angle')"></webgl2-range-input>
-    <webgl2-range-input fieldName="camera_near" label="Near" [min]="0" [max]="10" [step]="0.1" [ngModel]="getModel('camera_near')" (ngModelChange)="setModel('camera_near', $event); modelChanged('camera_near')"></webgl2-range-input>
-    <webgl2-range-input fieldName="camera_far" label="Far" [min]="-100" [max]="400" [step]="1" [ngModel]="getModel('camera_far')" (ngModelChange)="setModel('camera_far', $event); modelChanged('camera_far')"></webgl2-range-input>
+    <section class="mb-8">
+      <webgl2-range-input fieldName="camera_position_x" label="X position" [min]="-200" [max]="200" [step]="1" [ngModel]="getModel('camera_position_x')" (ngModelChange)="setModel('camera_position_x', $event); modelChanged('camera_position_x')"></webgl2-range-input>
+      <webgl2-range-input fieldName="camera_position_y" label="Y position" [min]="-200" [max]="200" [step]="1" [ngModel]="getModel('camera_position_y')" (ngModelChange)="setModel('camera_position_y', $event); modelChanged('camera_position_y')"></webgl2-range-input>
+      <webgl2-range-input fieldName="camera_position_z" label="Z position" [min]="-400" [max]="200" [step]="1" [ngModel]="getModel('camera_position_z')" (ngModelChange)="setModel('camera_position_z', $event); modelChanged('camera_position_z')"></webgl2-range-input>
+    </section>
 
-    <webgl2-range-input fieldName="camera_focalPoint_x" label="Focal point X position" [min]="-400" [max]="400" [step]="1" [ngModel]="getModel('camera_focalPoint_x')" (ngModelChange)="setModel('camera_focalPoint_x', $event); modelChanged('camera_focalPoint_x')"></webgl2-range-input>
-    <webgl2-range-input fieldName="camera_focalPoint_y" label="Focal point Y position" [min]="-400" [max]="400" [step]="1" [ngModel]="getModel('camera_focalPoint_y')" (ngModelChange)="setModel('camera_focalPoint_y', $event); modelChanged('camera_focalPoint_y')"></webgl2-range-input>
-    <webgl2-range-input fieldName="camera_focalPoint_z" label="Focal point Z position" [min]="-400" [max]="400" [step]="1" [ngModel]="getModel('camera_focalPoint_z')" (ngModelChange)="setModel('camera_focalPoint_z', $event); modelChanged('camera_focalPoint_z')"></webgl2-range-input>
+    <section class="mb-8">
+      <webgl2-range-input [disabled]="getModel('camera_perspective') === 0" fieldName="camera_angle" label="FOV (degrees)" [min]="-359" [max]="359" [step]="1" [ngModel]="getModel('camera_angle')" (ngModelChange)="setModel('camera_angle', $event); modelChanged('camera_angle')"></webgl2-range-input>
+      <webgl2-range-input fieldName="camera_near" label="Near" [min]="0" [max]="10" [step]="0.1" [ngModel]="getModel('camera_near')" (ngModelChange)="setModel('camera_near', $event); modelChanged('camera_near')"></webgl2-range-input>
+      <webgl2-range-input fieldName="camera_far" label="Far" [min]="-100" [max]="400" [step]="1" [ngModel]="getModel('camera_far')" (ngModelChange)="setModel('camera_far', $event); modelChanged('camera_far')"></webgl2-range-input>
+    </section>
 
-    <button class="button w-full mt-3" (click)="resetCameraToDefault()">Reset to default</button>
+    <section class="mb-8">
+      <webgl2-range-input fieldName="camera_focalPoint_x" label="Focal point X position" [min]="-400" [max]="400" [step]="1" [ngModel]="getModel('camera_focalPoint_x')" (ngModelChange)="setModel('camera_focalPoint_x', $event); modelChanged('camera_focalPoint_x')"></webgl2-range-input>
+      <webgl2-range-input fieldName="camera_focalPoint_y" label="Focal point Y position" [min]="-400" [max]="400" [step]="1" [ngModel]="getModel('camera_focalPoint_y')" (ngModelChange)="setModel('camera_focalPoint_y', $event); modelChanged('camera_focalPoint_y')"></webgl2-range-input>
+      <webgl2-range-input fieldName="camera_focalPoint_z" label="Focal point Z position" [min]="-400" [max]="400" [step]="1" [ngModel]="getModel('camera_focalPoint_z')" (ngModelChange)="setModel('camera_focalPoint_z', $event); modelChanged('camera_focalPoint_z')"></webgl2-range-input>
+    </section>
+
+    <button class="button w-full" (click)="resetCameraToDefault()">Reset to default</button>
   </webgl2-foldable-section>
 
   <webgl2-foldable-section title="Objects" [open]="getUiModel('objectsOpen')" (openStateChanged)="setUiModel('objectsOpen', $event); uiModelChanged()">

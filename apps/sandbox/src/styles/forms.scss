@@ -6,5 +6,14 @@
   }
   .input {
     @apply bg-white rounded border-gray-300 border text-xs text-center;
+    &:disabled {
+      @apply bg-gray-100 cursor-not-allowed;
+    }
+  }
+  .range-input {
+    @apply h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer;
+    &:disabled {
+      @apply cursor-not-allowed;
+    }
   }
 }

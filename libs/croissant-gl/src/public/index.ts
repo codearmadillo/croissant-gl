@@ -2,7 +2,7 @@ import {croissantBackend} from "../lib/backend";
 import {defaultCamera} from "../lib/graphics/camera";
 import {EventType} from "../lib/types/events";
 import {eventBroker} from "../lib/event-broker";
-import {vec3, vec2} from "gl-matrix";
+import {vec3} from "gl-matrix";
 import {objectBroker} from "../lib/object-broker";
 import {renderer} from "../lib/renderer";
 import {DrawableType} from "../lib/graphics/drawable-type";
@@ -57,6 +57,9 @@ export namespace camera {
   }
   export function perspective(fov: number, near: number, far: number) {
     defaultCamera.perspective(fov, near, far);
+  }
+  export function setMode(mode: 'perspective' | 'orthographic') {
+    defaultCamera.setMode(mode);
   }
   export function info(): CameraInfo {
     return defaultCamera.info();

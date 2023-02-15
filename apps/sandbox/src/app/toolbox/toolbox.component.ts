@@ -33,6 +33,7 @@ export class ToolboxComponent {
     camera_focalPoint_x: 0,
     camera_focalPoint_y: 0,
     camera_focalPoint_z: 0,
+    camera_perspective: 1
   }
   private readonly defaultModel: CroissantConfiguration = {
     camera_rotation_x: 0,
@@ -47,6 +48,7 @@ export class ToolboxComponent {
     camera_focalPoint_x: 0,
     camera_focalPoint_y: 0,
     camera_focalPoint_z: 0,
+    camera_perspective: 1
   }
   scene_xzAxis = true;
   scene_xyAxis = true;
@@ -72,6 +74,7 @@ export class ToolboxComponent {
       this.defaultModel.camera_focalPoint_x = info.focalPoint[0];
       this.defaultModel.camera_focalPoint_y = info.focalPoint[1];
       this.defaultModel.camera_focalPoint_z = info.focalPoint[2];
+      this.defaultModel.camera_perspective = info.perspective ? 1 : 0;
     }
     // Load Model
     const storedModel = localStorage.getItem(this.MODEL_STORAGE_KEY);
@@ -91,6 +94,7 @@ export class ToolboxComponent {
       this.model.camera_focalPoint_x = info.focalPoint[0];
       this.model.camera_focalPoint_y = info.focalPoint[1];
       this.model.camera_focalPoint_z = info.focalPoint[2];
+      this.model.camera_perspective = info.perspective ? 1 : 0;
     }
     // Load UiModel
     const storedUiModel = localStorage.getItem(this.UI_MODEL_STORAGE_KEY);
@@ -108,8 +112,8 @@ export class ToolboxComponent {
     }
   }
 
-  setModel(key: string, value: any) {
-    this.model[key as keyof CroissantConfiguration] = value;
+  setModel(key: string, value: number) {
+    this.model[key as keyof CroissantConfiguration] = value as any;
   }
   getModel(key: string) {
     return this.model[key as keyof CroissantConfiguration];
@@ -135,6 +139,9 @@ export class ToolboxComponent {
       case "camera_focalPoint_y":
       case "camera_focalPoint_z":
         croissantGl.camera.focalPoint.setTranslation([this.model.camera_focalPoint_x, this.model.camera_focalPoint_y, this.model.camera_focalPoint_z]);
+        break;
+      case "camera_perspective":
+        croissantGl.camera.setMode(this.model.camera_perspective ? 'perspective' : 'orthographic');
         break;
     }
     localStorage.setItem(this.MODEL_STORAGE_KEY, JSON.stringify(this.model));
@@ -169,6 +176,7 @@ export class ToolboxComponent {
     this.model.camera_focalPoint_x = this.defaultModel.camera_focalPoint_x;
     this.model.camera_focalPoint_y = this.defaultModel.camera_focalPoint_y;
     this.model.camera_focalPoint_z = this.defaultModel.camera_focalPoint_z;
+    this.model.camera_perspective = this.defaultModel.camera_perspective;
 
     this.loadPresets();
   }
