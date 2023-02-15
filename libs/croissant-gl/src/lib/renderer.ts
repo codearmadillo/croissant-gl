@@ -53,6 +53,11 @@ class Renderer {
         this.visiblePlanes[2] = yz;
         this.dirty = true;
     }
+
+    setClearColor(rgb: vec3) {
+      gl().clearColor(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255, 1.0);
+    }
+
     private renderFrame() {
         // only render frame if camera or any objects are dirty
         if (!objectPropertiesBroker.isDirty() && !defaultCamera.isDirty() && !this.dirty) {

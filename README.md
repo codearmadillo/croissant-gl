@@ -49,6 +49,13 @@ Enables/disables individual axis planes
 | showXY  | `boolean` | Value indicating if `x-y` axis plane should be shown | `n/a` |
 | showYZ  | `boolean` | Value indicating if `y-` axis plane should be shown  | `n/a` |
 
+### `scene.setClearColor(rgb: vec3)`
+Sets scene clear (background) color
+#### Arguments
+| Name | Type   | Description                                          | Default value |
+|------|--------|------------------------------------------------------| --- |
+| rgb  | `vec3` | Color in RGB format | `n/a` |
+
 ## Camera API
 API for manipulating camera properties.
 

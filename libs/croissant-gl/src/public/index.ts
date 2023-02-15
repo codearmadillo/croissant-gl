@@ -60,6 +60,14 @@ export namespace scene {
   export function showAxes(showXZ: boolean, showXY: boolean, showYZ: boolean) {
     renderer.enableAxes(showXZ, showXY, showYZ);
   }
+
+  /**
+   * Sets scene clear (background) color
+   * @param rgb Color in RGB format
+   */
+  export function setClearColor(rgb: vec3) {
+    renderer.setClearColor(rgb);
+  }
 }
 
 export namespace debug {

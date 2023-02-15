@@ -22,6 +22,7 @@ export class ViewportComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     croissantGl.bootstrap(this.canvasElement);
+    croissantGl.scene.setClearColor([ 12, 16, 21 ]);
     croissantGl.start();
 
     const cube = croissantGl.object.create({
