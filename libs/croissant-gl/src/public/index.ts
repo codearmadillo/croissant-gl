@@ -27,6 +27,12 @@ export function on(eventType: EventType, callback: (...args: any[]) => any) {
   eventBroker.registerCallback(eventType, callback);
 }
 
+export namespace scene {
+  export function showAxes(showX: boolean, showY: boolean, showZ: boolean) {
+    renderer.enableAxes(showX, showY, showZ);
+  }
+}
+
 export namespace debug {
   export function info(): DebugInfo {
     return {

@@ -24,6 +24,7 @@ export class ViewportComponent implements AfterViewInit {
     croissantGl.bootstrap(this.canvasElement);
     croissantGl.start();
 
+    /*
     const cube = croissantGl.object.create({
       type: "cube",
       size: [ 32, 32, 32 ],
@@ -36,6 +37,7 @@ export class ViewportComponent implements AfterViewInit {
     setInterval(() => {
       // croissantGl.object.rotate(cube, [ 0, 0.5, 0 ]);
     }, 1000 / 60);
+     */
   }
 
   onEnabledChanged() {

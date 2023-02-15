@@ -4,6 +4,12 @@
     <button class="button w-full" (click)="printDebugInformation()">Print debug information</button>
   </webgl2-foldable-section>
 
+  <webgl2-foldable-section title="Scene" [open]="getUiModel('sceneOpen')" (openStateChanged)="setUiModel('sceneOpen', $event); uiModelChanged()">
+    <webgl2-toggle name="scene_xAxis" [(ngModel)]="scene_xAxis" (ngModelChange)="onSceneAxisUpdate()">Show X axis</webgl2-toggle>
+    <webgl2-toggle name="scene_yAxis" [(ngModel)]="scene_yAxis" (ngModelChange)="onSceneAxisUpdate()">Show Y axis</webgl2-toggle>
+    <webgl2-toggle name="scene_zAxis" [(ngModel)]="scene_zAxis" (ngModelChange)="onSceneAxisUpdate()">Show Z axis</webgl2-toggle>
+  </webgl2-foldable-section>
+
   <webgl2-foldable-section title="Camera" [open]="getUiModel('cameraOpen')" (openStateChanged)="setUiModel('cameraOpen', $event); uiModelChanged()">
     <webgl2-range-input fieldName="camera_rotation_x" label="X rotation" [min]="-359" [max]="359" [step]="1" [ngModel]="getModel('camera_rotation_x')" (ngModelChange)="setModel('camera_rotation_x', $event); modelChanged('camera_rotation_x')"></webgl2-range-input>
     <webgl2-range-input fieldName="camera_rotation_y" label="Y rotation" [min]="-359" [max]="359" [step]="1" [ngModel]="getModel('camera_rotation_y')" (ngModelChange)="setModel('camera_rotation_y', $event); modelChanged('camera_rotation_y')"></webgl2-range-input>

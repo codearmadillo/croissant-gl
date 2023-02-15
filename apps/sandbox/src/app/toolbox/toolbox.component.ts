@@ -9,6 +9,7 @@ import {ObjectService} from "../services/object.service";
   styleUrls: ['./toolbox.component.scss'],
 })
 export class ToolboxComponent {
+  private readonly MODEL_SCENE_STORAGE_KEY: string = "ui_scene_storage";
   private readonly UI_MODEL_STORAGE_KEY: string = "ui_model_storage";
   private readonly MODEL_STORAGE_KEY: string = "model_storage";
   private readonly uiModel: UiConfiguration = {
@@ -16,7 +17,8 @@ export class ToolboxComponent {
     perspectiveOpen: true,
     objectsOpen: true,
     objectsCreateOpen: true,
-    objectsListOpen: true
+    objectsListOpen: true,
+    sceneOpen: true
   }
   private readonly model: CroissantConfiguration = {
     camera_rotation_x: 0,
@@ -40,6 +42,9 @@ export class ToolboxComponent {
     camera_near: 0.1,
     camera_far: 1000
   }
+  scene_xAxis = true;
+  scene_yAxis = true;
+  scene_zAxis = true;
 
   @HostBinding("class") get class() {
     return "box-border relative overflow-hidden";
@@ -79,6 +84,15 @@ export class ToolboxComponent {
     const storedUiModel = localStorage.getItem(this.UI_MODEL_STORAGE_KEY);
     if (storedUiModel !== null && storedUiModel !== undefined) {
       this.uiModel = JSON.parse(storedUiModel as string) as UiConfiguration;
+    }
+    // Load scene
+    const sceneModel = localStorage.getItem(this.MODEL_SCENE_STORAGE_KEY);
+    if (sceneModel !== null && sceneModel !== undefined) {
+      const sceneModelParsed = JSON.parse(sceneModel) as boolean[];
+      this.scene_xAxis = sceneModelParsed[0];
+      this.scene_yAxis = sceneModelParsed[1];
+      this.scene_zAxis = sceneModelParsed[2];
+      this.onSceneAxisUpdate();
     }
   }
 
@@ -141,6 +155,11 @@ export class ToolboxComponent {
 
   printDebugInformation() {
     console.table(croissantGl.debug.info());
+  }
+
+  onSceneAxisUpdate() {
+    localStorage.setItem(this.MODEL_SCENE_STORAGE_KEY, JSON.stringify([ this.scene_xAxis, this.scene_yAxis, this.scene_zAxis ]));
+    croissantGl.scene.showAxes(this.scene_xAxis, this.scene_yAxis, this.scene_zAxis);
   }
 
   private loadPresets() {

@@ -11,10 +11,11 @@ import {objectPropertiesBroker} from "./object-properties-broker";
 import {vec2, vec3} from "gl-matrix";
 
 class Renderer {
-
+    private dirty = true;
     private _passes = 0;
     private vao: (VertexArrayObject | null)[] = [];
-    private gridVao: VertexArrayObject;
+    private planes: VertexArrayObject[] = [];
+    private visiblePlanes: boolean[] = [false, false, false];
 
     public get passes() {
         return this._passes;
@@ -38,18 +39,25 @@ class Renderer {
     bootstrap() {
         gl().enable(gl().DEPTH_TEST);
         gl().clearColor(1, 1, 1, 1);
-        this.setupGrid();
+        this.setupPlanes();
     }
     loop() {
         setInterval(() => {
             this.renderFrame();
         }, 1000 / RENDERER_UPDATE_RATE);
     }
+    enableAxes(x: boolean, y: boolean, z: boolean) {
+        this.visiblePlanes[0] = x;
+        this.visiblePlanes[1] = y;
+        this.visiblePlanes[2] = z;
+        this.dirty = true;
+    }
     private renderFrame() {
         // only render frame if camera or any objects are dirty
-        if (!objectPropertiesBroker.isDirty() && !defaultCamera.isDirty()) {
+        if (!objectPropertiesBroker.isDirty() && !defaultCamera.isDirty() && !this.dirty) {
             return;
         }
+        this.dirty = false;
         this._passes++;
         // clear buffer
         gl().clear(gl().COLOR_BUFFER_BIT | gl().DEPTH_BUFFER_BIT);
@@ -74,7 +82,11 @@ class Renderer {
         // unbind uniforms
         objectPropertiesBroker.unbind();
         // render grid
-        this.gridVao.drawLines();
+        this.planes.forEach((plane, i) => {
+            if (this.visiblePlanes[i]) {
+                plane.drawLines();
+            }
+        });
     }
     private getVerticesIndices(type: DrawableType): [ Vertex[], number[] ] {
         switch(type.type) {
@@ -84,7 +96,54 @@ class Renderer {
                 return getPlaneVerticesIndices(type.size, type.position);
         }
     }
-    private setupGrid() {
+    private setupPlanes() {
+        const size = 100;
+        const vao = new VertexArrayObject();
+
+        const indices: number[] = [
+            0, 1,
+            1, 2,
+            2, 3,
+            3, 0
+        ];
+
+        // generate x axis
+        const xAxisVertices: Vertex[] = [
+            new Vertex([ -size / 2, 0, -size / 2 ], [ 1, 0, 0 ]),
+            new Vertex([ size / 2, 0, -size / 2 ], [ 1, 0, 0 ]),
+            new Vertex([ size / 2, 0, size / 2 ], [ 1, 0, 0 ]),
+            new Vertex([ -size / 2, 0, size / 2 ], [ 1, 0, 0 ]),
+        ];
+        const xAxisVao = new VertexArrayObject();
+        xAxisVao.addVertices(xAxisVertices);
+        xAxisVao.addIndices(indices);
+        this.planes.push(xAxisVao);
+
+        // generate y axis
+        const yAxisVertices: Vertex[] = [
+            new Vertex([ -size / 2, -size / 2, 0 ], [ 0, 1, 0 ]),
+            new Vertex([ size / 2, -size / 2, 0 ], [ 0, 1, 0 ]),
+            new Vertex([ size / 2, size / 2, 0 ], [ 0, 1, 0 ]),
+            new Vertex([ -size / 2, size / 2, 0 ], [ 0, 1, 0 ]),
+        ];
+        const yAxisVao = new VertexArrayObject();
+        yAxisVao.addVertices(yAxisVertices);
+        yAxisVao.addIndices(indices);
+        this.planes.push(yAxisVao);
+
+        // generate z axis
+        const zAxisVertices: Vertex[] = [
+            new Vertex([ 0, -size / 2, -size / 2 ], [ 0, 0, 1 ]),
+            new Vertex([ 0, -size / 2, size / 2 ], [ 0, 0, 1 ]),
+            new Vertex([ 0, size / 2, size / 2 ], [ 0, 0, 1 ]),
+            new Vertex([ 0, size / 2, -size / 2], [ 0, 0, 1 ]),
+        ];
+        const zAxisVao = new VertexArrayObject();
+        zAxisVao.addVertices(zAxisVertices);
+        zAxisVao.addIndices(indices);
+        this.planes.push(zAxisVao);
+
+        /*
       // should be even
       const cols = 6;
       const rows = 6;
@@ -136,6 +195,7 @@ class Renderer {
 
       // store the vao
       this.gridVao = vao;
+         */
     }
 }
 export const renderer = new Renderer();

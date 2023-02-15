@@ -16,4 +16,5 @@ export interface UiConfiguration {
   objectsOpen: boolean;
   objectsCreateOpen: boolean;
   objectsListOpen: boolean;
+  sceneOpen: boolean;
 }

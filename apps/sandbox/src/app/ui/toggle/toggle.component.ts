@@ -21,7 +21,7 @@ export class ToggleComponent implements ControlValueAccessor {
   onTouched: any = () => {};
 
   @HostBinding("class") get class() {
-    return "";
+    return "block my-2";
   }
 
   constructor(
