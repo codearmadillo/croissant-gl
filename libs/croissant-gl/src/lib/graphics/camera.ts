@@ -3,7 +3,6 @@ import {gl} from "./context";
 import {defaultShader} from "./shader";
 import {CameraInfo} from "../types/camera";
 
-
 class Camera {
   private dirty = true;
   private viewRotationQuat: quat = quat.create();
@@ -16,7 +15,7 @@ class Camera {
   private viewMatrixLocation: WebGLUniformLocation | null = null;
   private projectionMatrixLocation: WebGLUniformLocation | null = null;
   private readonly viewMatrix: mat4;
-  private readonly projectionMatrix: mat4;
+  private projectionMatrix: mat4;
   private mode: 'perspective' | 'orthographic' = 'perspective';
   constructor() {
     this.viewMatrix = mat4.create();
@@ -37,7 +36,11 @@ class Camera {
       quat.fromEuler(this.viewRotationQuat, this.viewRotation[0], this.viewRotation[1], this.viewRotation[2]);
       mat4.fromRotationTranslation(this.viewMatrix, this.viewRotationQuat, this.viewTranslation);
       // update perspective
-      mat4.perspective(this.projectionMatrix, this.perspectiveFov, gl().canvas.width / gl().canvas.height, this.perspectiveNear, this.perspectiveFar);
+      if (this.mode === "perspective") {
+        this.projectionMatrix = mat4.perspective(mat4.create(), this.perspectiveFov, gl().canvas.width / gl().canvas.height, this.perspectiveNear, this.perspectiveFar);
+      } else {
+        this.projectionMatrix = mat4.ortho(mat4.create(), 0, gl().canvas.width, gl().canvas.height, 0, this.perspectiveNear, this.perspectiveFar);
+      }
       // set recalculate flag to false
       this.dirty = false;
     }
@@ -83,10 +86,13 @@ class Camera {
     this.focalPointTranslation[2] = translation[2];
     this.dirty = true;
   }
-  perspective(fovDegrees: number, near: number, far: number) {
-    this.perspectiveFov = glMatrix.toRadian(fovDegrees);
+  setClipPlanes(near: number, far: number) {
     this.perspectiveNear = near;
     this.perspectiveFar = far;
+    this.dirty = true;
+  }
+  setPerspectiveFieldOfView(fovInDegrees: number) {
+    this.perspectiveFov = glMatrix.toRadian(fovInDegrees);
     this.dirty = true;
   }
   setMode(mode: 'perspective' | 'orthographic') {

@@ -80,15 +80,6 @@ Sets camera rotation to provided value
 |-----------|--------|------------------------| --- |
 | rotation  | `vec3` | New camera rotation | `n/a` |
 
-### `camera.perspective(fov: number, near: number, far: number): void`
-Re-calculates camera perspective to match provided values
-#### Arguments
-| Name  | Type     | Description                     | Default value |
-|-------|----------|---------------------------------| --- |
-| fov   | `number` | Camera field of view in degrees | `n/a` |
-| near  | `number` | Near clip plane value           | `n/a` |
-| far   | `number` | Far clip plane value            | `n/a` |
-
 ### `camera.info(): CameraInfo`
 Returns information about current state of camera (see [`CameraInfo`](#Types))
 
@@ -98,6 +89,21 @@ Changes camera mode to perspective or orthographic
 | Name | Type                         | Description   | Default value   |
 |------|------------------------------|---------------|-----------------|
 | mode | `perspective / orthographic` | New camera mode | `n/a` |
+
+### `camera.setClipPlanes(near: number, far: number): void`
+Sets camera near/far clip planes, used for both perspective and orthographic projections
+#### Arguments
+| Name  | Type     | Description                     | Default value |
+|-------|----------|---------------------------------| --- |
+| near  | `number` | Near clip plane value           | `n/a` |
+| far   | `number` | Far clip plane value            | `n/a` |
+
+### `camera.setPerspectiveFieldOfView(angleInDegrees: number): void`
+Changes field of view of perspective camera to provided value in degrees
+#### Arguments
+| Name  | Type     | Description                        | Default value |
+|-------|----------|------------------------------------| --- |
+| angleInDegrees   | `number` | New field of view angle in degrees | `n/a` |
 
 ### `camera.focalPoint.translate(translation: vec3): void`
 Changes camera's focal point translation by provided value

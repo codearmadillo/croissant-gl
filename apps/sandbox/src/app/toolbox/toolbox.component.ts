@@ -131,9 +131,11 @@ export class ToolboxComponent {
         croissantGl.camera.setRotation([this.model.camera_rotation_x, this.model.camera_rotation_y, this.model.camera_rotation_z]);
         break;
       case "camera_angle":
+        croissantGl.camera.setPerspectiveFieldOfView(this.model.camera_angle);
+        break;
       case "camera_near":
       case "camera_far":
-        croissantGl.camera.perspective(this.model.camera_angle, this.model.camera_near, this.model.camera_far);
+        croissantGl.camera.setClipPlanes(this.model.camera_near, this.model.camera_far);
         break;
       case "camera_focalPoint_x":
       case "camera_focalPoint_y":
@@ -194,6 +196,7 @@ export class ToolboxComponent {
     croissantGl.camera.focalPoint.setTranslation([this.model.camera_focalPoint_x, this.model.camera_focalPoint_y, this.model.camera_focalPoint_z]);
     croissantGl.camera.setRotation([this.model.camera_rotation_x, this.model.camera_rotation_y, this.model.camera_rotation_z]);
     croissantGl.camera.setTranslation([this.model.camera_position_x, this.model.camera_position_y, this.model.camera_position_z]);
-    croissantGl.camera.perspective(this.model.camera_angle, this.model.camera_near, this.model.camera_far);
+    croissantGl.camera.setClipPlanes(this.model.camera_near, this.model.camera_far);
+    croissantGl.camera.setPerspectiveFieldOfView(this.model.camera_angle);
   }
 }
