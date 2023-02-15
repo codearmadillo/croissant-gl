@@ -4,22 +4,22 @@ const fragmentShaderSource = `#version 300 es
 precision highp float;
 
 out vec4 fragColor;
-in vec3 vertColor;
+in vec4 vertColor;
 
 void main() {
-  fragColor = vec4(vertColor, 1.0);
+  fragColor = vertColor;
 }
 `;
 
 const vertexShaderSource = `#version 300 es
 layout (location = 0) in vec4 a_Position;
-layout (location = 1) in vec3 a_Color;
+layout (location = 1) in vec4 a_Color;
 
 uniform mat4 u_model;
 uniform mat4 u_view;
 uniform mat4 u_projection;
 
-out vec3 vertColor;
+out vec4 vertColor;
 
 void main() {
   gl_Position = u_projection * u_view * u_model * vec4(a_Position.xyz, 1.0);

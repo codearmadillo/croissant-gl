@@ -5,14 +5,14 @@ import {vec2, vec3} from "gl-matrix";
 export function getCubeVerticesIndices(size: vec3, position: vec3): [ Vertex[], number[] ] {
     return [
         [
-            new Vertex([ -size[0] / 2 + position[0], -size[1] / 2 + position[1],  -size[2] / 2 + position[2] ], [ 1.0, 0.0, 0.0 ]),
-            new Vertex([ size[0] / 2 + position[0],  -size[1] / 2 + position[1],  -size[2] / 2 + position[2] ], [ 0.0, 1.0, 0.0 ]),
-            new Vertex([ size[0] / 2 + position[0],  -size[1] / 2 + position[1],  size[2] / 2 + position[2] ], [ 0.0, 0.0, 1.0 ]),
-            new Vertex([ -size[0] / 2 + position[0], -size[1] / 2 + position[1],  size[2] / 2 + position[2] ], [ 1.0, 0.0, 1.0 ]),
-            new Vertex([ -size[0] / 2 + position[0], size[1] / 2 + position[1],   -size[2] / 2 + position[2] ], [ 1.0, 0.0, 0.0 ]),
-            new Vertex([ size[0] / 2 + position[0],  size[1] / 2 + position[1],   -size[2] / 2 + position[2] ], [ 0.0, 1.0, 0.0 ]),
-            new Vertex([ size[0] / 2 + position[0],  size[1] / 2 + position[1],   size[2] / 2 + position[2] ], [ 0.0, 0.0, 1.0 ]),
-            new Vertex([ -size[0] / 2 + position[0], size[1] / 2 + position[1],   size[2] / 2 + position[2] ], [ 1.0, 0.0, 1.0 ])
+            new Vertex([ -size[0] / 2 + position[0], -size[1] / 2 + position[1],  -size[2] / 2 + position[2] ], [ 1.0, 0.0, 0.0, 1.0 ]),
+            new Vertex([ size[0] / 2 + position[0],  -size[1] / 2 + position[1],  -size[2] / 2 + position[2] ], [ 0.0, 1.0, 0.0, 1.0 ]),
+            new Vertex([ size[0] / 2 + position[0],  -size[1] / 2 + position[1],  size[2] / 2 + position[2] ], [ 0.0, 0.0, 1.0, 1.0 ]),
+            new Vertex([ -size[0] / 2 + position[0], -size[1] / 2 + position[1],  size[2] / 2 + position[2] ], [ 1.0, 0.0, 1.0, 1.0 ]),
+            new Vertex([ -size[0] / 2 + position[0], size[1] / 2 + position[1],   -size[2] / 2 + position[2] ], [ 1.0, 0.0, 0.0, 1.0 ]),
+            new Vertex([ size[0] / 2 + position[0],  size[1] / 2 + position[1],   -size[2] / 2 + position[2] ], [ 0.0, 1.0, 0.0, 1.0 ]),
+            new Vertex([ size[0] / 2 + position[0],  size[1] / 2 + position[1],   size[2] / 2 + position[2] ], [ 0.0, 0.0, 1.0, 1.0 ]),
+            new Vertex([ -size[0] / 2 + position[0], size[1] / 2 + position[1],   size[2] / 2 + position[2] ], [ 1.0, 0.0, 1.0, 1.0 ])
         ],
         [
             0, 1, 2,
@@ -40,10 +40,10 @@ export function getPlaneVerticesIndices(size: vec2, position: vec3): [ Vertex[],
 
   return [
     [
-      new Vertex([ -size[0] / 2 + position[0], position[1],  -size[1] / 2 + position[1] ], [ 1.0, 1.0, 1.0 ]),
-      new Vertex([ size[0] / 2 + position[0],  position[1],  -size[1] / 2 + position[1] ], [ 1.0, 1.0, 1.0 ]),
-      new Vertex([ size[0] / 2 + position[0],  position[1],  size[1] / 2 + position[1] ], [ 1.0, 1.0, 1.0 ]),
-      new Vertex([ -size[0] / 2 + position[0], position[1],  size[1] / 2 + position[1] ], [ 1.0, 1.0, 1.0 ]),
+      new Vertex([ -size[0] / 2 + position[0], position[1],  -size[1] / 2 + position[1] ], [ 1.0, 1.0, 1.0, 1.0 ]),
+      new Vertex([ size[0] / 2 + position[0],  position[1],  -size[1] / 2 + position[1] ], [ 1.0, 1.0, 1.0, 1.0 ]),
+      new Vertex([ size[0] / 2 + position[0],  position[1],  size[1] / 2 + position[1] ], [ 1.0, 1.0, 1.0, 1.0 ]),
+      new Vertex([ -size[0] / 2 + position[0], position[1],  size[1] / 2 + position[1] ], [ 1.0, 1.0, 1.0, 1.0 ]),
     ],
     [
       0, 1, 2,

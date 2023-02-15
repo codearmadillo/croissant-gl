@@ -99,6 +99,7 @@ class Renderer {
     }
     private setupPlanes() {
 
+        const transparency = 0.25;
         const cols = 12;
         const rows = 12;
         const size = 200;
@@ -111,16 +112,16 @@ class Renderer {
 
         for (let z = 0; z < rows + 1; z++) {
             xzAxisVertices.push(
-                new Vertex([ -offset, 0, z * (size / rows) - offset ], [ 1, 0, 0 ]),
-                new Vertex([ size - offset, 0, z * (size / rows) - offset ], [ 1, 0, 0 ])
+                new Vertex([ -offset, 0, z * (size / rows) - offset ], [ 1, 0, 0, transparency ]),
+                new Vertex([ size - offset, 0, z * (size / rows) - offset ], [ 1, 0, 0, transparency ])
             );
             const indexOffset = xzAxisIndices.length;
             xzAxisIndices.push(indexOffset, 1 + indexOffset);
         }
         for (let x = 0; x < cols + 1; x++) {
             xzAxisVertices.push(
-                new Vertex([ x * (size / rows) - offset, 0, -offset ], [ 1, 0, 0 ]),
-                new Vertex([ x * (size / rows) - offset, 0, size - offset ], [ 1, 0, 0 ])
+                new Vertex([ x * (size / rows) - offset, 0, -offset ], [ 1, 0, 0, transparency ]),
+                new Vertex([ x * (size / rows) - offset, 0, size - offset ], [ 1, 0, 0, transparency ])
             );
             const indexOffset = xzAxisIndices.length;
             xzAxisIndices.push(indexOffset, 1 + indexOffset);
@@ -136,16 +137,16 @@ class Renderer {
 
         for (let y = 0; y < rows + 1; y++) {
             xyAxisVertices.push(
-                new Vertex([ -offset, y * (size / rows) - offset, 0 ], [ 0, 1, 0 ]),
-                new Vertex([ size - offset, y * (size / rows) - offset, 0 ], [ 0, 1, 0 ])
+                new Vertex([ -offset, y * (size / rows) - offset, 0 ], [ 0, 1, 0, transparency ]),
+                new Vertex([ size - offset, y * (size / rows) - offset, 0 ], [ 0, 1, 0, transparency ])
             );
             const indexOffset = xyAxisIndices.length;
             xyAxisIndices.push(indexOffset, 1 + indexOffset);
         }
         for (let x = 0; x < cols + 1; x++) {
             xyAxisVertices.push(
-                new Vertex([ x * (size / rows) - offset, -offset, 0 ], [ 0, 1, 0 ]),
-                new Vertex([ x * (size / rows) - offset, size - offset, 0 ], [ 0, 1, 0 ])
+                new Vertex([ x * (size / rows) - offset, -offset, 0 ], [ 0, 1, 0, transparency ]),
+                new Vertex([ x * (size / rows) - offset, size - offset, 0 ], [ 0, 1, 0, transparency ])
             );
             const indexOffset = xyAxisIndices.length;
             xyAxisIndices.push(indexOffset, 1 + indexOffset);
@@ -161,16 +162,16 @@ class Renderer {
 
         for (let y = 0; y < rows + 1; y++) {
             yzAxisVertices.push(
-                new Vertex([ 0, -offset, y * (size / rows) - offset ], [ 0, 0, 1 ]),
-                new Vertex([ 0, size - offset, y * (size / rows) - offset ], [ 0, 0, 1 ])
+                new Vertex([ 0, -offset, y * (size / rows) - offset ], [ 0, 0, 1, transparency ]),
+                new Vertex([ 0, size - offset, y * (size / rows) - offset ], [ 0, 0, 1, transparency ])
             );
             const indexOffset = yzAxisIndices.length;
             yzAxisIndices.push(indexOffset, 1 + indexOffset);
         }
         for (let z = 0; z < cols + 1; z++) {
             yzAxisVertices.push(
-                new Vertex([ 0, z * (size / rows) - offset, -offset ], [ 0, 0, 1 ]),
-                new Vertex([ 0, z * (size / rows) - offset, size - offset ], [ 0, 0, 1 ])
+                new Vertex([ 0, z * (size / rows) - offset, -offset ], [ 0, 0, 1, transparency ]),
+                new Vertex([ 0, z * (size / rows) - offset, size - offset ], [ 0, 0, 1, transparency ])
             );
             const indexOffset = yzAxisIndices.length;
             yzAxisIndices.push(indexOffset, 1 + indexOffset);
