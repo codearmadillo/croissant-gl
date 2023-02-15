@@ -45,15 +45,15 @@ class Camera {
     gl().uniformMatrix4fv(this.projectionMatrixLocation, false, this.projectionMatrix);
   }
   translate(translation: vec3) {
-    this.viewTranslation[0] = translation[0];
-    this.viewTranslation[1] = translation[1];
-    this.viewTranslation[2] = translation[2];
+    this.viewTranslation[0] += translation[0];
+    this.viewTranslation[1] += translation[1];
+    this.viewTranslation[2] += translation[2];
     this.dirty = true;
   }
   rotate(rotation: vec3) {
-    this.viewRotation[0] = rotation[0];
-    this.viewRotation[1] = rotation[1];
-    this.viewRotation[2] = rotation[2];
+    this.viewRotation[0] += rotation[0];
+    this.viewRotation[1] += rotation[1];
+    this.viewRotation[2] += rotation[2];
     this.dirty = true;
   }
   setTranslation(translation: vec3) {
@@ -66,6 +66,18 @@ class Camera {
     this.viewRotation[0] = rotation[0];
     this.viewRotation[1] = rotation[1];
     this.viewRotation[2] = rotation[2];
+    this.dirty = true;
+  }
+  translateFocalPoint(translation: vec3) {
+    this.focalPointTranslation[0] = translation[0];
+    this.focalPointTranslation[1] = translation[1];
+    this.focalPointTranslation[2] = translation[2];
+    this.dirty = true;
+  }
+  setFocalPointTranslation(translation: vec3) {
+    this.focalPointTranslation[0] = translation[0];
+    this.focalPointTranslation[1] = translation[1];
+    this.focalPointTranslation[2] = translation[2];
     this.dirty = true;
   }
   perspective(fovDegrees: number, near: number, far: number) {

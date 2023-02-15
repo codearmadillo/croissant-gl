@@ -134,6 +134,7 @@ export class ToolboxComponent {
       case "camera_focalPoint_x":
       case "camera_focalPoint_y":
       case "camera_focalPoint_z":
+        croissantGl.camera.focalPoint.setTranslation([this.model.camera_focalPoint_x, this.model.camera_focalPoint_y, this.model.camera_focalPoint_z]);
         break;
     }
     localStorage.setItem(this.MODEL_STORAGE_KEY, JSON.stringify(this.model));
@@ -182,6 +183,7 @@ export class ToolboxComponent {
   }
 
   private loadPresets() {
+    croissantGl.camera.focalPoint.setTranslation([this.model.camera_focalPoint_x, this.model.camera_focalPoint_y, this.model.camera_focalPoint_z]);
     croissantGl.camera.setRotation([this.model.camera_rotation_x, this.model.camera_rotation_y, this.model.camera_rotation_z]);
     croissantGl.camera.setTranslation([this.model.camera_position_x, this.model.camera_position_y, this.model.camera_position_z]);
     croissantGl.camera.perspective(this.model.camera_angle, this.model.camera_near, this.model.camera_far);

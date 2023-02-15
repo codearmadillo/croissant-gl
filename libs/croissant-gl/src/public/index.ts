@@ -61,6 +61,14 @@ export namespace camera {
   export function info(): CameraInfo {
     return defaultCamera.info();
   }
+  export namespace focalPoint {
+    export function translate(translation: vec3) {
+      defaultCamera.translateFocalPoint(translation);
+    }
+    export function setTranslation(translation: vec3) {
+      defaultCamera.setFocalPointTranslation(translation);
+    }
+  }
 }
 
 export namespace object {
