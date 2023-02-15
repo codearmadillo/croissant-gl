@@ -32,12 +32,14 @@ class Camera {
   }
   bind() {
     if (this.dirty) {
+      // update view
       quat.fromEuler(this.viewRotationQuat, this.viewRotation[0], this.viewRotation[1], this.viewRotation[2]);
       mat4.fromRotationTranslation(this.viewMatrix, this.viewRotationQuat, this.viewTranslation);
+      // update perspective
+      mat4.perspective(this.projectionMatrix, this.perspectiveFov, gl().canvas.width / gl().canvas.height, this.perspectiveNear, this.perspectiveFar);
+      // set recalculate flag to false
       this.dirty = false;
     }
-    // update perspective
-    mat4.perspective(this.projectionMatrix, this.perspectiveFov, gl().canvas.width / gl().canvas.height, this.perspectiveNear, this.perspectiveFar);
     // update viewport
     gl().viewport(0, 0, gl().canvas.width, gl().canvas.height);
     // push uniforms
