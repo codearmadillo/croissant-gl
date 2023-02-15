@@ -42,9 +42,9 @@ export class ToolboxComponent {
     camera_near: 0.1,
     camera_far: 1000
   }
-  scene_xAxis = true;
-  scene_yAxis = true;
-  scene_zAxis = true;
+  scene_xyAxis = true;
+  scene_xzAxis = true;
+  scene_yzAxis = true;
 
   @HostBinding("class") get class() {
     return "box-border relative overflow-hidden";
@@ -89,9 +89,9 @@ export class ToolboxComponent {
     const sceneModel = localStorage.getItem(this.MODEL_SCENE_STORAGE_KEY);
     if (sceneModel !== null && sceneModel !== undefined) {
       const sceneModelParsed = JSON.parse(sceneModel) as boolean[];
-      this.scene_xAxis = sceneModelParsed[0];
-      this.scene_yAxis = sceneModelParsed[1];
-      this.scene_zAxis = sceneModelParsed[2];
+      this.scene_xyAxis = sceneModelParsed[0];
+      this.scene_xzAxis = sceneModelParsed[1];
+      this.scene_yzAxis = sceneModelParsed[2];
       this.onSceneAxisUpdate();
     }
   }
@@ -158,8 +158,8 @@ export class ToolboxComponent {
   }
 
   onSceneAxisUpdate() {
-    localStorage.setItem(this.MODEL_SCENE_STORAGE_KEY, JSON.stringify([ this.scene_xAxis, this.scene_yAxis, this.scene_zAxis ]));
-    croissantGl.scene.showAxes(this.scene_xAxis, this.scene_yAxis, this.scene_zAxis);
+    localStorage.setItem(this.MODEL_SCENE_STORAGE_KEY, JSON.stringify([ this.scene_xzAxis, this.scene_xyAxis, this.scene_yzAxis ]));
+    croissantGl.scene.showAxes(this.scene_xzAxis, this.scene_xyAxis, this.scene_yzAxis);
   }
 
   private loadPresets() {

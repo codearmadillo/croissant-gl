@@ -28,8 +28,8 @@ export function on(eventType: EventType, callback: (...args: any[]) => any) {
 }
 
 export namespace scene {
-  export function showAxes(showX: boolean, showY: boolean, showZ: boolean) {
-    renderer.enableAxes(showX, showY, showZ);
+  export function showAxes(showXZ: boolean, showXY: boolean, showYZ: boolean) {
+    renderer.enableAxes(showXZ, showXY, showYZ);
   }
 }
 

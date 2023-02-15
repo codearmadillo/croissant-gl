@@ -5,9 +5,9 @@
   </webgl2-foldable-section>
 
   <webgl2-foldable-section title="Scene" [open]="getUiModel('sceneOpen')" (openStateChanged)="setUiModel('sceneOpen', $event); uiModelChanged()">
-    <webgl2-toggle name="scene_xAxis" [(ngModel)]="scene_xAxis" (ngModelChange)="onSceneAxisUpdate()">Show X axis</webgl2-toggle>
-    <webgl2-toggle name="scene_yAxis" [(ngModel)]="scene_yAxis" (ngModelChange)="onSceneAxisUpdate()">Show Y axis</webgl2-toggle>
-    <webgl2-toggle name="scene_zAxis" [(ngModel)]="scene_zAxis" (ngModelChange)="onSceneAxisUpdate()">Show Z axis</webgl2-toggle>
+    <webgl2-toggle name="scene_xzAxis" [(ngModel)]="scene_xzAxis" (ngModelChange)="onSceneAxisUpdate()">Show XZ plane</webgl2-toggle>
+    <webgl2-toggle name="scene_xyAxis" [(ngModel)]="scene_xyAxis" (ngModelChange)="onSceneAxisUpdate()">Show XY plane</webgl2-toggle>
+    <webgl2-toggle name="scene_yzAxis" [(ngModel)]="scene_yzAxis" (ngModelChange)="onSceneAxisUpdate()">Show YZ plane</webgl2-toggle>
   </webgl2-foldable-section>
 
   <webgl2-foldable-section title="Camera" [open]="getUiModel('cameraOpen')" (openStateChanged)="setUiModel('cameraOpen', $event); uiModelChanged()">

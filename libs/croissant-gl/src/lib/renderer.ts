@@ -46,10 +46,11 @@ class Renderer {
             this.renderFrame();
         }, 1000 / RENDERER_UPDATE_RATE);
     }
-    enableAxes(x: boolean, y: boolean, z: boolean) {
-        this.visiblePlanes[0] = x;
-        this.visiblePlanes[1] = y;
-        this.visiblePlanes[2] = z;
+
+    enableAxes(xz: boolean, xy: boolean, yz: boolean) {
+        this.visiblePlanes[0] = xz;
+        this.visiblePlanes[1] = xy;
+        this.visiblePlanes[2] = yz;
         this.dirty = true;
     }
     private renderFrame() {
@@ -97,38 +98,125 @@ class Renderer {
         }
     }
     private setupPlanes() {
-        const size = 100;
-        const vao = new VertexArrayObject();
 
-        const indices: number[] = [
-            0, 1,
-            1, 2,
-            2, 3,
-            3, 0
-        ];
+        const cols = 12;
+        const rows = 12;
+        const size = 200;
+        const offset = size / 2;
 
-        // generate x axis
-        const xAxisVertices: Vertex[] = [
-            new Vertex([ -size / 2, 0, -size / 2 ], [ 1, 0, 0 ]),
-            new Vertex([ size / 2, 0, -size / 2 ], [ 1, 0, 0 ]),
-            new Vertex([ size / 2, 0, size / 2 ], [ 1, 0, 0 ]),
-            new Vertex([ -size / 2, 0, size / 2 ], [ 1, 0, 0 ]),
-        ];
-        const xAxisVao = new VertexArrayObject();
-        xAxisVao.addVertices(xAxisVertices);
-        xAxisVao.addIndices(indices);
-        this.planes.push(xAxisVao);
+        // generate xz axis
+        const xzAxisVao = new VertexArrayObject();
+        const xzAxisVertices: Vertex[] = [];
+        const xzAxisIndices: number[] = [];
+
+        for (let z = 0; z < rows + 1; z++) {
+            xzAxisVertices.push(
+                new Vertex([ -offset, 0, z * (size / rows) - offset ], [ 1, 0, 0 ]),
+                new Vertex([ size - offset, 0, z * (size / rows) - offset ], [ 1, 0, 0 ])
+            );
+            const indexOffset = xzAxisIndices.length;
+            xzAxisIndices.push(indexOffset, 1 + indexOffset);
+        }
+        for (let x = 0; x < cols + 1; x++) {
+            xzAxisVertices.push(
+                new Vertex([ x * (size / rows) - offset, 0, -offset ], [ 1, 0, 0 ]),
+                new Vertex([ x * (size / rows) - offset, 0, size - offset ], [ 1, 0, 0 ])
+            );
+            const indexOffset = xzAxisIndices.length;
+            xzAxisIndices.push(indexOffset, 1 + indexOffset);
+        }
+        xzAxisVao.addVertices(xzAxisVertices);
+        xzAxisVao.addIndices(xzAxisIndices);
+        this.planes.push(xzAxisVao);
+
+        // generate xy axis
+        const xyAxisVao = new VertexArrayObject();
+        const xyAxisVertices: Vertex[] = [];
+        const xyAxisIndices: number[] = [];
+
+        for (let y = 0; y < rows + 1; y++) {
+            xyAxisVertices.push(
+                new Vertex([ -offset, y * (size / rows) - offset, 0 ], [ 0, 1, 0 ]),
+                new Vertex([ size - offset, y * (size / rows) - offset, 0 ], [ 0, 1, 0 ])
+            );
+            const indexOffset = xyAxisIndices.length;
+            xyAxisIndices.push(indexOffset, 1 + indexOffset);
+        }
+        for (let x = 0; x < cols + 1; x++) {
+            xyAxisVertices.push(
+                new Vertex([ x * (size / rows) - offset, -offset, 0 ], [ 0, 1, 0 ]),
+                new Vertex([ x * (size / rows) - offset, size - offset, 0 ], [ 0, 1, 0 ])
+            );
+            const indexOffset = xyAxisIndices.length;
+            xyAxisIndices.push(indexOffset, 1 + indexOffset);
+        }
+        xyAxisVao.addVertices(xyAxisVertices);
+        xyAxisVao.addIndices(xyAxisIndices);
+        this.planes.push(xyAxisVao);
+
+        // generate yz axis
+        const yzAxisVao = new VertexArrayObject();
+        const yzAxisVertices: Vertex[] = [];
+        const yzAxisIndices: number[] = [];
+
+        for (let y = 0; y < rows + 1; y++) {
+            yzAxisVertices.push(
+                new Vertex([ 0, -offset, y * (size / rows) - offset ], [ 0, 0, 1 ]),
+                new Vertex([ 0, size - offset, y * (size / rows) - offset ], [ 0, 0, 1 ])
+            );
+            const indexOffset = yzAxisIndices.length;
+            yzAxisIndices.push(indexOffset, 1 + indexOffset);
+        }
+        for (let z = 0; z < cols + 1; z++) {
+            yzAxisVertices.push(
+                new Vertex([ 0, z * (size / rows) - offset, -offset ], [ 0, 0, 1 ]),
+                new Vertex([ 0, z * (size / rows) - offset, size - offset ], [ 0, 0, 1 ])
+            );
+            const indexOffset = yzAxisIndices.length;
+            yzAxisIndices.push(indexOffset, 1 + indexOffset);
+        }
+        yzAxisVao.addVertices(yzAxisVertices);
+        yzAxisVao.addIndices(yzAxisIndices);
+        this.planes.push(yzAxisVao);
+
+        /*
 
         // generate y axis
+
         const yAxisVertices: Vertex[] = [
             new Vertex([ -size / 2, -size / 2, 0 ], [ 0, 1, 0 ]),
             new Vertex([ size / 2, -size / 2, 0 ], [ 0, 1, 0 ]),
             new Vertex([ size / 2, size / 2, 0 ], [ 0, 1, 0 ]),
             new Vertex([ -size / 2, size / 2, 0 ], [ 0, 1, 0 ]),
         ];
+
+        const yAxisVertices: Vertex[] = [];
+        const yAxisIndices: number[] = [];
         const yAxisVao = new VertexArrayObject();
+
+        for (let y = 0; y < rows + 1; y++) {
+
+            xAxisVertices.push(
+                new Vertex([ -offset, 0, y * (size / rows) - offset ], [ 1, 0, 0 ]),
+                new Vertex([ size - offset, 0, y * (size / rows) - offset ], [ 1, 0, 0 ])
+            );
+            const indexOffset = xAxisIndices.length;
+            xAxisIndices.push(indexOffset, 1 + indexOffset);
+
+        }
+        for (let x = 0; x < cols + 1; x++) {
+
+            xAxisVertices.push(
+                new Vertex([ x * (size / rows) - offset, 0, -offset ], [ 1, 0, 0 ]),
+                new Vertex([ x * (size / rows) - offset, 0, size - offset ], [ 1, 0, 0 ])
+            );
+            const indexOffset = xAxisIndices.length;
+            xAxisIndices.push(indexOffset, 1 + indexOffset);
+
+        }
+
         yAxisVao.addVertices(yAxisVertices);
-        yAxisVao.addIndices(indices);
+        yAxisVao.addIndices(yAxisIndices);
         this.planes.push(yAxisVao);
 
         // generate z axis
@@ -143,7 +231,6 @@ class Renderer {
         zAxisVao.addIndices(indices);
         this.planes.push(zAxisVao);
 
-        /*
       // should be even
       const cols = 6;
       const rows = 6;
