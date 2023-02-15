@@ -10,9 +10,9 @@ Root API to access core functionalities
 ### `bootstrap(canvas: HTMLCanvasElement): void`
 Bootstraps renderer to provided canvas and starts the renderer.
 #### Arguments
-Name | Type  | Description                             | Default value
---- |-------|-----------------------------------------| ---
-canvas | `HTMLCanvasElement` | Canvas to bootstrap renderer context to | `n/a`
+| Name    | Type  | Description                             | Default value |
+|---------|-------|-----------------------------------------| --- |
+| canvas  | `HTMLCanvasElement` | Canvas to bootstrap renderer context to | `n/a` |
 
 ### `stop(): void`
 Stops renderer. The renderer context is not cleared, only rendering to canvas to suspended.
@@ -26,10 +26,10 @@ Returns `boolean` indicating whether or not is rendering context ready.
 ### `on(eventType: EventType, callback: () => void): void`
 Adds event listener that fires on renderer event
 #### Arguments
-Name | Type                  | Description                | Default value
---- |-----------------------|----------------------------| ---
-eventType | [`EventType`](#Types) | Type of event to listen to | `n/a`
-callback | `() => void`          | Callback to be called when event occurs | `n/a`
+| Name       | Type                  | Description                | Default value |
+|------------|-----------------------|----------------------------| --- |
+| eventType  | [`EventType`](#Types) | Type of event to listen to | `n/a` |
+| callback   | `() => void`          | Callback to be called when event occurs | `n/a` |
 
 ## Debug API
 Debug API used to obtain information about current application state
@@ -43,51 +43,51 @@ API to enable/disable helper scene methods, or other scene-related configuration
 ### `scene.showAxes(showXZ: boolean, showXY: boolean, showYZ: boolean)`
 Enables/disables individual axis planes
 #### Arguments
-Name | Type                  | Description                                          | Default value
---- |-----------------------|------------------------------------------------------| ---
-showXZ | `boolean` | Value indicating if `x-z` axis plane should be shown | `n/a`
-showXY | `boolean` | Value indicating if `x-y` axis plane should be shown | `n/a`
-showYZ | `boolean` | Value indicating if `y-` axis plane should be shown  | `n/a`
+| Name    | Type                  | Description                                          | Default value |
+|---------|-----------------------|------------------------------------------------------| --- |
+| showXZ  | `boolean` | Value indicating if `x-z` axis plane should be shown | `n/a` |
+| showXY  | `boolean` | Value indicating if `x-y` axis plane should be shown | `n/a` |
+| showYZ  | `boolean` | Value indicating if `y-` axis plane should be shown  | `n/a` |
 
 ## Camera API
 API for manipulating camera properties.
 
 ### `camera.translate(translation: vec3): void`
-Changes camera translation by provided value
+Changes camera translation by provided value 
 #### Arguments
-Name | Type   | Description        | Default value
---- |--------|--------------------| ---
-translation | `vec3` | Translation change | `n/a`
+| Name         | Type   | Description        | Default value |
+|--------------|--------|--------------------| --- |
+| translation  | `vec3` | Translation change | `n/a` |
 
 ### `camera.setTranslation(translation: vec3): void`
 Sets camera translation to provided value
 #### Arguments
-Name | Type   | Description            | Default value
---- |--------|------------------------| ---
-translation | `vec3` | New camera translation | `n/a`
+| Name         | Type   | Description            | Default value |
+|--------------|--------|------------------------| --- |
+| translation  | `vec3` | New camera translation | `n/a` |
 
 ### `camera.rotate(rotation: vec3): void`
 Changes camera rotation by provided value
 #### Arguments
-Name | Type   | Description     | Default value
---- |--------|-----------------| ---
-rotation | `vec3` | Rotation change | `n/a`
+| Name      | Type   | Description     | Default value |
+|-----------|--------|-----------------| --- |
+| rotation  | `vec3` | Rotation change | `n/a` |
 
 ### `camera.setRotation(rotation: vec3): void`
 Sets camera rotation to provided value
 #### Arguments
-Name | Type   | Description            | Default value
---- |--------|------------------------| ---
-rotation | `vec3` | New camera rotation | `n/a`
+| Name      | Type   | Description            | Default value |
+|-----------|--------|------------------------| --- |
+| rotation  | `vec3` | New camera rotation | `n/a` |
 
 ### `camera.perspective(fov: number, near: number, far: number): void`
 Re-calculates camera perspective to match provided values
 #### Arguments
-Name | Type     | Description                     | Default value
---- |----------|---------------------------------| ---
-fov | `number` | Camera field of view in degrees | `n/a`
-near | `number` | Near clip plane value           | `n/a`
-far | `number` | Far clip plane value            | `n/a`
+| Name  | Type     | Description                     | Default value |
+|-------|----------|---------------------------------| --- |
+| fov   | `number` | Camera field of view in degrees | `n/a` |
+| near  | `number` | Near clip plane value           | `n/a` |
+| far   | `number` | Far clip plane value            | `n/a` |
 
 ### `camera.info(): CameraInfo`
 Returns information about current state of camera (see [`CameraInfo`](#Types))
@@ -95,16 +95,16 @@ Returns information about current state of camera (see [`CameraInfo`](#Types))
 ### `camera.focalPoint.translate(translation: vec3): void`
 Changes camera's focal point translation by provided value
 #### Arguments
-Name | Type   | Description        | Default value
---- |--------|--------------------| ---
-translation | `vec3` | Translation change | `n/a`
+| Name         | Type   | Description        | Default value |
+|--------------|--------|--------------------| --- |
+| translation  | `vec3` | Translation change | `n/a` |
 
 ### `camera.focalPoint.setTranslation(translation: vec3): void`
 Sets camera's focal point translation to provided value
 #### Arguments
-Name | Type   | Description                 | Default value
---- |--------|-----------------------------| ---
-translation | `vec3` | New focal point translation | `n/a`
+| Name         | Type   | Description                 | Default value |
+|--------------|--------|-----------------------------| --- |
+| translation  | `vec3` | New focal point translation | `n/a` |
 
 ## Object API
 API for creating and manipulating objects
@@ -139,22 +139,22 @@ interface DebugInfo {
 ```ts
 interface CameraInfo {
     
-    // Current camera translation
+    // Camera's translation
     translation: vec3;
     
-    // Current camera rotation
+    // Camera's rotation in degrees
     rotation: vec3;
     
-    // Current camera near clip plane
-    
+    // Camera's near clip plane
     clipNear: number;
-    // Current camera far clip plane
+    
+    // Camera's far clip plane
     clipFar: number;
     
-    // Current camera field of view angle
+    // Camera's field of view angle
     angle: number;
     
-    // Current camera focal point position
+    // Camera's focal point position
     focalPoint: vec3;
     
 }
