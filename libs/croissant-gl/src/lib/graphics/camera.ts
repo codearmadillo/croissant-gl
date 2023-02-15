@@ -14,7 +14,7 @@ class Camera {
   private perspectiveFar = 1000;
   private viewMatrixLocation: WebGLUniformLocation | null = null;
   private projectionMatrixLocation: WebGLUniformLocation | null = null;
-  private readonly viewMatrix: mat4;
+  private viewMatrix: mat4;
   private projectionMatrix: mat4;
   private mode: 'perspective' | 'orthographic' = 'perspective';
   constructor() {
@@ -35,7 +35,6 @@ class Camera {
       // update view
       quat.fromEuler(this.viewRotationQuat, this.viewRotation[0], this.viewRotation[1], this.viewRotation[2]);
       mat4.fromRotationTranslation(this.viewMatrix, this.viewRotationQuat, this.viewTranslation);
-      // update perspective
       if (this.mode === "perspective") {
         this.projectionMatrix = mat4.perspective(mat4.create(), this.perspectiveFov, gl().canvas.width / gl().canvas.height, this.perspectiveNear, this.perspectiveFar);
       } else {
@@ -44,6 +43,27 @@ class Camera {
       // set recalculate flag to false
       this.dirty = false;
     }
+
+    {
+      // PERSPECTIVE
+      const angle = glMatrix.toRadian(45);
+      const near = 0.1;
+      const far = 1000;
+      const aspect = gl().canvas.width / gl().canvas.height;
+      this.projectionMatrix = mat4.perspective(mat4.create(), angle, aspect, near, far);
+
+      // CAMERA
+      const viewRotationQuat = quat.fromEuler(quat.create(), this.viewRotation[0], this.viewRotation[1], this.viewRotation[2]);
+      const viewMatrixFromInput = mat4.fromRotationTranslation(mat4.create(), viewRotationQuat, this.viewTranslation);
+      this.viewMatrix = mat4.lookAt(viewMatrixFromInput, this.viewTranslation, this.focalPointTranslation, [ 0, 1, 0 ]);
+      /*
+      const radius = 200;
+      let cameraMatrix = mat4.fromYRotation(mat4.create(), glMatrix.toRadian(45));
+      cameraMatrix = mat4.fromTranslation(cameraMatrix, this.viewTranslation);
+      this.viewMatrix = mat4.lookAt(mat4.create(), this.viewTranslation, this.focalPointTranslation, [ 0, 1, 0 ]);
+       */
+    }
+
     // update viewport
     gl().viewport(0, 0, gl().canvas.width, gl().canvas.height);
     // push uniforms
