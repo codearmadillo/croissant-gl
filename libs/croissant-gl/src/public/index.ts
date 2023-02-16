@@ -11,6 +11,7 @@ import {CameraInfo} from "../lib/types/camera";
 import {ObjectInfo} from "../lib/types/object";
 import {DebugInfo} from "../lib/types/debug";
 import defaultTasksRunner from "nx/src/tasks-runner/default-tasks-runner";
+import {defaultLight} from "../lib/graphics/light";
 
 /**
  * Bootstraps renderer to provided canvas and starts the renderer.
@@ -48,6 +49,39 @@ export function ready() {
  */
 export function on(eventType: EventType, callback: (...args: any[]) => any) {
   eventBroker.registerCallback(eventType, callback);
+}
+
+export namespace light {
+  /**
+   * Sets color of the light to provided RGB values
+   * @param color RGB values
+   */
+  export function setColor(color: vec3) {
+    defaultLight.setColor(color);
+  }
+
+  /**
+   * Translates light to provided position
+   * @param translation New translation value
+   */
+  export function setTranslation(translation: vec3) {
+    defaultLight.setTranslation(translation);
+  }
+
+  /**
+   * Translates light by provided value
+   * @param translation Translation value
+   */
+  export function translate(translation: vec3) {
+    defaultLight.translate(translation);
+  }
+
+  /**
+   * Returns information about light
+   */
+  export function info() {
+    return defaultLight.info();
+  }
 }
 
 export namespace scene {

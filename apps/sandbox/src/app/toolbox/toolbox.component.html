@@ -4,10 +4,28 @@
     <button class="button w-full" (click)="printDebugInformation()">Print debug information</button>
   </webgl2-foldable-section>
 
+  <webgl2-foldable-section title="Scene" [open]="getUiModel('lightOpen')" (openStateChanged)="setUiModel('lightOpen', $event); uiModelChanged()">
+    <section class="mb-8">
+      <webgl2-range-input fieldName="light_x" label="Light X position" [min]="-100" [max]="100" [step]="1" [(ngModel)]="light_x" (ngModelChange)="onSceneLightChanged()"></webgl2-range-input>
+      <webgl2-range-input fieldName="light_y" label="Light Y position" [min]="10" [max]="200" [step]="1" [(ngModel)]="light_y" (ngModelChange)="onSceneLightChanged()"></webgl2-range-input>
+      <webgl2-range-input fieldName="light_z" label="Light Z position" [min]="-100" [max]="100" [step]="1" [(ngModel)]="light_z" (ngModelChange)="onSceneLightChanged()"></webgl2-range-input>
+    </section>
+    <section>
+      <webgl2-range-input fieldName="light_r" label="Light color R" [min]="0" [max]="255" [step]="1" [(ngModel)]="light_r" (ngModelChange)="onSceneLightChanged()"></webgl2-range-input>
+      <webgl2-range-input fieldName="light_g" label="Light color G" [min]="0" [max]="255" [step]="1" [(ngModel)]="light_g" (ngModelChange)="onSceneLightChanged()"></webgl2-range-input>
+      <webgl2-range-input fieldName="light_b" label="Light color B" [min]="0" [max]="255" [step]="1" [(ngModel)]="light_b" (ngModelChange)="onSceneLightChanged()"></webgl2-range-input>
+    </section>
+    <section class="mb-8">
+
+    </section>
+  </webgl2-foldable-section>
+
   <webgl2-foldable-section title="Scene" [open]="getUiModel('sceneOpen')" (openStateChanged)="setUiModel('sceneOpen', $event); uiModelChanged()">
-    <webgl2-toggle name="scene_xzAxis" [(ngModel)]="scene_xzAxis" (ngModelChange)="onSceneAxisUpdate()">Show XZ plane</webgl2-toggle>
-    <webgl2-toggle name="scene_xyAxis" [(ngModel)]="scene_xyAxis" (ngModelChange)="onSceneAxisUpdate()">Show XY plane</webgl2-toggle>
-    <webgl2-toggle name="scene_yzAxis" [(ngModel)]="scene_yzAxis" (ngModelChange)="onSceneAxisUpdate()">Show YZ plane</webgl2-toggle>
+    <section>
+      <webgl2-toggle name="scene_xzAxis" [(ngModel)]="scene_xzAxis" (ngModelChange)="onSceneAxisUpdate()">Show XZ plane</webgl2-toggle>
+      <webgl2-toggle name="scene_xyAxis" [(ngModel)]="scene_xyAxis" (ngModelChange)="onSceneAxisUpdate()">Show XY plane</webgl2-toggle>
+      <webgl2-toggle name="scene_yzAxis" [(ngModel)]="scene_yzAxis" (ngModelChange)="onSceneAxisUpdate()">Show YZ plane</webgl2-toggle>
+    </section>
   </webgl2-foldable-section>
 
   <webgl2-foldable-section title="Camera" [open]="getUiModel('cameraOpen')" (openStateChanged)="setUiModel('cameraOpen', $event); uiModelChanged()">

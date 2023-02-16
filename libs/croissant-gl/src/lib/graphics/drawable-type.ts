@@ -8,11 +8,13 @@ type TransformableType = {
 
 type DrawableCubeType = TransformableType & {
     type: "cube",
-    size: vec3
+    size: vec3,
+    color: vec3
 }
 type DrawablePlaneType = TransformableType & {
   type: "plane",
-  size: vec2
+  size: vec2,
+  color: vec3
 }
 
 export type DrawableType = DrawableCubeType | DrawablePlaneType;

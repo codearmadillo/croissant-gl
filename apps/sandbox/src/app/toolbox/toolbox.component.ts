@@ -9,6 +9,7 @@ import {ObjectService} from "../services/object.service";
   styleUrls: ['./toolbox.component.scss'],
 })
 export class ToolboxComponent {
+  private readonly MODEL_LIGHT_STORAGE_KEY: string = "ui_light_storage";
   private readonly MODEL_SCENE_STORAGE_KEY: string = "ui_scene_storage";
   private readonly UI_MODEL_STORAGE_KEY: string = "ui_model_storage";
   private readonly MODEL_STORAGE_KEY: string = "model_storage";
@@ -18,7 +19,8 @@ export class ToolboxComponent {
     objectsOpen: true,
     objectsCreateOpen: true,
     objectsListOpen: true,
-    sceneOpen: true
+    sceneOpen: true,
+    lightOpen: true
   }
   private readonly model: CroissantConfiguration = {
     camera_field_of_view: 45,
@@ -47,6 +49,14 @@ export class ToolboxComponent {
   scene_xzAxis = true;
   scene_xyAxis = true;
   scene_yzAxis = true;
+
+  light_x: number;
+  light_y: number;
+  light_z: number;
+
+  light_r: number;
+  light_g: number;
+  light_b: number;
 
   @HostBinding("class") get class() {
     return "box-border relative overflow-hidden";
@@ -98,6 +108,26 @@ export class ToolboxComponent {
       this.scene_yzAxis = sceneModelParsed[2];
       this.onSceneAxisUpdate();
     }
+    // Load lighting
+    const lightModel = localStorage.getItem(this.MODEL_LIGHT_STORAGE_KEY);
+    if (lightModel !== null && lightModel !== undefined) {
+      const lightModelParsed = JSON.parse(lightModel) as number[];
+      this.light_x = lightModelParsed[0];
+      this.light_y = lightModelParsed[1];
+      this.light_z = lightModelParsed[2];
+      this.light_r = lightModelParsed[3];
+      this.light_g = lightModelParsed[4];
+      this.light_b = lightModelParsed[5];
+      this.onSceneLightChanged();
+    } else {
+      const lightFromBackend = croissantGl.light.info();
+      this.light_x = lightFromBackend.translation[0];
+      this.light_y = lightFromBackend.translation[1];
+      this.light_z = lightFromBackend.translation[2];
+      this.light_r = lightFromBackend.color[0];
+      this.light_g = lightFromBackend.color[1];
+      this.light_b = lightFromBackend.color[2];
+    }
   }
 
   setModel(key: string, value: number) {
@@ -134,7 +164,7 @@ export class ToolboxComponent {
         croissantGl.camera.setMode(this.model.camera_perspective ? 'perspective' : 'orthographic');
         break;
     }
-    localStorage.setItem(this.MODEL_STORAGE_KEY, JSON.stringify(this.model));
+    this.saveModelInformation();
   }
 
   setUiModel(key: string, value: any) {
@@ -170,8 +200,18 @@ export class ToolboxComponent {
   }
 
   onSceneAxisUpdate() {
-    localStorage.setItem(this.MODEL_SCENE_STORAGE_KEY, JSON.stringify([ this.scene_xzAxis, this.scene_xyAxis, this.scene_yzAxis ]));
     croissantGl.scene.showAxes(this.scene_xzAxis, this.scene_xyAxis, this.scene_yzAxis);
+    localStorage.setItem(this.MODEL_SCENE_STORAGE_KEY, JSON.stringify([ this.scene_xzAxis, this.scene_xyAxis, this.scene_yzAxis ]));
+  }
+
+  onSceneLightChanged() {
+    croissantGl.light.setTranslation([ this.light_x, this.light_y, this.light_z ]);
+    croissantGl.light.setColor([ this.light_r, this.light_g, this.light_b ]);
+    localStorage.setItem(this.MODEL_LIGHT_STORAGE_KEY, JSON.stringify([ this.light_x, this.light_y, this.light_z, this.light_r, this.light_g, this.light_b ]));
+  }
+
+  private saveModelInformation() {
+    localStorage.setItem(this.MODEL_STORAGE_KEY, JSON.stringify(this.model));
   }
 
   private loadPresets() {

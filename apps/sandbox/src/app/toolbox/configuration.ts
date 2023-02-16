@@ -18,4 +18,5 @@ export interface UiConfiguration {
   objectsCreateOpen: boolean;
   objectsListOpen: boolean;
   sceneOpen: boolean;
+  lightOpen: boolean;
 }

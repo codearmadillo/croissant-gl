@@ -35,5 +35,9 @@ export class VertexArray {
     // Color
     gl().vertexAttribPointer(1, 4, gl().FLOAT, false, Vertex.bytesize, 3 * SizeOf.FLOAT);
     gl().enableVertexAttribArray(1);
+
+    // Normals
+    gl().vertexAttribPointer(2, 3, gl().FLOAT, false, Vertex.bytesize, 7 * SizeOf.FLOAT);
+    gl().enableVertexAttribArray(2);
   }
 }

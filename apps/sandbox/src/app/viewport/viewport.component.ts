@@ -30,9 +30,11 @@ export class ViewportComponent implements AfterViewInit {
       size: [ 32, 32, 32 ],
       position: [ 0, 16, 0 ],
       rotation: [ 0, 0, 0, ],
-      scale: [ 1, 1, 1 ]
+      scale: [ 1, 1, 1 ],
+      color: [ 0.65, 0.65, 0.65 ]
     });
     this.objectService.add(cube);
+
     // start interval
     /*
     setInterval(() => {

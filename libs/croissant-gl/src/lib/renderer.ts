@@ -8,9 +8,11 @@ import {defaultShader} from "./graphics/shader";
 import {defaultCamera} from "./graphics/camera";
 import {objectBroker} from "./object-broker";
 import {objectPropertiesBroker} from "./object-properties-broker";
-import {vec2, vec3} from "gl-matrix";
+import {vec2, vec3, vec4} from "gl-matrix";
+import {defaultLight} from "./graphics/light";
 
 class Renderer {
+
     private dirty = true;
     private _passes = 0;
     private vao: (VertexArrayObject | null)[] = [];
@@ -36,11 +38,12 @@ class Renderer {
     clear(entity: number) {
         this.vao[entity] = null;
     }
-    bootstrap() {
+    async bootstrap() {
         gl().enable(gl().DEPTH_TEST);
         gl().clearColor(1, 1, 1, 1);
         this.setupPlanes();
     }
+
     loop() {
         setInterval(() => {
             this.renderFrame();
@@ -60,7 +63,7 @@ class Renderer {
 
     private renderFrame() {
         // only render frame if camera or any objects are dirty
-        if (!objectPropertiesBroker.isDirty() && !defaultCamera.isDirty() && !this.dirty) {
+        if (!objectPropertiesBroker.isDirty() && !defaultCamera.isDirty() && !defaultLight.isDirty() && !this.dirty) {
             return;
         }
         this.dirty = false;
@@ -71,6 +74,8 @@ class Renderer {
         defaultShader.bind();
         // bind camera
         defaultCamera.bind();
+        // bind light source
+        defaultLight.bind();
         // iterate through objects
         objectBroker.each((entity: number) => {
             if (!objectPropertiesBroker.getEnabled(entity)) {
@@ -98,13 +103,12 @@ class Renderer {
     private getVerticesIndices(type: DrawableType): [ Vertex[], number[] ] {
         switch(type.type) {
             case "cube":
-                return getCubeVerticesIndices(type.size, type.position);
+                return getCubeVerticesIndices(type.size, type.position, type.color);
             case "plane":
-                return getPlaneVerticesIndices(type.size, type.position);
+                return getPlaneVerticesIndices(type.size, type.position, type.color);
         }
     }
     private setupPlanes() {
-
         const transparency = 0.25;
         const cols = 12;
         const rows = 12;
@@ -118,16 +122,16 @@ class Renderer {
 
         for (let z = 0; z < rows + 1; z++) {
             xzAxisVertices.push(
-                new Vertex([ -offset, 0, z * (size / rows) - offset ], [ 1, 0, 0, transparency ]),
-                new Vertex([ size - offset, 0, z * (size / rows) - offset ], [ 1, 0, 0, transparency ])
+                new Vertex([ -offset, 0, z * (size / rows) - offset ], [ 1, 1, 1 ] ,[ 1, 0, 0, transparency ]),
+                new Vertex([ size - offset, 0, z * (size / rows) - offset ], [ 1, 1, 1 ], [ 1, 0, 0, transparency ])
             );
             const indexOffset = xzAxisIndices.length;
             xzAxisIndices.push(indexOffset, 1 + indexOffset);
         }
         for (let x = 0; x < cols + 1; x++) {
             xzAxisVertices.push(
-                new Vertex([ x * (size / rows) - offset, 0, -offset ], [ 1, 0, 0, transparency ]),
-                new Vertex([ x * (size / rows) - offset, 0, size - offset ], [ 1, 0, 0, transparency ])
+                new Vertex([ x * (size / rows) - offset, 0, -offset ], [ 1, 1, 1 ] ,[ 1, 0, 0, transparency ]),
+                new Vertex([ x * (size / rows) - offset, 0, size - offset ], [ 1, 1, 1 ], [ 1, 0, 0, transparency ])
             );
             const indexOffset = xzAxisIndices.length;
             xzAxisIndices.push(indexOffset, 1 + indexOffset);
@@ -143,16 +147,16 @@ class Renderer {
 
         for (let y = 0; y < rows + 1; y++) {
             xyAxisVertices.push(
-                new Vertex([ -offset, y * (size / rows) - offset, 0 ], [ 0, 1, 0, transparency ]),
-                new Vertex([ size - offset, y * (size / rows) - offset, 0 ], [ 0, 1, 0, transparency ])
+                new Vertex([ -offset, y * (size / rows) - offset, 0 ], [ 1, 1, 1 ] ,[ 0, 1, 0, transparency ]),
+                new Vertex([ size - offset, y * (size / rows) - offset, 0 ], [ 1, 1, 1 ], [ 0, 1, 0, transparency ])
             );
             const indexOffset = xyAxisIndices.length;
             xyAxisIndices.push(indexOffset, 1 + indexOffset);
         }
         for (let x = 0; x < cols + 1; x++) {
             xyAxisVertices.push(
-                new Vertex([ x * (size / rows) - offset, -offset, 0 ], [ 0, 1, 0, transparency ]),
-                new Vertex([ x * (size / rows) - offset, size - offset, 0 ], [ 0, 1, 0, transparency ])
+                new Vertex([ x * (size / rows) - offset, -offset, 0 ], [ 1, 1, 1 ] ,[ 0, 1, 0, transparency ]),
+                new Vertex([ x * (size / rows) - offset, size - offset, 0 ], [ 1, 1, 1 ], [ 0, 1, 0, transparency ])
             );
             const indexOffset = xyAxisIndices.length;
             xyAxisIndices.push(indexOffset, 1 + indexOffset);
@@ -168,16 +172,16 @@ class Renderer {
 
         for (let y = 0; y < rows + 1; y++) {
             yzAxisVertices.push(
-                new Vertex([ 0, -offset, y * (size / rows) - offset ], [ 0, 0, 1, transparency ]),
-                new Vertex([ 0, size - offset, y * (size / rows) - offset ], [ 0, 0, 1, transparency ])
+                new Vertex([ 0, -offset, y * (size / rows) - offset ], [ 1, 1, 1 ], [ 0, 0, 1, transparency ]),
+                new Vertex([ 0, size - offset, y * (size / rows) - offset ], [ 1, 1, 1 ], [ 0, 0, 1, transparency ])
             );
             const indexOffset = yzAxisIndices.length;
             yzAxisIndices.push(indexOffset, 1 + indexOffset);
         }
         for (let z = 0; z < cols + 1; z++) {
             yzAxisVertices.push(
-                new Vertex([ 0, z * (size / rows) - offset, -offset ], [ 0, 0, 1, transparency ]),
-                new Vertex([ 0, z * (size / rows) - offset, size - offset ], [ 0, 0, 1, transparency ])
+                new Vertex([ 0, z * (size / rows) - offset, -offset ], [ 1, 1, 1 ], [ 0, 0, 1, transparency ]),
+                new Vertex([ 0, z * (size / rows) - offset, size - offset ], [ 1, 1, 1 ], [ 0, 0, 1, transparency ])
             );
             const indexOffset = yzAxisIndices.length;
             yzAxisIndices.push(indexOffset, 1 + indexOffset);
@@ -185,111 +189,6 @@ class Renderer {
         yzAxisVao.addVertices(yzAxisVertices);
         yzAxisVao.addIndices(yzAxisIndices);
         this.planes.push(yzAxisVao);
-
-        /*
-
-        // generate y axis
-
-        const yAxisVertices: Vertex[] = [
-            new Vertex([ -size / 2, -size / 2, 0 ], [ 0, 1, 0 ]),
-            new Vertex([ size / 2, -size / 2, 0 ], [ 0, 1, 0 ]),
-            new Vertex([ size / 2, size / 2, 0 ], [ 0, 1, 0 ]),
-            new Vertex([ -size / 2, size / 2, 0 ], [ 0, 1, 0 ]),
-        ];
-
-        const yAxisVertices: Vertex[] = [];
-        const yAxisIndices: number[] = [];
-        const yAxisVao = new VertexArrayObject();
-
-        for (let y = 0; y < rows + 1; y++) {
-
-            xAxisVertices.push(
-                new Vertex([ -offset, 0, y * (size / rows) - offset ], [ 1, 0, 0 ]),
-                new Vertex([ size - offset, 0, y * (size / rows) - offset ], [ 1, 0, 0 ])
-            );
-            const indexOffset = xAxisIndices.length;
-            xAxisIndices.push(indexOffset, 1 + indexOffset);
-
-        }
-        for (let x = 0; x < cols + 1; x++) {
-
-            xAxisVertices.push(
-                new Vertex([ x * (size / rows) - offset, 0, -offset ], [ 1, 0, 0 ]),
-                new Vertex([ x * (size / rows) - offset, 0, size - offset ], [ 1, 0, 0 ])
-            );
-            const indexOffset = xAxisIndices.length;
-            xAxisIndices.push(indexOffset, 1 + indexOffset);
-
-        }
-
-        yAxisVao.addVertices(yAxisVertices);
-        yAxisVao.addIndices(yAxisIndices);
-        this.planes.push(yAxisVao);
-
-        // generate z axis
-        const zAxisVertices: Vertex[] = [
-            new Vertex([ 0, -size / 2, -size / 2 ], [ 0, 0, 1 ]),
-            new Vertex([ 0, -size / 2, size / 2 ], [ 0, 0, 1 ]),
-            new Vertex([ 0, size / 2, size / 2 ], [ 0, 0, 1 ]),
-            new Vertex([ 0, size / 2, -size / 2], [ 0, 0, 1 ]),
-        ];
-        const zAxisVao = new VertexArrayObject();
-        zAxisVao.addVertices(zAxisVertices);
-        zAxisVao.addIndices(indices);
-        this.planes.push(zAxisVao);
-
-      // should be even
-      const cols = 6;
-      const rows = 6;
-
-      // generate two dimensional points
-      const points: vec2[] = [];
-      for (let y = -rows / 2; y < rows / 2 + 1; y++) {
-        for (let x = -cols / 2; x < cols / 2 + 1; x++) {
-          points.push([x, y]);
-        }
-      }
-
-      // transform points to actual vertices
-      const vertices: vec3[] = [];
-      const tileSize = 12;
-
-      for (let i = 0; i < points.length; i++) {
-        vertices.push(
-          [ points[i][0] * tileSize, 0, points[i][1] * tileSize ]
-        );
-      }
-
-      // define indices
-      const indices: vec2[] = [];
-
-      // generate indices for columns
-      for (let x = 0; x < cols + 1; x++) {
-        indices.push([ x, 7 * rows + x ]);
-      }
-
-      // generate indices for rows
-      for (let z = 0; z < rows + 1; z++) {
-        indices.push([ z * 7, z * 7 + cols ]);
-      }
-
-      // transform vertex positions into actual vertices
-      const vertexArray = vertices.map((vert) => {
-        return new Vertex(vert, [ 0.55, 0.55, 0.55 ]);
-      });
-
-      // transform index positions into flat index array
-      const indexArray: number[] = [];
-      indices.forEach((indexPair) => indexArray.push(indexPair[0], indexPair[1]));
-
-      // generate vao and add vertices/indices to it
-      const vao = new VertexArrayObject();
-      vao.addVertices(vertexArray);
-      vao.addIndices(indexArray);
-
-      // store the vao
-      this.gridVao = vao;
-         */
     }
 }
 export const renderer = new Renderer();
