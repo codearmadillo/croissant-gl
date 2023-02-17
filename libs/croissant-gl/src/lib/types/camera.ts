@@ -1,0 +1,12 @@
+import {vec3} from "gl-matrix";
+
+export interface CameraInfo {
+    distance: number;
+    orbitAngle: number;
+    height: number;
+    clipNear: number;
+    clipFar: number;
+    fieldOfView: number;
+    focalPoint: vec3;
+    perspective: boolean;
+}
