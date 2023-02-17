@@ -4,7 +4,7 @@
     <button class="button w-full" (click)="printDebugInformation()">Print debug information</button>
   </webgl2-foldable-section>
 
-  <webgl2-foldable-section title="Scene" [open]="getUiModel('lightOpen')" (openStateChanged)="setUiModel('lightOpen', $event); uiModelChanged()">
+  <webgl2-foldable-section title="Light" [open]="getUiModel('lightOpen')" (openStateChanged)="setUiModel('lightOpen', $event); uiModelChanged()">
     <section class="mb-8">
       <webgl2-range-input fieldName="light_x" label="Light X position" [min]="-100" [max]="100" [step]="1" [(ngModel)]="light_x" (ngModelChange)="onSceneLightChanged()"></webgl2-range-input>
       <webgl2-range-input fieldName="light_y" label="Light Y position" [min]="10" [max]="200" [step]="1" [(ngModel)]="light_y" (ngModelChange)="onSceneLightChanged()"></webgl2-range-input>
@@ -14,9 +14,6 @@
       <webgl2-range-input fieldName="light_r" label="Light color R" [min]="0" [max]="255" [step]="1" [(ngModel)]="light_r" (ngModelChange)="onSceneLightChanged()"></webgl2-range-input>
       <webgl2-range-input fieldName="light_g" label="Light color G" [min]="0" [max]="255" [step]="1" [(ngModel)]="light_g" (ngModelChange)="onSceneLightChanged()"></webgl2-range-input>
       <webgl2-range-input fieldName="light_b" label="Light color B" [min]="0" [max]="255" [step]="1" [(ngModel)]="light_b" (ngModelChange)="onSceneLightChanged()"></webgl2-range-input>
-    </section>
-    <section class="mb-8">
-
     </section>
   </webgl2-foldable-section>
 
@@ -30,7 +27,7 @@
 
   <webgl2-foldable-section title="Camera" [open]="getUiModel('cameraOpen')" (openStateChanged)="setUiModel('cameraOpen', $event); uiModelChanged()">
     <section class="mt-3 mb-4">
-      <webgl2-toggle name="camera_perspective" [ngModel]="getModel('camera_perspective')" (ngModelChange)="setModel('camera_perspective', $event ? 1 : 0); modelChanged('camera_perspective')">Perspective mode</webgl2-toggle>
+      <webgl2-toggle [disabled]="true" name="camera_perspective" [ngModel]="getModel('camera_perspective')" (ngModelChange)="setModel('camera_perspective', $event ? 1 : 0); modelChanged('camera_perspective')">Perspective mode</webgl2-toggle>
     </section>
 
     <section class="mb-8">
@@ -52,12 +49,6 @@
     </section>
 
     <button class="button w-full" (click)="resetCameraToDefault()">Reset to default</button>
-  </webgl2-foldable-section>
-
-  <webgl2-foldable-section title="Objects" [open]="getUiModel('objectsOpen')" (openStateChanged)="setUiModel('objectsOpen', $event); uiModelChanged()">
-    <webgl2-foldable-section *ngFor="let object of objectService.objects$ | async" [title]="'Object #' + getObjectId(object)" [open]="true">
-      <webgl2-object-editor [object]="object"></webgl2-object-editor>
-    </webgl2-foldable-section>
   </webgl2-foldable-section>
 
 </section>

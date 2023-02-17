@@ -51,6 +51,9 @@ export function on(eventType: EventType, callback: (...args: any[]) => any) {
   eventBroker.registerCallback(eventType, callback);
 }
 
+/**
+ * Temporary API
+ */
 export namespace light {
   /**
    * Sets color of the light to provided RGB values
@@ -191,6 +194,9 @@ export namespace camera {
   }
 }
 
+/**
+ * Temporary API
+ */
 export namespace object {
   export function create(type: DrawableType): number {
     const entity = objectBroker.create();

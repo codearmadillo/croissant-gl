@@ -14,14 +14,10 @@ import {defaultLight} from "./graphics/light";
 class Renderer {
 
     private dirty = true;
-    private _passes = 0;
     private vao: (VertexArrayObject | null)[] = [];
     private planes: VertexArrayObject[] = [];
     private visiblePlanes: boolean[] = [false, false, false];
-
-    public get passes() {
-        return this._passes;
-    }
+    public passes = 0;
 
     constructor() {
         for (let i = 0; i < MAX_OBJECTS; i++) {
@@ -41,6 +37,7 @@ class Renderer {
     async bootstrap() {
         gl().enable(gl().DEPTH_TEST);
         gl().clearColor(1, 1, 1, 1);
+        gl().lineWidth(1);
         this.setupPlanes();
     }
 
@@ -67,7 +64,7 @@ class Renderer {
             return;
         }
         this.dirty = false;
-        this._passes++;
+        this.passes++;
         // clear buffer
         gl().clear(gl().COLOR_BUFFER_BIT | gl().DEPTH_BUFFER_BIT);
         // bind shader
@@ -93,7 +90,6 @@ class Renderer {
         // unbind uniforms
         objectPropertiesBroker.unbind();
         // render grid
-        gl().lineWidth(1);
         this.planes.forEach((plane, i) => {
             if (this.visiblePlanes[i]) {
                 plane.drawLines();

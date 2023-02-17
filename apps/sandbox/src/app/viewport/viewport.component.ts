@@ -17,15 +17,12 @@ export class ViewportComponent implements AfterViewInit {
     return this.canvasElementRef?.nativeElement as HTMLCanvasElement;
   }
 
-  constructor(private readonly objectService: ObjectService) {
-  }
-
   ngAfterViewInit() {
     croissantGl.bootstrap(this.canvasElement);
     croissantGl.scene.setClearColor([ 12, 16, 21 ]);
     croissantGl.start();
 
-    const cube = croissantGl.object.create({
+    croissantGl.object.create({
       type: "cube",
       size: [ 32, 32, 32 ],
       position: [ 0, 16, 0 ],
@@ -33,14 +30,14 @@ export class ViewportComponent implements AfterViewInit {
       scale: [ 1, 1, 1 ],
       color: [ 0.65, 0.65, 0.65 ]
     });
-    this.objectService.add(cube);
-
-    // start interval
-    /*
-    setInterval(() => {
-      // croissantGl.object.rotate(cube, [ 0, 0.5, 0 ]);
-    }, 1000 / 60);
-     */
+    croissantGl.object.create({
+      type: "plane",
+      size: [ 200, 200 ],
+      position: [ 0, 0, 0 ],
+      rotation: [ 0, 0, 0 ],
+      scale: [ 1, 1, 1 ],
+      color: [ 0.65, 0.65, 0.65 ]
+    });
   }
 
   onEnabledChanged() {
