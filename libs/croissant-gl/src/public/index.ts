@@ -51,3 +51,4 @@ export * as scene from "./scene";
 export * as debug from "./debug";
 export * as camera from "./camera";
 export * as object from "./object";
+export * as texture from "./texture";

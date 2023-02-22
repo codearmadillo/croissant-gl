@@ -12,6 +12,8 @@ import {Camera, CameraInfo} from "./types/camera";
 import {Axis, RendererStatistics} from "./types/renderer";
 import {shaderBroker} from "./shader-broker";
 import {EntityMaterial} from "./types/entity";
+import {textureBroker} from "./brokers/texture-broker";
+import {Texture} from "./types/texture";
 
 class Renderer {
 
@@ -140,7 +142,16 @@ class Renderer {
             const color = material.color;
             gl().uniform3fv(shader.getUniformLocation("u_vertexColor"), color);
 
-            // TODO: Check if material has a texture to bind
+            // Bind texture if any
+            if (material.texture !== null) {
+              // Bind albedo (doesn't always mean it is albedo texture though...)
+              const glTexture = textureBroker.get(material.texture as Texture) as WebGLTexture;
+              if (glTexture !== null) {
+                gl().uniform1i(shader.getUniformLocation("u_textureAlbedo"), glTexture as GLint);
+                gl().activeTexture(gl().TEXTURE0);
+                gl().bindTexture(gl().TEXTURE_2D, glTexture);
+              }
+            }
 
             // Bind light
             defaultLight.bind(shader);
@@ -150,19 +161,23 @@ class Renderer {
             gl().uniformMatrix4fv(shader.getUniformLocation("u_view"), false, view);
             gl().uniformMatrix4fv(shader.getUniformLocation("u_model"), false, this.entityModelMatrix[entity] as mat4);
 
-            // Bind VAO and perform drawcall
+            // Bind VAO and perform draw call
             this.entityVao[entity]?.bind();
             this.entityVao[entity]?.drawElements();
             gl().bindVertexArray(null);
+
+            // Cleanup
+            if (material.texture !== null) {
+              gl().activeTexture(gl().TEXTURE0);
+              gl().bindTexture(gl().TEXTURE_2D, null);
+            }
 
             // Entity was re-rendered - mark it as pristine
             objectPropertiesBroker.entityRendered(entity);
         });
         // render grid
         this.axis.forEach((axis) => {
-           if (axis.enabled) {
-               axis.vao.drawLines();
-           }
+          axis.vao.drawLines();
         });
         // mark renderer as pristine
         this.markAsPristine();
@@ -192,16 +207,16 @@ class Renderer {
 
         for (let z = 0; z < rows + 1; z++) {
             xzAxisVertices.push(
-                new Vertex([ -offset, 0, z * (size / rows) - offset ], [ 1, 1, 1 ] ,[ 1, 0, 0, transparency ]),
-                new Vertex([ size - offset, 0, z * (size / rows) - offset ], [ 1, 1, 1 ], [ 1, 0, 0, transparency ])
+                new Vertex([ -offset, 0, z * (size / rows) - offset ], [ 1, 1, 1 ], [ 0, 0 ]),
+                new Vertex([ size - offset, 0, z * (size / rows) - offset ], [ 1, 1, 1 ], [ 0, 0 ])
             );
             const indexOffset = xzAxisIndices.length;
             xzAxisIndices.push(indexOffset, 1 + indexOffset);
         }
         for (let x = 0; x < cols + 1; x++) {
             xzAxisVertices.push(
-                new Vertex([ x * (size / rows) - offset, 0, -offset ], [ 1, 1, 1 ] ,[ 1, 0, 0, transparency ]),
-                new Vertex([ x * (size / rows) - offset, 0, size - offset ], [ 1, 1, 1 ], [ 1, 0, 0, transparency ])
+                new Vertex([ x * (size / rows) - offset, 0, -offset ], [ 1, 1, 1 ], [ 0, 0 ]),
+                new Vertex([ x * (size / rows) - offset, 0, size - offset ], [ 1, 1, 1 ], [ 0, 0 ])
             );
             const indexOffset = xzAxisIndices.length;
             xzAxisIndices.push(indexOffset, 1 + indexOffset);
@@ -221,16 +236,16 @@ class Renderer {
 
         for (let y = 0; y < rows + 1; y++) {
             xyAxisVertices.push(
-                new Vertex([ -offset, y * (size / rows) - offset, 0 ], [ 1, 1, 1 ] ,[ 0, 1, 0, transparency ]),
-                new Vertex([ size - offset, y * (size / rows) - offset, 0 ], [ 1, 1, 1 ], [ 0, 1, 0, transparency ])
+                new Vertex([ -offset, y * (size / rows) - offset, 0 ], [ 1, 1, 1 ], [ 0, 0 ]),
+                new Vertex([ size - offset, y * (size / rows) - offset, 0 ], [ 1, 1, 1 ], [ 0, 0 ])
             );
             const indexOffset = xyAxisIndices.length;
             xyAxisIndices.push(indexOffset, 1 + indexOffset);
         }
         for (let x = 0; x < cols + 1; x++) {
             xyAxisVertices.push(
-                new Vertex([ x * (size / rows) - offset, -offset, 0 ], [ 1, 1, 1 ] ,[ 0, 1, 0, transparency ]),
-                new Vertex([ x * (size / rows) - offset, size - offset, 0 ], [ 1, 1, 1 ], [ 0, 1, 0, transparency ])
+                new Vertex([ x * (size / rows) - offset, -offset, 0 ], [ 1, 1, 1 ], [ 0, 0 ]),
+                new Vertex([ x * (size / rows) - offset, size - offset, 0 ], [ 1, 1, 1 ], [ 0, 0 ])
             );
             const indexOffset = xyAxisIndices.length;
             xyAxisIndices.push(indexOffset, 1 + indexOffset);
@@ -250,16 +265,16 @@ class Renderer {
 
         for (let y = 0; y < rows + 1; y++) {
             yzAxisVertices.push(
-                new Vertex([ 0, -offset, y * (size / rows) - offset ], [ 1, 1, 1 ], [ 0, 0, 1, transparency ]),
-                new Vertex([ 0, size - offset, y * (size / rows) - offset ], [ 1, 1, 1 ], [ 0, 0, 1, transparency ])
+                new Vertex([ 0, -offset, y * (size / rows) - offset ], [ 1, 1, 1 ], [ 0, 0 ]),
+                new Vertex([ 0, size - offset, y * (size / rows) - offset ], [ 1, 1, 1 ], [ 0, 0 ])
             );
             const indexOffset = yzAxisIndices.length;
             yzAxisIndices.push(indexOffset, 1 + indexOffset);
         }
         for (let z = 0; z < cols + 1; z++) {
             yzAxisVertices.push(
-                new Vertex([ 0, z * (size / rows) - offset, -offset ], [ 1, 1, 1 ], [ 0, 0, 1, transparency ]),
-                new Vertex([ 0, z * (size / rows) - offset, size - offset ], [ 1, 1, 1 ], [ 0, 0, 1, transparency ])
+                new Vertex([ 0, z * (size / rows) - offset, -offset ], [ 1, 1, 1 ], [ 0, 0 ]),
+                new Vertex([ 0, z * (size / rows) - offset, size - offset ], [ 1, 1, 1 ], [ 0, 0 ])
             );
             const indexOffset = yzAxisIndices.length;
             yzAxisIndices.push(indexOffset, 1 + indexOffset);

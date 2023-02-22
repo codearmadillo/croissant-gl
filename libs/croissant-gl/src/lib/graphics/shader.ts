@@ -10,6 +10,9 @@ in vec4 v_Color;
 in vec3 v_Normal;
 in vec3 v_LightPosition;
 in vec3 v_LightColor;
+in vec2 v_textureCoordinates;
+
+uniform sampler2D u_textureAlbedo;
 
 // Fragment position in world-space without view/projection
 in vec3 v_FragPos;
@@ -37,8 +40,8 @@ void main() {
 
 const vertexShaderSource = `#version 300 es
 layout (location = 0) in vec4 a_Position;
-layout (location = 1) in vec4 a_Color;
-layout (location = 2) in vec3 a_Normal;
+layout (location = 1) in vec3 a_Normal;
+layout (location = 2) in vec2 a_TextureCoords;
 
 uniform mat4 u_model;
 uniform mat4 u_view;
@@ -52,6 +55,7 @@ out vec3 v_Normal;
 out vec3 v_FragPos;
 out vec3 v_LightPosition;
 out vec3 v_LightColor;
+out vec2 v_textureCoordinates;
 
 void main() {
   v_Color = vec4(u_vertexColor, 1.0);
@@ -59,6 +63,7 @@ void main() {
   v_Normal = a_Normal;
   v_LightPosition = u_lightPosition;
   v_LightColor = u_lightColor;
+  v_textureCoordinates = a_TextureCoords;
 
   gl_Position = u_projection * u_view * u_model * vec4(a_Position.xyz, 1.0);
 }

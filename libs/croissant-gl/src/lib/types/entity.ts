@@ -1,5 +1,6 @@
 import {quat, vec3} from "gl-matrix";
 import {ShaderType} from "./graphics";
+import {Texture} from "./texture";
 
 
 export interface EntityTransform {
@@ -11,6 +12,7 @@ export interface EntityTransform {
 export interface EntityMaterial {
     color: vec3;
     shader: ShaderType;
+    texture?: Texture | null;
 }
 export interface EntityMeta {
     type: string;

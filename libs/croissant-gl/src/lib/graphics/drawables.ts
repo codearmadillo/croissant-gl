@@ -1,4 +1,3 @@
-import {DrawableType} from "./drawable-type";
 import {Vertex} from "../types/graphics";
 import {vec2, vec3} from "gl-matrix";
 
@@ -6,35 +5,35 @@ export function getCubeVerticesIndices(size: vec3, position: vec3, color: vec3):
   return [
     [
       // bottom
-      new Vertex([ -size[0] / 2 + position[0], -size[1] / 2 + position[1],  -size[2] / 2 + position[2] ], [ 0, -1, 0 ], [ color[0], color[1], color[2], 1 ] ),
-      new Vertex([ size[0] / 2 + position[0],  -size[1] / 2 + position[1],  -size[2] / 2 + position[2] ], [ 0, -1, 0 ], [ color[0], color[1], color[2], 1 ] ),
-      new Vertex([ size[0] / 2 + position[0],  -size[1] / 2 + position[1],  size[2] / 2 + position[2] ], [ 0, -1, 0 ], [ color[0], color[1], color[2], 1 ] ),
-      new Vertex([ -size[0] / 2 + position[0], -size[1] / 2 + position[1],  size[2] / 2 + position[2] ], [ 0, -1, 0 ], [ color[0], color[1], color[2], 1 ] ),
+      new Vertex([ -size[0] / 2 + position[0], -size[1] / 2 + position[1],  -size[2] / 2 + position[2] ], [ 0, -1, 0 ], [ 0, 0 ]),
+      new Vertex([ size[0] / 2 + position[0],  -size[1] / 2 + position[1],  -size[2] / 2 + position[2] ], [ 0, -1, 0 ], [ 1, 0 ]),
+      new Vertex([ size[0] / 2 + position[0],  -size[1] / 2 + position[1],  size[2] / 2 + position[2] ], [ 0, -1, 0 ], [ 1, 1 ]),
+      new Vertex([ -size[0] / 2 + position[0], -size[1] / 2 + position[1],  size[2] / 2 + position[2] ], [ 0, -1, 0 ], [ 0, 1 ]),
       // top
-      new Vertex([ -size[0] / 2 + position[0], size[1] / 2 + position[1],  -size[2] / 2 + position[2] ], [ 0, 1, 0 ], [ color[0], color[1], color[2], 1 ] ),
-      new Vertex([ size[0] / 2 + position[0],  size[1] / 2 + position[1],   -size[2] / 2 + position[2] ], [ 0, 1, 0 ], [ color[0], color[1], color[2], 1 ] ),
-      new Vertex([ size[0] / 2 + position[0],  size[1] / 2 + position[1],   size[2] / 2 + position[2] ], [ 0, 1, 0 ], [ color[0], color[1], color[2], 1 ] ),
-      new Vertex([ -size[0] / 2 + position[0], size[1] / 2 + position[1],   size[2] / 2 + position[2] ], [ 0, 1, 0 ], [ color[0], color[1], color[2], 1 ] ),
+      new Vertex([ -size[0] / 2 + position[0], size[1] / 2 + position[1],  -size[2] / 2 + position[2] ], [ 0, 1, 0 ], [ 0, 0 ]),
+      new Vertex([ size[0] / 2 + position[0],  size[1] / 2 + position[1],   -size[2] / 2 + position[2] ], [ 0, 1, 0 ], [ 1, 0 ]),
+      new Vertex([ size[0] / 2 + position[0],  size[1] / 2 + position[1],   size[2] / 2 + position[2] ], [ 0, 1, 0 ], [ 1, 1 ]),
+      new Vertex([ -size[0] / 2 + position[0], size[1] / 2 + position[1],   size[2] / 2 + position[2] ], [ 0, 1, 0 ], [ 0, 1 ]),
       // left
-      new Vertex([ -size[0] / 2 + position[0], -size[1] / 2 + position[1],  -size[2] / 2 + position[2] ], [ -1, 0, 0 ], [ color[0], color[1], color[2], 1 ] ),
-      new Vertex([ -size[0] / 2 + position[0], -size[1] / 2 + position[1],  size[2] / 2 + position[2] ], [ -1, 0, 0 ], [ color[0], color[1], color[2], 1 ] ),
-      new Vertex([ -size[0] / 2 + position[0], size[1] / 2 + position[1],   size[2] / 2 + position[2] ], [ -1, 0, 0 ], [ color[0], color[1], color[2], 1 ] ),
-      new Vertex([ -size[0] / 2 + position[0], size[1] / 2 + position[1],  -size[2] / 2 + position[2] ], [ -1, 0, 0 ], [ color[0], color[1], color[2], 1 ] ),
+      new Vertex([ -size[0] / 2 + position[0], -size[1] / 2 + position[1],  -size[2] / 2 + position[2] ], [ -1, 0, 0 ], [ 0, 0 ]),
+      new Vertex([ -size[0] / 2 + position[0], -size[1] / 2 + position[1],  size[2] / 2 + position[2] ], [ -1, 0, 0 ], [ 1, 0 ]),
+      new Vertex([ -size[0] / 2 + position[0], size[1] / 2 + position[1],   size[2] / 2 + position[2] ], [ -1, 0, 0 ], [ 1, 1 ]),
+      new Vertex([ -size[0] / 2 + position[0], size[1] / 2 + position[1],  -size[2] / 2 + position[2] ], [ -1, 0, 0 ], [ 0, 1 ]),
       // right
-      new Vertex([ size[0] / 2 + position[0], -size[1] / 2 + position[1],  -size[2] / 2 + position[2] ], [ 1, 0, 0 ], [ color[0], color[1], color[2], 1 ] ),
-      new Vertex([ size[0] / 2 + position[0], -size[1] / 2 + position[1],  size[2] / 2 + position[2] ], [ 1, 0, 0 ], [ color[0], color[1], color[2], 1 ] ),
-      new Vertex([ size[0] / 2 + position[0], size[1] / 2 + position[1],   size[2] / 2 + position[2] ], [ 1, 0, 0 ], [ color[0], color[1], color[2], 1 ] ),
-      new Vertex([ size[0] / 2 + position[0], size[1] / 2 + position[1],  -size[2] / 2 + position[2] ], [ 1, 0, 0 ], [ color[0], color[1], color[2], 1 ] ),
+      new Vertex([ size[0] / 2 + position[0], -size[1] / 2 + position[1],  -size[2] / 2 + position[2] ], [ 1, 0, 0 ], [ 0, 0 ]),
+      new Vertex([ size[0] / 2 + position[0], -size[1] / 2 + position[1],  size[2] / 2 + position[2] ], [ 1, 0, 0 ], [ 1, 0 ]),
+      new Vertex([ size[0] / 2 + position[0], size[1] / 2 + position[1],   size[2] / 2 + position[2] ], [ 1, 0, 0 ], [ 1, 1 ]),
+      new Vertex([ size[0] / 2 + position[0], size[1] / 2 + position[1],  -size[2] / 2 + position[2] ], [ 1, 0, 0 ], [ 0, 1 ]),
       // front
-      new Vertex([ -size[0] / 2 + position[0], -size[1] / 2 + position[1],  -size[2] / 2 + position[2] ], [ 0, 0, -1 ], [ color[0], color[1], color[2], 1 ] ),
-      new Vertex([ size[0] / 2 + position[0],  -size[1] / 2 + position[1],  -size[2] / 2 + position[2] ], [ 0, 0, -1 ], [ color[0], color[1], color[2], 1 ] ),
-      new Vertex([ size[0] / 2 + position[0],  size[1] / 2 + position[1],   -size[2] / 2 + position[2] ], [ 0, 0, -1 ], [ color[0], color[1], color[2], 1 ] ),
-      new Vertex([ -size[0] / 2 + position[0], size[1] / 2 + position[1],  -size[2] / 2 + position[2] ], [ 0, 0, -1 ], [ color[0], color[1], color[2], 1 ] ),
+      new Vertex([ -size[0] / 2 + position[0], -size[1] / 2 + position[1],  -size[2] / 2 + position[2] ], [ 0, 0, -1 ], [ 0, 0 ]),
+      new Vertex([ size[0] / 2 + position[0],  -size[1] / 2 + position[1],  -size[2] / 2 + position[2] ], [ 0, 0, -1 ], [ 1, 0 ]),
+      new Vertex([ size[0] / 2 + position[0],  size[1] / 2 + position[1],   -size[2] / 2 + position[2] ], [ 0, 0, -1 ], [ 1, 1 ]),
+      new Vertex([ -size[0] / 2 + position[0], size[1] / 2 + position[1],  -size[2] / 2 + position[2] ], [ 0, 0, -1 ], [ 0, 1 ]),
       // back
-      new Vertex([ -size[0] / 2 + position[0], -size[1] / 2 + position[1],  size[2] / 2 + position[2] ], [ 0, 0, 1 ], [ color[0], color[1], color[2], 1 ] ),
-      new Vertex([ size[0] / 2 + position[0],  -size[1] / 2 + position[1],  size[2] / 2 + position[2] ], [ 0, 0, 1 ], [ color[0], color[1], color[2], 1 ] ),
-      new Vertex([ size[0] / 2 + position[0],  size[1] / 2 + position[1],   size[2] / 2 + position[2] ], [ 0, 0, 1 ], [ color[0], color[1], color[2], 1 ] ),
-      new Vertex([ -size[0] / 2 + position[0], size[1] / 2 + position[1],  size[2] / 2 + position[2] ], [ 0, 0, 1 ], [ color[0], color[1], color[2], 1 ] ),
+      new Vertex([ -size[0] / 2 + position[0], -size[1] / 2 + position[1],  size[2] / 2 + position[2] ], [ 0, 0, 1 ], [ 0, 0 ]),
+      new Vertex([ size[0] / 2 + position[0],  -size[1] / 2 + position[1],  size[2] / 2 + position[2] ], [ 0, 0, 1 ], [ 1, 0 ]),
+      new Vertex([ size[0] / 2 + position[0],  size[1] / 2 + position[1],   size[2] / 2 + position[2] ], [ 0, 0, 1 ], [ 1, 1 ]),
+      new Vertex([ -size[0] / 2 + position[0], size[1] / 2 + position[1],  size[2] / 2 + position[2] ], [ 0, 0, 1 ], [ 0, 1 ]),
     ],
     [
       // bottom
@@ -63,10 +62,10 @@ export function getPlaneVerticesIndices(size: vec2, position: vec3, color: vec3)
 
   return [
     [
-      new Vertex([ -size[0] / 2 + position[0], position[1],  -size[1] / 2 + position[1] ], [ 0, 1, 0 ], [ color[0], color[1], color[2], 1.0 ]),
-      new Vertex([ size[0] / 2 + position[0],  position[1],  -size[1] / 2 + position[1] ], [ 0, 1, 0 ], [ color[0], color[1], color[2], 1.0 ]),
-      new Vertex([ size[0] / 2 + position[0],  position[1],  size[1] / 2 + position[1] ], [ 0, 1, 0 ], [ color[0], color[1], color[2], 1.0 ]),
-      new Vertex([ -size[0] / 2 + position[0], position[1],  size[1] / 2 + position[1] ], [ 0, 1, 0 ], [ color[0], color[1], color[2], 1.0 ]),
+      new Vertex([ -size[0] / 2 + position[0], position[1],  -size[1] / 2 + position[1] ], [ 0, 1, 0 ], [ 0, 0 ]),
+      new Vertex([ size[0] / 2 + position[0],  position[1],  -size[1] / 2 + position[1] ], [ 0, 1, 0 ], [ 1, 0 ]),
+      new Vertex([ size[0] / 2 + position[0],  position[1],  size[1] / 2 + position[1] ], [ 0, 1, 0 ], [ 1, 1 ]),
+      new Vertex([ -size[0] / 2 + position[0], position[1],  size[1] / 2 + position[1] ], [ 0, 1, 0 ], [ 0, 1 ]),
     ],
     [
       0, 1, 2,

@@ -1,6 +1,6 @@
 import { SizeOf } from "./sizeof";
 import * as glMatrix from 'gl-matrix';
-import {vec3} from "gl-matrix";
+import {vec2, vec3} from "gl-matrix";
 
 export enum ShaderType {
   OBJECT_SHADER
@@ -14,30 +14,30 @@ export interface ShaderProgram {
 }
 
 export class Vertex {
-  readonly position: glMatrix.vec3;
-  readonly color: glMatrix.vec4;
-  readonly normals: glMatrix.vec3;
+  readonly position: vec3;
+  readonly normals: vec3;
+  readonly textureCoordinates: vec2;
 
   // Float size of vector
   static get size() {
-    return 10;
+    return 8;
   }
 
   static get bytesize() {
     return this.size * SizeOf.FLOAT;
   }
 
-  constructor(position: glMatrix.vec3, normals: vec3, color: glMatrix.vec4 = [ 0.65, 0.65, 0.65, 1.0 ]) {
+  constructor(position: vec3, normals: vec3, textureCoordinates: vec2) {
     this.position = position;
-    this.color = color;
     this.normals = normals;
+    this.textureCoordinates = textureCoordinates;
   }
 
   serialize(): number[] {
     return [
       ...this.position,
-      ...this.color,
-      ...this.normals
+      ...this.normals,
+      ...this.textureCoordinates
     ]
   }
 }

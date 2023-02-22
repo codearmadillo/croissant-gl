@@ -4,6 +4,7 @@ import {objectPropertiesBroker} from "../lib/object-properties-broker";
 import {renderer} from "../lib/renderer";
 import {ObjectInfo} from "../lib/types/object";
 import {vec3} from "gl-matrix";
+import {Texture} from "../lib/types/texture";
 
 export function create(type: DrawableType): number {
     const entity = objectBroker.create();
@@ -46,4 +47,7 @@ export function enable(object: number) {
 }
 export function disable(object: number) {
     objectPropertiesBroker.disable(object);
+}
+export function setTexture(object: number, texture: Texture | null) {
+    objectPropertiesBroker.setMaterialTexture(object, texture);
 }

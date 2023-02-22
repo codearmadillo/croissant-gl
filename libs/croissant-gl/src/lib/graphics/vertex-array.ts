@@ -32,12 +32,12 @@ export class VertexArray {
     gl().vertexAttribPointer(0, 3, gl().FLOAT, false, Vertex.bytesize, 0);
     gl().enableVertexAttribArray(0);
 
-    // Color
-    gl().vertexAttribPointer(1, 4, gl().FLOAT, false, Vertex.bytesize, 3 * SizeOf.FLOAT);
+    // Normals
+    gl().vertexAttribPointer(1, 3, gl().FLOAT, false, Vertex.bytesize, 3 * SizeOf.FLOAT);
     gl().enableVertexAttribArray(1);
 
-    // Normals
-    gl().vertexAttribPointer(2, 3, gl().FLOAT, false, Vertex.bytesize, 7 * SizeOf.FLOAT);
+    // Texture Coordinates
+    gl().vertexAttribPointer(2, 2, gl().FLOAT, false, Vertex.bytesize, 6 * SizeOf.FLOAT);
     gl().enableVertexAttribArray(2);
   }
 }

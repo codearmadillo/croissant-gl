@@ -3,6 +3,7 @@ import {quat, vec3} from "gl-matrix";
 import {MAX_OBJECTS} from "./constants";
 import {EntityMaterial, EntityMeta, EntityTransform} from "./types/entity";
 import {ShaderType} from "./types/graphics";
+import {Texture} from "./types/texture";
 
 class ObjectPropertiesBroker {
     private entityTransform: (EntityTransform | null)[] = [];
@@ -135,6 +136,12 @@ class ObjectPropertiesBroker {
             return null;
         }
         return this.entityMaterial[entity]!;
+    }
+    setMaterialTexture(entity: number, texture: Texture | null) {
+      if (this.entityMaterial[entity] === null) {
+        return;
+      }
+      this.entityMaterial[entity]!.texture = texture;
     }
     isEntityEnabled(entity: number) {
         return this.entityMeta[entity]!.enabled ?? false;
