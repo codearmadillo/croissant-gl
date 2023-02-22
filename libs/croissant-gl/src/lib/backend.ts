@@ -1,5 +1,4 @@
 import {gl, WebGL2} from "./graphics/context";
-import { defaultCamera} from "./graphics/camera";
 import {defaultShader} from "./graphics/shader";
 import {Drawable} from "./types/drawable";
 import {renderer} from "./renderer";
@@ -19,8 +18,6 @@ class CroissantBackend {
     WebGL2.setContextFromCanvas(canvas);
     // initialize shader
     defaultShader.bootstrap();
-    // initialize camera
-    defaultCamera.bootstrap();
     // initialize renderer
     renderer.bootstrap();
     // frame

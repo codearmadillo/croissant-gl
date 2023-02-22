@@ -29,7 +29,6 @@ export class ToolboxComponent {
     camera_focalPoint_x: 0,
     camera_focalPoint_y: 0,
     camera_focalPoint_z: 0,
-    camera_perspective: 1,
     camera_distance: 0,
     camera_orbit_angle: 0,
     camera_height: 0,
@@ -41,7 +40,6 @@ export class ToolboxComponent {
     camera_focalPoint_x: 0,
     camera_focalPoint_y: 0,
     camera_focalPoint_z: 0,
-    camera_perspective: 1,
     camera_distance: 0,
     camera_orbit_angle: 0,
     camera_height: 0,
@@ -72,7 +70,6 @@ export class ToolboxComponent {
       this.defaultModel.camera_focalPoint_x = info.focalPoint[0];
       this.defaultModel.camera_focalPoint_y = info.focalPoint[1];
       this.defaultModel.camera_focalPoint_z = info.focalPoint[2];
-      this.defaultModel.camera_perspective = info.perspective ? 1 : 0;
       this.defaultModel.camera_distance = info.distance;
       this.defaultModel.camera_orbit_angle = info.orbitAngle;
       this.defaultModel.camera_height = info.height;
@@ -89,7 +86,6 @@ export class ToolboxComponent {
       this.model.camera_focalPoint_x = info.focalPoint[0];
       this.model.camera_focalPoint_y = info.focalPoint[1];
       this.model.camera_focalPoint_z = info.focalPoint[2];
-      this.model.camera_perspective = info.perspective ? 1 : 0;
       this.model.camera_distance = info.distance;
       this.model.camera_orbit_angle = info.orbitAngle;
       this.model.camera_height = info.height;
@@ -149,7 +145,7 @@ export class ToolboxComponent {
         croissantGl.camera.setHeight(this.model.camera_height);
         break;
       case "camera_field_of_view":
-        croissantGl.camera.setPerspectiveFieldOfView(this.model.camera_field_of_view);
+        croissantGl.camera.setFieldOfView(this.model.camera_field_of_view);
         break;
       case "camera_near":
       case "camera_far":
@@ -158,10 +154,7 @@ export class ToolboxComponent {
       case "camera_focalPoint_x":
       case "camera_focalPoint_y":
       case "camera_focalPoint_z":
-        croissantGl.camera.focalPoint.setTranslation([this.model.camera_focalPoint_x, this.model.camera_focalPoint_y, this.model.camera_focalPoint_z]);
-        break;
-      case "camera_perspective":
-        croissantGl.camera.setMode(this.model.camera_perspective ? 'perspective' : 'orthographic');
+        croissantGl.camera.setFocusPointTranslation([this.model.camera_focalPoint_x, this.model.camera_focalPoint_y, this.model.camera_focalPoint_z]);
         break;
     }
     this.saveModelInformation();
@@ -190,7 +183,6 @@ export class ToolboxComponent {
     this.model.camera_focalPoint_x = this.defaultModel.camera_focalPoint_x;
     this.model.camera_focalPoint_y = this.defaultModel.camera_focalPoint_y;
     this.model.camera_focalPoint_z = this.defaultModel.camera_focalPoint_z;
-    this.model.camera_perspective = this.defaultModel.camera_perspective;
 
     this.loadPresets();
   }
@@ -215,9 +207,9 @@ export class ToolboxComponent {
   }
 
   private loadPresets() {
-    croissantGl.camera.focalPoint.setTranslation([this.model.camera_focalPoint_x, this.model.camera_focalPoint_y, this.model.camera_focalPoint_z]);
+    croissantGl.camera.setFocusPointTranslation([this.model.camera_focalPoint_x, this.model.camera_focalPoint_y, this.model.camera_focalPoint_z]);
     croissantGl.camera.setClipPlanes(this.model.camera_near, this.model.camera_far);
-    croissantGl.camera.setPerspectiveFieldOfView(this.model.camera_field_of_view);
+    croissantGl.camera.setFieldOfView(this.model.camera_field_of_view);
     croissantGl.camera.setDistance(this.model.camera_distance);
     croissantGl.camera.setOrbitAngle(this.model.camera_orbit_angle);
     croissantGl.camera.setHeight(this.model.camera_height);

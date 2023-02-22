@@ -8,7 +8,6 @@ export interface CameraInfo {
     clipFar: number;
     fieldOfView: number;
     focalPoint: vec3;
-    perspective: boolean;
 }
 export interface Camera {
     focusPoint: vec3;

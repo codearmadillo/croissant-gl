@@ -8,7 +8,6 @@ export interface CroissantConfiguration {
   camera_focalPoint_x: number;
   camera_focalPoint_y: number;
   camera_focalPoint_z: number;
-  camera_perspective: number;
 }
 
 export interface UiConfiguration {
