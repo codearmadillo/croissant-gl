@@ -5,6 +5,7 @@ export interface Axis {
     orientation: vec3;
     vao: VertexArrayObject;
     enabled: boolean;
+    color: vec3;
 }
 export interface RendererStatistics {
     passes: number;

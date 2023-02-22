@@ -3,7 +3,8 @@ import * as glMatrix from 'gl-matrix';
 import {vec2, vec3} from "gl-matrix";
 
 export enum ShaderType {
-  OBJECT_SHADER
+  OBJECT_SHADER,
+  UI_SHADER
 }
 
 export interface ShaderProgram {

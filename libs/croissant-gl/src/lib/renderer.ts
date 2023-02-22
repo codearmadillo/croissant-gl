@@ -1,12 +1,12 @@
 import {VertexArrayObject} from "./graphics/vertex-array-object";
 import {DrawableType} from "./graphics/drawable-type";
 import {getCubeVerticesIndices, getPlaneVerticesIndices} from "./graphics/drawables";
-import {Vertex} from "./types/graphics";
+import {ShaderType, Vertex} from "./types/graphics";
 import {MAX_OBJECTS, RENDERER_UPDATE_RATE} from "./constants";
 import {gl} from "./graphics/context";
 import {objectBroker} from "./object-broker";
 import {objectPropertiesBroker} from "./object-properties-broker";
-import {mat4, vec3, glMatrix} from "gl-matrix";
+import {glMatrix, mat4, vec3} from "gl-matrix";
 import {defaultLight} from "./graphics/light";
 import {Camera, CameraInfo} from "./types/camera";
 import {Axis, RendererStatistics} from "./types/renderer";
@@ -30,6 +30,8 @@ class Renderer {
     private entityModelMatrix: (mat4 | null)[] = [];
     private entityVao: (VertexArrayObject | null)[] = [];
     private axis: Axis[] = [];
+    private projection: mat4;
+    private view: mat4;
 
     private dirty = true;
     public stats: RendererStatistics = {
@@ -119,8 +121,8 @@ class Renderer {
         gl().viewport(0, 0, gl().canvas.width, gl().canvas.height);
 
         // Calculate projection/view for render pass
-        const projection = this.getCalculatedProjectionMatrix();
-        const view = this.getCalculatedViewMatrix();
+        this.projection = this.getCalculatedProjectionMatrix();
+        this.view = this.getCalculatedViewMatrix();
 
         // Iterate through objects
         objectBroker.each((entity: number) => {
@@ -157,8 +159,8 @@ class Renderer {
             defaultLight.bind(shader);
 
             // Bind MVP matrices
-            gl().uniformMatrix4fv(shader.getUniformLocation("u_projection"), false, projection);
-            gl().uniformMatrix4fv(shader.getUniformLocation("u_view"), false, view);
+            gl().uniformMatrix4fv(shader.getUniformLocation("u_projection"), false, this.projection);
+            gl().uniformMatrix4fv(shader.getUniformLocation("u_view"), false, this.view);
             gl().uniformMatrix4fv(shader.getUniformLocation("u_model"), false, this.entityModelMatrix[entity] as mat4);
 
             // Bind VAO and perform draw call
@@ -176,14 +178,28 @@ class Renderer {
             objectPropertiesBroker.entityRendered(entity);
         });
         // render grid
-        this.axis.forEach((axis) => {
-          axis.vao.drawLines();
-        });
+        this.renderAxis();
         // mark renderer as pristine
         this.markAsPristine();
         // statistics
         this.stats.passes++;
         this.stats.totalRenderTimeInMs = new Date().getTime() - startTimeMs;
+    }
+    private renderAxis() {
+      const uiShader = shaderBroker.get(ShaderType.UI_SHADER);
+      uiShader.bind();
+
+      gl().uniformMatrix4fv(uiShader.getUniformLocation("u_projection"), false, this.projection);
+      gl().uniformMatrix4fv(uiShader.getUniformLocation("u_view"), false, this.view);
+      gl().uniformMatrix4fv(uiShader.getUniformLocation("u_model"), false, mat4.create());
+
+      this.axis.forEach((axis) => {
+        if (!axis.enabled) {
+          return;
+        }
+        gl().uniform3fv(uiShader.getUniformLocation("u_vertexColor"), axis.color);
+        axis.vao.drawLines();
+      });
     }
     private getVerticesIndices(type: DrawableType): [ Vertex[], number[] ] {
         switch(type.type) {
@@ -194,7 +210,6 @@ class Renderer {
         }
     }
     private generateAxisObjects() {
-        const transparency = 0.25;
         const cols = 12;
         const rows = 12;
         const size = 200;
@@ -226,7 +241,8 @@ class Renderer {
         this.axis.push({
             orientation: [ 1, 0, 1 ],
             enabled: true,
-            vao: xzAxisVao
+            vao: xzAxisVao,
+            color: [ 1, 0, 0 ]
         });
 
         // generate xy axis
@@ -255,7 +271,8 @@ class Renderer {
         this.axis.push({
             orientation: [ 1, 1, 0 ],
             enabled: true,
-            vao: xyAxisVao
+            vao: xyAxisVao,
+            color: [ 0, 1, 0 ]
         });
 
         // generate yz axis
@@ -284,7 +301,8 @@ class Renderer {
         this.axis.push({
             orientation: [ 0, 1, 1 ],
             enabled: true,
-            vao: yzAxisVao
+            vao: yzAxisVao,
+            color: [ 0, 0, 1 ]
         });
     }
 

@@ -1,11 +1,13 @@
 import {ShaderProgram, ShaderType} from "./types/graphics";
-import {defaultShader} from "./graphics/shader";
+import {objectShader} from "./graphics/shaders/shader.object";
+import {uiShader} from "./graphics/shaders/shader.ui";
 
 class ShaderBroker {
     private shaders: Map<ShaderType, ShaderProgram> = new Map();
     bootstrap() {
         // register shaders
-        this.shaders.set(ShaderType.OBJECT_SHADER, defaultShader);
+        this.shaders.set(ShaderType.OBJECT_SHADER, objectShader);
+        this.shaders.set(ShaderType.UI_SHADER, uiShader);
         // bootstrap shaders
         this.shaders.forEach((shader) => {
             shader.bootstrap();
