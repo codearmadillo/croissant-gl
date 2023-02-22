@@ -1,7 +1,6 @@
-import {gl, WebGL2} from "./graphics/context";
-import {defaultShader} from "./graphics/shader";
-import {Drawable} from "./types/drawable";
+import {WebGL2} from "./graphics/context";
 import {renderer} from "./renderer";
+import {shaderBroker} from "./shader-broker";
 
 class CroissantBackend {
   private running = true;
@@ -17,7 +16,7 @@ class CroissantBackend {
     // initialize webgl2 context
     WebGL2.setContextFromCanvas(canvas);
     // initialize shader
-    defaultShader.bootstrap();
+    shaderBroker.bootstrap();
     // initialize renderer
     renderer.bootstrap();
     // frame

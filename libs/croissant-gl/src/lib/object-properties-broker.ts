@@ -1,9 +1,8 @@
 import {DrawableType} from "./graphics/drawable-type";
-import {mat4, quat, vec3} from "gl-matrix";
+import {quat, vec3} from "gl-matrix";
 import {MAX_OBJECTS} from "./constants";
-import {gl} from "./graphics/context";
-import {defaultShader} from "./graphics/shader";
 import {EntityMaterial, EntityMeta, EntityTransform} from "./types/entity";
+import {ShaderType} from "./types/graphics";
 
 class ObjectPropertiesBroker {
     private entityTransform: (EntityTransform | null)[] = [];
@@ -29,7 +28,8 @@ class ObjectPropertiesBroker {
         }
         this.setTransformRotationQuat(entity);
         this.entityMaterial[entity] = {
-            color: type.color
+            color: type.color,
+            shader: ShaderType.OBJECT_SHADER
         }
         this.entityMeta[entity] = {
             type: type.type,
@@ -129,6 +129,12 @@ class ObjectPropertiesBroker {
             this.entityTransform[entity]!.scale[1],
             this.entityTransform[entity]!.scale[2]
         ]
+    }
+    getMaterial(entity: number): EntityMaterial | null {
+        if (this.entityMaterial[entity] === null) {
+            return null;
+        }
+        return this.entityMaterial[entity]!;
     }
     isEntityEnabled(entity: number) {
         return this.entityMeta[entity]!.enabled ?? false;

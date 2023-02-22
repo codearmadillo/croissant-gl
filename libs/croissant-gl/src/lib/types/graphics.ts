@@ -2,6 +2,17 @@ import { SizeOf } from "./sizeof";
 import * as glMatrix from 'gl-matrix';
 import {vec3} from "gl-matrix";
 
+export enum ShaderType {
+  OBJECT_SHADER
+}
+
+export interface ShaderProgram {
+  bind(): void;
+  unbind(): void;
+  bootstrap(): void;
+  getUniformLocation(name: string): WebGLUniformLocation;
+}
+
 export class Vertex {
   readonly position: glMatrix.vec3;
   readonly color: glMatrix.vec4;

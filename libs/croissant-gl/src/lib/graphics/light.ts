@@ -1,16 +1,16 @@
-import {vec3, vec4} from "gl-matrix";
+import {vec3} from "gl-matrix";
 import {LightInfo} from "../types/light";
 import {gl} from "./context";
-import {defaultShader} from "./shader";
+import {ShaderProgram} from "../types/graphics";
 
 class Light {
   private dirty = true;
   private translation: vec3 = [ 0, 50, 0 ];
   private color: vec3 = [ 1, 1, 1 ];
 
-  bind() {
-    gl().uniform3fv(defaultShader.getUniformLocation("u_lightPosition"), this.translation);
-    gl().uniform3fv(defaultShader.getUniformLocation("u_lightColor"), this.color);
+  bind(shader: ShaderProgram) {
+    gl().uniform3fv(shader.getUniformLocation("u_lightPosition"), this.translation);
+    gl().uniform3fv(shader.getUniformLocation("u_lightColor"), this.color);
     this.dirty = false;
   }
   info(): LightInfo {

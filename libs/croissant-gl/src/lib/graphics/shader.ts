@@ -1,4 +1,5 @@
 import {gl} from "./context";
+import {ShaderProgram} from "../types/graphics";
 
 const fragmentShaderSource = `#version 300 es
 precision highp float;
@@ -44,6 +45,7 @@ uniform mat4 u_view;
 uniform mat4 u_projection;
 uniform vec3 u_lightPosition;
 uniform vec3 u_lightColor;
+uniform vec3 u_vertexColor;
 
 out vec4 v_Color;
 out vec3 v_Normal;
@@ -52,7 +54,7 @@ out vec3 v_LightPosition;
 out vec3 v_LightColor;
 
 void main() {
-  v_Color = a_Color;
+  v_Color = vec4(u_vertexColor, 1.0);
   v_FragPos = vec3(u_model * vec4(a_Position.xyz, 1.0));
   v_Normal = a_Normal;
   v_LightPosition = u_lightPosition;
@@ -62,7 +64,7 @@ void main() {
 }
 `;
 
-class Shader {
+class Shader implements ShaderProgram {
   private _uniformLocations: Map<string, WebGLUniformLocation> = new Map();
   private _shaders: Map<GLenum, WebGLProgram> = new Map();
   private _program: WebGLProgram | null = null;

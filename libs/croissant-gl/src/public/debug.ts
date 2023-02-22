@@ -8,6 +8,7 @@ import {renderer} from "../lib/renderer";
 export function info(): DebugInfo {
     return {
         entities: objectBroker.entityCount,
-        renderPasses: renderer.passes
+        passes: renderer.stats.passes,
+        averageFrameTimeMs: renderer.stats.totalRenderTimeInMs / renderer.stats.passes
     }
 }

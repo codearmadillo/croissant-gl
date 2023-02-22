@@ -4,12 +4,14 @@ import {getCubeVerticesIndices, getPlaneVerticesIndices} from "./graphics/drawab
 import {Vertex} from "./types/graphics";
 import {MAX_OBJECTS, RENDERER_UPDATE_RATE} from "./constants";
 import {gl} from "./graphics/context";
-import {defaultShader} from "./graphics/shader";
 import {objectBroker} from "./object-broker";
 import {objectPropertiesBroker} from "./object-properties-broker";
-import {mat4, vec2, vec3, vec4, glMatrix} from "gl-matrix";
+import {mat4, vec3, glMatrix} from "gl-matrix";
 import {defaultLight} from "./graphics/light";
 import {Camera, CameraInfo} from "./types/camera";
+import {Axis, RendererStatistics} from "./types/renderer";
+import {shaderBroker} from "./shader-broker";
+import {EntityMaterial} from "./types/entity";
 
 class Renderer {
 
@@ -25,11 +27,13 @@ class Renderer {
     }
     private entityModelMatrix: (mat4 | null)[] = [];
     private entityVao: (VertexArrayObject | null)[] = [];
+    private axis: Axis[] = [];
 
     private dirty = true;
-    private planes: VertexArrayObject[] = [];
-    private visiblePlanes: boolean[] = [false, false, false];
-    public passes = 0;
+    public stats: RendererStatistics = {
+        passes: 0,
+        totalRenderTimeInMs: 0
+    }
 
     constructor() {
         for (let i = 0; i < MAX_OBJECTS; i++) {
@@ -59,7 +63,8 @@ class Renderer {
         gl().enable(gl().DEPTH_TEST);
         gl().clearColor(1, 1, 1, 1);
         gl().lineWidth(1);
-        this.setupPlanes();
+
+        this.generateAxisObjects();
     }
 
     loop() {
@@ -70,10 +75,19 @@ class Renderer {
     //#endregion
 
     enableAxes(xz: boolean, xy: boolean, yz: boolean) {
-        this.visiblePlanes[0] = xz;
-        this.visiblePlanes[1] = xy;
-        this.visiblePlanes[2] = yz;
-        this.dirty = true;
+        this.axis = this.axis.map((axis) => {
+            if (vec3.equals(axis.orientation, [ 1, 0, 1 ])) {
+                axis.enabled = xz;
+            }
+            if (vec3.equals(axis.orientation, [ 1, 1, 0 ])) {
+                axis.enabled = xy;
+            }
+            if (vec3.equals(axis.orientation, [ 0, 1, 1 ])) {
+                axis.enabled = yz;
+            }
+            return axis;
+        });
+        this.markAsDirty();
     }
 
     setClearColor(rgb: vec3) {
@@ -97,7 +111,7 @@ class Renderer {
         if (!objectPropertiesBroker.isDirty() && !defaultLight.isDirty() && !this.dirty) {
             return;
         }
-        this.passes++;
+        const startTimeMs = new Date().getTime();
 
         gl().clear(gl().COLOR_BUFFER_BIT | gl().DEPTH_BUFFER_BIT);
         gl().viewport(0, 0, gl().canvas.width, gl().canvas.height);
@@ -106,27 +120,35 @@ class Renderer {
         const projection = this.getCalculatedProjectionMatrix();
         const view = this.getCalculatedViewMatrix();
 
-        // bind shader
-        defaultShader.bind();
-
         // Iterate through objects
         objectBroker.each((entity: number) => {
             if (!objectPropertiesBroker.isEntityEnabled(entity)) {
                 return;
             }
+
             // Recalculate model if entity is dirty
             if (objectPropertiesBroker.isEntityDirty(entity)) {
                 mat4.fromRotationTranslationScale(this.entityModelMatrix[entity] as mat4, objectPropertiesBroker.getRotationQuaternion(entity), objectPropertiesBroker.getTranslation(entity) as vec3, objectPropertiesBroker.getScale(entity) as vec3);
             }
-            // Bind material shader
+
+            // Bind shader
+            const material = objectPropertiesBroker.getMaterial(entity) as EntityMaterial;
+            const shader = shaderBroker.get(material.shader);
+            shader.bind();
+
+            // Bind material
+            const color = material.color;
+            gl().uniform3fv(shader.getUniformLocation("u_vertexColor"), color);
+
+            // TODO: Check if material has a texture to bind
 
             // Bind light
-            defaultLight.bind();
+            defaultLight.bind(shader);
 
             // Bind MVP matrices
-            gl().uniformMatrix4fv(defaultShader.getUniformLocation("u_projection"), false, projection);
-            gl().uniformMatrix4fv(defaultShader.getUniformLocation("u_view"), false, view);
-            gl().uniformMatrix4fv(defaultShader.getUniformLocation("u_model"), false, this.entityModelMatrix[entity] as mat4);
+            gl().uniformMatrix4fv(shader.getUniformLocation("u_projection"), false, projection);
+            gl().uniformMatrix4fv(shader.getUniformLocation("u_view"), false, view);
+            gl().uniformMatrix4fv(shader.getUniformLocation("u_model"), false, this.entityModelMatrix[entity] as mat4);
 
             // Bind VAO and perform drawcall
             this.entityVao[entity]?.bind();
@@ -137,13 +159,16 @@ class Renderer {
             objectPropertiesBroker.entityRendered(entity);
         });
         // render grid
-        this.planes.forEach((plane, i) => {
-            if (this.visiblePlanes[i]) {
-                plane.drawLines();
-            }
+        this.axis.forEach((axis) => {
+           if (axis.enabled) {
+               axis.vao.drawLines();
+           }
         });
         // mark renderer as pristine
         this.markAsPristine();
+        // statistics
+        this.stats.passes++;
+        this.stats.totalRenderTimeInMs = new Date().getTime() - startTimeMs;
     }
     private getVerticesIndices(type: DrawableType): [ Vertex[], number[] ] {
         switch(type.type) {
@@ -153,7 +178,7 @@ class Renderer {
                 return getPlaneVerticesIndices(type.size, type.position, type.color);
         }
     }
-    private setupPlanes() {
+    private generateAxisObjects() {
         const transparency = 0.25;
         const cols = 12;
         const rows = 12;
@@ -183,7 +208,11 @@ class Renderer {
         }
         xzAxisVao.addVertices(xzAxisVertices);
         xzAxisVao.addIndices(xzAxisIndices);
-        this.planes.push(xzAxisVao);
+        this.axis.push({
+            orientation: [ 1, 0, 1 ],
+            enabled: true,
+            vao: xzAxisVao
+        });
 
         // generate xy axis
         const xyAxisVao = new VertexArrayObject();
@@ -208,7 +237,11 @@ class Renderer {
         }
         xyAxisVao.addVertices(xyAxisVertices);
         xyAxisVao.addIndices(xyAxisIndices);
-        this.planes.push(xyAxisVao);
+        this.axis.push({
+            orientation: [ 1, 1, 0 ],
+            enabled: true,
+            vao: xyAxisVao
+        });
 
         // generate yz axis
         const yzAxisVao = new VertexArrayObject();
@@ -233,7 +266,11 @@ class Renderer {
         }
         yzAxisVao.addVertices(yzAxisVertices);
         yzAxisVao.addIndices(yzAxisIndices);
-        this.planes.push(yzAxisVao);
+        this.axis.push({
+            orientation: [ 0, 1, 1 ],
+            enabled: true,
+            vao: yzAxisVao
+        });
     }
 
     //#region Camera

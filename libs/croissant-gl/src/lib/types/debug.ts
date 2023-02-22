@@ -1,4 +1,5 @@
 export interface DebugInfo {
     entities: number;
-    renderPasses: number;
+    passes: number;
+    averageFrameTimeMs: number;
 }
