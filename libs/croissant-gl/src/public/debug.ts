@@ -1,5 +1,5 @@
 import {DebugInfo} from "../lib/types/debug";
-import {objectBroker} from "../lib/object-broker";
+import {objectBroker} from "../lib/brokers/object-broker";
 import {renderer} from "../lib/renderer";
 
 /**

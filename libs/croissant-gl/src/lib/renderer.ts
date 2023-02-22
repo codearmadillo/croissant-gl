@@ -4,13 +4,13 @@ import {getCubeVerticesIndices, getPlaneVerticesIndices} from "./graphics/drawab
 import {ShaderType, Vertex} from "./types/graphics";
 import {MAX_OBJECTS, RENDERER_UPDATE_RATE} from "./constants";
 import {gl} from "./graphics/context";
-import {objectBroker} from "./object-broker";
-import {objectPropertiesBroker} from "./object-properties-broker";
+import {objectBroker} from "./brokers/object-broker";
+import {objectPropertiesBroker} from "./brokers/object-properties-broker";
 import {glMatrix, mat4, vec3} from "gl-matrix";
 import {defaultLight} from "./graphics/light";
 import {Camera, CameraInfo} from "./types/camera";
 import {Axis, RendererStatistics} from "./types/renderer";
-import {shaderBroker} from "./shader-broker";
+import {shaderBroker} from "./brokers/shader-broker";
 import {EntityMaterial} from "./types/entity";
 import {textureBroker} from "./brokers/texture-broker";
 import {Texture} from "./types/texture";

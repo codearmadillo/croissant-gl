@@ -1,6 +1,6 @@
 import {croissantBackend} from "../lib/backend";
 import {EventType} from "../lib/types/events";
-import {eventBroker} from "../lib/event-broker";
+import {eventBroker} from "../lib/brokers/event-broker";
 
 //////////////////////////////////////////////////////////
 // TOP-LEVEL API

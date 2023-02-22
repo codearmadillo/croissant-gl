@@ -1,6 +1,6 @@
 import {WebGL2} from "./graphics/context";
 import {renderer} from "./renderer";
-import {shaderBroker} from "./shader-broker";
+import {shaderBroker} from "./brokers/shader-broker";
 
 class CroissantBackend {
   private running = true;

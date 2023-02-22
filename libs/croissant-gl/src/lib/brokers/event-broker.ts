@@ -1,4 +1,4 @@
-import {EventType} from "./types/events";
+import {EventType} from "../types/events";
 
 class EventBroker {
   private readonly eventCallbacks: Map<EventType, ((...args: any[]) => any)[]> = new Map();

@@ -1,6 +1,6 @@
-import {ShaderProgram, ShaderType} from "./types/graphics";
-import {objectShader} from "./graphics/shaders/shader.object";
-import {uiShader} from "./graphics/shaders/shader.ui";
+import {ShaderProgram, ShaderType} from "../types/graphics";
+import {objectShader} from "../graphics/shaders/shader.object";
+import {uiShader} from "../graphics/shaders/shader.ui";
 
 class ShaderBroker {
     private shaders: Map<ShaderType, ShaderProgram> = new Map();

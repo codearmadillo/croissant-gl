@@ -1,9 +1,9 @@
-import {DrawableType} from "./graphics/drawable-type";
+import {DrawableType} from "../graphics/drawable-type";
 import {quat, vec3} from "gl-matrix";
-import {MAX_OBJECTS} from "./constants";
-import {EntityMaterial, EntityMeta, EntityTransform} from "./types/entity";
-import {ShaderType} from "./types/graphics";
-import {Texture} from "./types/texture";
+import {MAX_OBJECTS} from "../constants";
+import {EntityMaterial, EntityMeta, EntityTransform} from "../types/entity";
+import {ShaderType} from "../types/graphics";
+import {Texture} from "../types/texture";
 
 class ObjectPropertiesBroker {
     private entityTransform: (EntityTransform | null)[] = [];
