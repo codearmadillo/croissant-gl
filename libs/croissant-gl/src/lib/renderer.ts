@@ -24,14 +24,14 @@ class Renderer {
             this.vao[i] = null;
         }
     }
-    create(entity: number, type: DrawableType) {
+    entityCreated(entity: number, type: DrawableType) {
         const vao = new VertexArrayObject();
         const [ vertices, indices ] = this.getVerticesIndices(type);
         vao.addIndices(indices);
         vao.addVertices(vertices);
         this.vao[entity] = vao;
     }
-    clear(entity: number) {
+    entityDestroyed(entity: number) {
         this.vao[entity] = null;
     }
     async bootstrap() {
@@ -87,8 +87,6 @@ class Renderer {
             // unbind vao
             gl().bindVertexArray(null);
         });
-        // unbind uniforms
-        objectPropertiesBroker.unbind();
         // render grid
         this.planes.forEach((plane, i) => {
             if (this.visiblePlanes[i]) {

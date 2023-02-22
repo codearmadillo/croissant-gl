@@ -200,10 +200,10 @@ export namespace camera {
 export namespace object {
   export function create(type: DrawableType): number {
     const entity = objectBroker.create();
-    // Add entity to properties broker
-    objectPropertiesBroker.create(entity, type);
-    // Add entity to renderer - Configuration will follow later
-    renderer.create(entity, type);
+
+    objectPropertiesBroker.entityCreated(entity, type);
+    renderer.entityCreated(entity, type);
+
     return entity;
   }
   export function info(object: number): ObjectInfo {

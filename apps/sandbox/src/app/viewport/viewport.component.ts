@@ -22,7 +22,7 @@ export class ViewportComponent implements AfterViewInit {
     croissantGl.scene.setClearColor([ 12, 16, 21 ]);
     croissantGl.start();
 
-    croissantGl.object.create({
+    const cube = croissantGl.object.create({
       type: "cube",
       size: [ 32, 32, 32 ],
       position: [ 0, 16, 0 ],
