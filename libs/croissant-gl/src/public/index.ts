@@ -213,7 +213,7 @@ export namespace object {
       translation: objectPropertiesBroker.getTranslation(object),
       rotation: objectPropertiesBroker.getRotation(object),
       scale: objectPropertiesBroker.getScale(object),
-      enabled: objectPropertiesBroker.getEnabled(object)
+      enabled: objectPropertiesBroker.isEntityEnabled(object)
     }
   }
   export function setTranslation(object: number, translation: vec3) {

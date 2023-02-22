@@ -10,3 +10,13 @@ export interface CameraInfo {
     focalPoint: vec3;
     perspective: boolean;
 }
+export interface Camera {
+    focusPoint: vec3;
+    distance: number;
+    height: number;
+    orbit: number;
+    near: number;
+    far: number;
+    fov: number;
+    dirty: boolean;
+}

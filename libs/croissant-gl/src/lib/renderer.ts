@@ -8,10 +8,12 @@ import {defaultShader} from "./graphics/shader";
 import {defaultCamera} from "./graphics/camera";
 import {objectBroker} from "./object-broker";
 import {objectPropertiesBroker} from "./object-properties-broker";
-import {vec2, vec3, vec4} from "gl-matrix";
+import {mat4, vec2, vec3, vec4} from "gl-matrix";
 import {defaultLight} from "./graphics/light";
 
 class Renderer {
+
+    private entityModelMatrix: (mat4 | null)[] = [];
 
     private dirty = true;
     private vao: (VertexArrayObject | null)[] = [];
@@ -22,6 +24,7 @@ class Renderer {
     constructor() {
         for (let i = 0; i < MAX_OBJECTS; i++) {
             this.vao[i] = null;
+            this.entityModelMatrix[i] = null;
         }
     }
     entityCreated(entity: number, type: DrawableType) {
@@ -30,9 +33,15 @@ class Renderer {
         vao.addIndices(indices);
         vao.addVertices(vertices);
         this.vao[entity] = vao;
+
+
+        this.entityModelMatrix[entity] = mat4.create();
     }
     entityDestroyed(entity: number) {
         this.vao[entity] = null;
+
+
+        this.entityModelMatrix[entity] = null;
     }
     async bootstrap() {
         gl().enable(gl().DEPTH_TEST);
@@ -75,17 +84,20 @@ class Renderer {
         defaultLight.bind();
         // iterate through objects
         objectBroker.each((entity: number) => {
-            if (!objectPropertiesBroker.getEnabled(entity)) {
+            if (!objectPropertiesBroker.isEntityEnabled(entity)) {
                 return;
             }
-            // bind model and other properties
-            objectPropertiesBroker.bind(entity);
-            // bind vao
+            if (objectPropertiesBroker.isEntityDirty(entity)) {
+                mat4.fromRotationTranslationScale(this.entityModelMatrix[entity] as mat4, objectPropertiesBroker.getRotationQuaternion(entity), objectPropertiesBroker.getTranslation(entity) as vec3, objectPropertiesBroker.getScale(entity) as vec3);
+            }
+
+            gl().uniformMatrix4fv(defaultShader.getUniformLocation("u_model"), false, this.entityModelMatrix[entity] as mat4);
             this.vao[entity]?.bind();
-            // draw
             this.vao[entity]?.drawElements();
-            // unbind vao
             gl().bindVertexArray(null);
+
+            // Entity was re-rendered - mark it as pristine
+            objectPropertiesBroker.entityRendered(entity);
         });
         // render grid
         this.planes.forEach((plane, i) => {
