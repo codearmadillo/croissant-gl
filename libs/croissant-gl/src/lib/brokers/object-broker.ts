@@ -1,4 +1,4 @@
-import {MAX_OBJECTS} from "./constants";
+import {MAX_OBJECTS} from "../constants";
 
 class ObjectBroker {
     private queue: number[] = [];
