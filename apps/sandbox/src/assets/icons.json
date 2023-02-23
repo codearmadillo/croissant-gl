@@ -3,6 +3,14 @@
     {
       "iconName": "chevron-down",
       "iconPath": "/assets/icons/chevron-down.svg"
+    },
+    {
+      "iconName": "refresh",
+      "iconPath": "/assets/icons/refresh.svg"
+    },
+    {
+      "iconName": "play",
+      "iconPath": "/assets/icons/play.svg"
     }
   ],
   "customIcons": []

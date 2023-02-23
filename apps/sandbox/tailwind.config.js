@@ -10,7 +10,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        site: '#171d25'
+        site: '#171d25',
+        "site-light": '#222b36'
       }
     },
   },

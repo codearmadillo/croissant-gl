@@ -1,9 +1,0 @@
-<label [for]="fieldName" class="block text-xs font-medium text-gray-900 mt-2">{{label}}</label>
-<input [disabled]="disabled" [name]="fieldName" [id]="fieldName" type="range" [ngModel]="value" (ngModelChange)="onModelChange($event)" [min]="min" [max]="max" [step]="step" class="range-input w-full">
-<div class="grid grid-cols-[min-content_1fr_min-content] w-full mt-0.5">
-  <span class="min-w-[1.5rem] text-center text-xs text-gray-600 inline-block rounded-md bg-gray-200 py-2 px-1">{{min}}</span>
-  <div class="grid justify-center">
-    <input [disabled]="disabled" class="input max-w-[5rem]" [min]="min" [max]="max" type="number" [ngModel]="value" (ngModelChange)="onModelChange($event)" />
-  </div>
-  <span class="min-w-[1.5rem] text-center text-xs text-gray-600 inline-block rounded-md rounded-xs bg-gray-200 py-2 px-1">{{max}}</span>
-</div>
