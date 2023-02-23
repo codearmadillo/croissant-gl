@@ -14,6 +14,7 @@ import {shaderBroker} from "./brokers/shader-broker";
 import {EntityMaterial} from "./types/entity";
 import {textureBroker} from "./brokers/texture-broker";
 import {Texture} from "./types/texture";
+import {isNullOrUndefined} from "./helpers/type.helpers";
 
 class Renderer {
 
@@ -112,7 +113,7 @@ class Renderer {
 
     private renderFrame() {
         // only render frame if camera or any objects are dirty
-        if (!objectPropertiesBroker.isDirty() && !defaultLight.isDirty() && !this.dirty) {
+        if (!objectPropertiesBroker.isDirty() && !textureBroker.isDirty() && !defaultLight.isDirty() && !this.dirty) {
             return;
         }
         const startTimeMs = new Date().getTime();
@@ -144,12 +145,16 @@ class Renderer {
             const color = material.color;
             gl().uniform3fv(shader.getUniformLocation("u_vertexColor"), color);
 
+            // Disable texture by default
+            gl().uniform1i(shader.getUniformLocation("u_materialTextureUsed"), 0);
+
             // Bind texture if any
-            if (material.texture !== null) {
+            if (isNullOrUndefined(material.texture)) {
               // Bind albedo (doesn't always mean it is albedo texture though...)
               const glTexture = textureBroker.get(material.texture as Texture) as WebGLTexture;
               if (glTexture !== null) {
-                gl().uniform1i(shader.getUniformLocation("u_textureAlbedo"), glTexture as GLint);
+                gl().uniform1i(shader.getUniformLocation("u_materialTextureUsed"), 1);
+                gl().uniform1i(shader.getUniformLocation("u_materialTexture"), glTexture as GLint);
                 gl().activeTexture(gl().TEXTURE0);
                 gl().bindTexture(gl().TEXTURE_2D, glTexture);
               }
@@ -354,6 +359,7 @@ class Renderer {
     }
     private markAsPristine() {
         this.dirty = false;
+        textureBroker.markAsPristine();
     }
 }
 export const renderer = new Renderer();

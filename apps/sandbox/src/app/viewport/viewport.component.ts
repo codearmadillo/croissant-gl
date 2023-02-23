@@ -33,14 +33,14 @@ export class ViewportComponent implements AfterViewInit {
             color: [ 0.65, 0.65, 0.65 ]
           })
      */
-    const texture = await croissantGl.texture.create("/assets/textures/uv-checker.png");
+    const texture = croissantGl.texture.create("/assets/textures/uv-checker.png");
     const plane = croissantGl.object.create({
       type: "plane",
       size: [ 200, 200 ],
       position: [ 0, 0, 0 ],
       rotation: [ 0, 0, 0 ],
       scale: [ 1, 1, 1 ],
-      color: [ 0.65, 0.65, 0.65 ]
+      color: [ 1.0, 1.0, 1.0 ]
     });
     croissantGl.object.setTexture(plane, texture);
   }
