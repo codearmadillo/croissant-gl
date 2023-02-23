@@ -6,31 +6,47 @@ class TextureBroker {
   private textures: (WebGLTexture | null)[] = [];
   private queue: number[] = [];
   private alive = 0;
+  private dirty = false;
   constructor() {
     for (let i = 0; i < MAX_TEXTURES; i++) {
       this.queue.push(i);
       this.textures.push(null);
     }
   }
-  async create(imagePath: string, options: TextureOptions): Promise<Texture> {
+  isDirty() {
+    return this.dirty;
+  }
+  create(imagePath: string, options: TextureOptions): Texture {
     this.alive++;
     const texture = this.queue.shift() as Texture;
 
-    // load texture
-    const imageData = await this.loadTextureImage(imagePath);
+    // Create WebGl2 texture
     const glTexture = gl().createTexture();
-
+    this.textures[texture] = glTexture;
     gl().bindTexture(gl().TEXTURE_2D, glTexture);
 
+    // set default texture
+    gl().texImage2D(gl().TEXTURE_2D, 0, gl().RGBA, 1, 1, 0, gl().RGBA, gl().UNSIGNED_BYTE, new Uint8Array([ 0, 0, 255, 255 ]));
+
+    // load texture
+    this.loadTextureImage(imagePath).then((image) => {
+      gl().bindTexture(gl().TEXTURE_2D, glTexture);
+      gl().texImage2D(gl().TEXTURE_2D, 0, gl().RGBA, gl().RGBA, gl().UNSIGNED_BYTE, image);
+      gl().bindTexture(gl().TEXTURE_2D, null);
+      this.markAsDirty();
+    }).catch((e) => {
+      console.error(`Failed to load '${imagePath}'`, e);
+    });
+
+    // setup parameters
     gl().texParameteri(gl().TEXTURE_2D, gl().TEXTURE_WRAP_S, this.getParsedWebGl2TextureOption(options.textureWrapS) ?? gl().REPEAT);
     gl().texParameteri(gl().TEXTURE_2D, gl().TEXTURE_WRAP_T, this.getParsedWebGl2TextureOption(options.textureWrapT) ?? gl().REPEAT);
-    gl().texParameteri(gl().TEXTURE_2D, gl().TEXTURE_MIN_FILTER, this.getParsedWebGl2TextureOption(options.minificationFilter) ?? gl().NEAREST_MIPMAP_LINEAR);
+    gl().texParameteri(gl().TEXTURE_2D, gl().TEXTURE_MIN_FILTER, this.getParsedWebGl2TextureOption(options.minificationFilter) ?? gl().NEAREST);
     gl().texParameteri(gl().TEXTURE_2D, gl().TEXTURE_MAG_FILTER, this.getParsedWebGl2TextureOption(options.magnificationFilter) ?? gl().LINEAR);
 
-    gl().texImage2D(gl().TEXTURE_2D, 0, gl().RGBA, gl().RGBA, gl().UNSIGNED_BYTE, imageData);
+    // unbind texture
     gl().bindTexture(gl().TEXTURE_2D, null);
 
-    this.textures[texture] = glTexture;
     return texture;
   }
   destroy(texture: Texture) {
@@ -43,13 +59,13 @@ class TextureBroker {
   private loadTextureImage(imagePath: string) {
     return new Promise<HTMLImageElement>((resolve, reject) => {
       const image = new Image();
-      image.src = imagePath;
       image.onload = () => {
         resolve(image);
       };
       image.onerror = () => {
         reject();
       }
+      image.src = imagePath;
       return image;
     });
   }
@@ -69,6 +85,12 @@ class TextureBroker {
         return gl().LINEAR_MIPMAP_LINEAR;
     }
     return null;
+  }
+  private markAsDirty() {
+    this.dirty = true;
+  }
+  public markAsPristine() {
+    this.dirty = false;
   }
 }
 export const textureBroker = new TextureBroker();

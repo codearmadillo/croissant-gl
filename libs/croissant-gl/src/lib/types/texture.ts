@@ -11,7 +11,7 @@ export interface TextureOptions {
 }
 export const defaultTextureOptions: TextureOptions = {
   magnificationFilter: 'linear',
-  minificationFilter: 'nearestMipmapLinear',
+  minificationFilter: 'nearest',
   textureWrapS: 'repeat',
   textureWrapT: 'repeat'
 }
