@@ -1,6 +1,6 @@
 import {EventType} from "../types/events";
 
-class EventBroker {
+export class EventBroker {
   private readonly eventCallbacks: Map<EventType, ((...args: any[]) => any)[]> = new Map();
   registerCallback(eventType: EventType, callback: (...args: any[]) => any) {
     if (!this.eventCallbacks.has(eventType)) {
@@ -15,4 +15,3 @@ class EventBroker {
     this.eventCallbacks.get(eventType)?.forEach((cb) => cb());
   }
 }
-export const eventBroker = new EventBroker();

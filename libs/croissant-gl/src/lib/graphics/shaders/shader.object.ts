@@ -1,4 +1,5 @@
 import {Shader} from "../shader";
+import {ShaderProgram} from "../../types/graphics";
 
 const fragmentShaderSource = `#version 300 es
 precision highp float;
@@ -83,4 +84,11 @@ void main() {
 }
 `;
 
-export const objectShader = new Shader(vertexShaderSource, fragmentShaderSource);
+export class ObjectShader extends Shader implements ShaderProgram {
+  protected getVertexShaderSource(): string {
+    return vertexShaderSource;
+  }
+  protected getFragmentShaderSource(): string {
+    return fragmentShaderSource;
+  }
+}

@@ -1,6 +1,22 @@
-<aside class="box-border p-4">
-  <webgl2-toolbox class="block bg-white rounded-md w-full h-full px-4"></webgl2-toolbox>
-</aside>
-<main>
-  <webgl2-viewport class="grid items-center justify-center w-full h-full"></webgl2-viewport>
+<main class="grid grid-cols-[782px_1fr] w-full h-full">
+  <section class="flex items-center justify-center">
+    <div class="rounded overflow-hidden">
+      <canvas #mainCanvas id="mainCanvas" width="750px" height="750px" class="bg-white"></canvas>
+    </div>
+  </section>
+  <section class="flex flex-col bg-site-light">
+    <div class="flex-1">
+      <ngs-code-editor
+        class="w-full h-full"
+        [theme]="theme"
+        [codeModel]="codeModel"
+        [options]="options"
+        (valueChanged)="onCodeChanged($event)">
+      </ngs-code-editor>
+    </div>
+    <footer class="flex-none bg-white border-top border-slate-200 flex items-center justify-start box-border p-2 border-t border-site">
+      <button class="button" (click)="onCodeRun()">Run code</button>
+      <button class="ml-2 button" (click)="onCodeErase()">Erase code</button>
+    </footer>
+  </section>
 </main>
