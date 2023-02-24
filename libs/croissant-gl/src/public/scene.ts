@@ -2,14 +2,30 @@ import {vec3} from "gl-matrix";
 import {contextBroker} from "../lib/context-broker";
 
 /**
- * Enables/disables individual axis planes
- * @param context CroissantGl context
- * @param showXZ Show XZ plane
- * @param showXY Show XY plane
- * @param showYZ Show YZ plane
+ * Enables/Disables grid
+ * @param context CroissantGL context
+ * @param showGrid Show grid
  */
-export function showAxes(context: number, showXZ: boolean, showXY: boolean, showYZ: boolean) {
-    contextBroker.getOrThrow(context).renderer.enableAxes(showXZ, showXY, showYZ);
+export function setGridVisibility(context: number, showGrid: boolean) {
+  contextBroker.getOrThrow(context).renderer.setGridVisibility(showGrid);
+}
+
+/**
+ * Enables/Disables grid
+ * @param context CroissantGL context
+ * @param color Color in rgb format (0-255 range)
+ */
+export function setGridColor(context: number, color: vec3) {
+  contextBroker.getOrThrow(context).renderer.setGridColor(color);
+}
+
+/**
+ * Enables/Disables gimbal
+ * @param context CroissantGL context
+ * @param showGimbal Show gimbal
+ */
+export function setGimbalVisibility(context: number, showGimbal: boolean) {
+  contextBroker.getOrThrow(context).renderer.setGimbalVisibility(showGimbal);
 }
 
 /**

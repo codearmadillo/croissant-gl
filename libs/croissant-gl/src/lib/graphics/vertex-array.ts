@@ -40,6 +40,10 @@ export class VertexArray {
     // Texture Coordinates
     this.webGl2RenderingContext.vertexAttribPointer(2, 2, this.webGl2RenderingContext.FLOAT, false, Vertex.bytesize, 6 * SizeOf.FLOAT);
     this.webGl2RenderingContext.enableVertexAttribArray(2);
+
+    // Color
+    this.webGl2RenderingContext.vertexAttribPointer(3, 3, this.webGl2RenderingContext.FLOAT, false, Vertex.bytesize, 8 * SizeOf.FLOAT);
+    this.webGl2RenderingContext.enableVertexAttribArray(3);
   }
   destroy() {
     this.webGl2RenderingContext.deleteBuffer(this.buffer);
