@@ -32,11 +32,19 @@ export function setOrbitAngle(context: number, degrees: number) {
 /**
  * Changes near/far clip planes for camera
  * @param context CroissantGl context
- * @param near Near clipping plane
- * @param far Far clipping plane
+ * @param near New value for near clip plane
  */
-export function setClipPlanes(context: number, near: number, far: number) {
-    contextBroker.getOrThrow(context)?.renderer.setCameraClipPlanes(near, far);
+export function setNearClipPlane(context: number, near: number) {
+  contextBroker.getOrThrow(context)?.renderer.setCameraNearClipPlane(near);
+}
+
+/**
+ * Changes near/far clip planes for camera
+ * @param context CroissantGl context
+ * @param far New value for far clip plane
+ */
+export function setFarClipPlane(context: number, far: number) {
+  contextBroker.getOrThrow(context)?.renderer.setCameraFarClipPlane(far);
 }
 
 /**

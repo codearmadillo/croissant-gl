@@ -1,11 +1,11 @@
 import {VertexArrayObject} from "./graphics/vertex-array-object";
 import {getCubeVerticesIndices, getPlaneVerticesIndices} from "./graphics/drawables";
-import {ShaderType, Vertex} from "./types/graphics";
+import {ShaderType, Vertex, VertexCreateOptions} from "./types/graphics";
 import {MAX_OBJECTS, RENDERER_UPDATE_RATE} from "./constants";
-import {glMatrix, mat4, vec3} from "gl-matrix";
+import {glMatrix, mat4, vec3, vec4} from "gl-matrix";
 import {Light} from "./graphics/light";
 import {Camera, CameraInfo} from "./types/camera";
-import {Axis, RendererStatistics} from "./types/renderer";
+import {Axis, Gimbal, RendererStatistics} from "./types/renderer";
 import {EntityMaterial} from "./types/entity";
 import {Texture} from "./types/texture";
 import {isNullOrUndefined} from "./helpers/type.helpers";
@@ -23,13 +23,14 @@ export class Renderer {
         height: 50,
         orbit: 0,
         near: 0.1,
-        far: 500,
+        far: 3000,
         fov: 45,
         dirty: true,
     }
     private entityModelMatrix: (mat4 | null)[] = [];
     private entityVao: (VertexArrayObject | null)[] = [];
-    private axis: Axis[] = [];
+    private grid: Axis;
+    private gimbal: Gimbal;
     private projection: mat4;
     private view: mat4;
     private readonly webGl2RenderingContext: WebGL2RenderingContext;
@@ -80,13 +81,13 @@ export class Renderer {
 
     //#region Lifecycle
     bootstrap() {
-        this.webGl2RenderingContext.enable(this.webGl2RenderingContext.DEPTH_TEST);
         this.webGl2RenderingContext.clearColor(1, 1, 1, 1);
         this.webGl2RenderingContext.lineWidth(1);
 
         this.light = new Light();
 
-        this.generateAxisObjects();
+        this.generateGrid();
+        this.generateGimbal();
     }
 
     loop() {
@@ -104,27 +105,25 @@ export class Renderer {
           this.entityDestroyed(i);
         }
       }
-      // Clear axis VAOs
-      this.axis.forEach((axis) => {
-          axis.vao.destroy();
-      });
+
+      // Clear grid
+      this.grid.vao.destroy();
     }
     //#endregion
 
-    enableAxes(xz: boolean, xy: boolean, yz: boolean) {
-        this.axis = this.axis.map((axis) => {
-            if (vec3.equals(axis.orientation, [ 1, 0, 1 ])) {
-                axis.enabled = xz;
-            }
-            if (vec3.equals(axis.orientation, [ 1, 1, 0 ])) {
-                axis.enabled = xy;
-            }
-            if (vec3.equals(axis.orientation, [ 0, 1, 1 ])) {
-                axis.enabled = yz;
-            }
-            return axis;
-        });
-        this.markAsDirty();
+    setGridVisibility(isGridVisible: boolean) {
+      this.grid.enabled = isGridVisible;
+      this.markAsDirty();
+    }
+
+    setGridColor(rgb: vec3) {
+      this.grid.color = rgb;
+      this.markAsDirty();
+    }
+
+    setGimbalVisibility(isGimbalVisible: boolean) {
+      this.gimbal.enabled = isGimbalVisible;
+      this.markAsDirty();
     }
 
     setClearColor(rgb: vec3) {
@@ -135,12 +134,12 @@ export class Renderer {
         return mat4.perspective(mat4.create(), glMatrix.toRadian(this.camera.fov), this.webGl2RenderingContext.canvas.width / this.webGl2RenderingContext.canvas.height, this.camera.near, this.camera.far);
     }
 
-    private getCalculatedViewMatrix() {
+    private getCalculatedViewMatrix(distance: number, orbit: number, height: number, focus: vec3) {
         const up: vec3 = [ 0, 1, 0 ];
-        const [ cameraX, cameraZ ] = [ Math.cos(glMatrix.toRadian(this.camera.orbit)), Math.sin(glMatrix.toRadian(this.camera.orbit)) ];
-        const cameraPosition: vec3 = [ cameraX * this.camera.distance, this.camera.height, cameraZ * this.camera.distance ];
+        const [ cameraX, cameraZ ] = [ Math.cos(glMatrix.toRadian(orbit)), Math.sin(glMatrix.toRadian(orbit)) ];
+        const cameraPosition: vec3 = [ cameraX * distance, height, cameraZ * distance ];
         const cameraView = mat4.fromTranslation(mat4.create(), cameraPosition);
-        return mat4.lookAt(cameraView, cameraPosition, this.camera.focusPoint, up);
+        return mat4.lookAt(cameraView, cameraPosition, focus, up);
     }
 
     private renderFrame() {
@@ -152,10 +151,11 @@ export class Renderer {
 
         this.webGl2RenderingContext.clear(this.webGl2RenderingContext.COLOR_BUFFER_BIT | this.webGl2RenderingContext.DEPTH_BUFFER_BIT);
         this.webGl2RenderingContext.viewport(0, 0, this.webGl2RenderingContext.canvas.width, this.webGl2RenderingContext.canvas.height);
+        this.webGl2RenderingContext.enable(this.webGl2RenderingContext.DEPTH_TEST);
 
         // Calculate projection/view for render pass
         this.projection = this.getCalculatedProjectionMatrix();
-        this.view = this.getCalculatedViewMatrix();
+        this.view = this.getCalculatedViewMatrix(this.camera.distance, this.camera.orbit, this.camera.height, this.camera.focusPoint);
 
         // Iterate through objects
         this.objectBroker.each((entity: number) => {
@@ -175,7 +175,7 @@ export class Renderer {
 
             // Bind material
             const color = [ material.color[0] / 255, material.color[1] / 255, material.color[2] / 255 ];
-            this.webGl2RenderingContext.uniform3fv(shader.getUniformLocation("u_vertexColor"), color);
+            this.webGl2RenderingContext.uniform3fv(shader.getUniformLocation("u_materialColor"), color);
 
             // Disable texture by default
             this.webGl2RenderingContext.uniform1i(shader.getUniformLocation("u_materialTextureUsed"), 0);
@@ -215,29 +215,48 @@ export class Renderer {
             // Entity was re-rendered - mark it as pristine
             this.objectPropertiesBroker.entityRendered(entity);
         });
-        // render grid
-        this.renderAxis();
+        // render renderer ui
+        this.renderGrid();
+        this.renderGimbal();
         // mark renderer as pristine
         this.markAsPristine();
         // statistics
         this.stats.passes++;
         this.stats.totalRenderTimeInMs = new Date().getTime() - startTimeMs;
     }
-    private renderAxis() {
+    private renderGimbal() {
+      if (!this.gimbal.enabled) {
+        return;
+      }
+
       const uiShader = this.shaderBroker.get(ShaderType.UI_SHADER);
       uiShader.bind();
 
+      this.webGl2RenderingContext.viewport(25, 25, 100, 100);
+      this.webGl2RenderingContext.disable(this.webGl2RenderingContext.DEPTH_TEST);
+
+      this.webGl2RenderingContext.uniformMatrix4fv(uiShader.getUniformLocation("u_view"), false, this.getCalculatedViewMatrix(200, this.camera.orbit, this.camera.height, [ 0, 0, 0 ]));
+      this.webGl2RenderingContext.uniform3fv(uiShader.getUniformLocation("u_materialColor"), [ 1, 1, 1 ]);
+      this.webGl2RenderingContext.uniformMatrix4fv(uiShader.getUniformLocation("u_projection"), false, this.projection);
+      this.webGl2RenderingContext.uniformMatrix4fv(uiShader.getUniformLocation("u_model"), false, mat4.create());
+
+      this.gimbal.lines.drawLines();
+      this.gimbal.bubbles.drawElements();
+    }
+    private renderGrid() {
+      if (!this.grid.enabled) {
+        return;
+      }
+
+      const uiShader = this.shaderBroker.get(ShaderType.UI_SHADER);
+      uiShader.bind();
+
+      this.webGl2RenderingContext.uniform3fv(uiShader.getUniformLocation("u_materialColor"), [ this.grid.color[0] / 255, this.grid.color[1] / 255, this.grid.color[2] / 255 ]);
       this.webGl2RenderingContext.uniformMatrix4fv(uiShader.getUniformLocation("u_projection"), false, this.projection);
       this.webGl2RenderingContext.uniformMatrix4fv(uiShader.getUniformLocation("u_view"), false, this.view);
       this.webGl2RenderingContext.uniformMatrix4fv(uiShader.getUniformLocation("u_model"), false, mat4.create());
 
-      this.axis.forEach((axis) => {
-        if (!axis.enabled) {
-          return;
-        }
-        this.webGl2RenderingContext.uniform3fv(uiShader.getUniformLocation("u_vertexColor"), axis.color);
-        axis.vao.drawLines();
-      });
+      this.grid.vao.drawLines();
     }
     private getVerticesIndices(options: ObjectCreateOptions): [ Vertex[], number[] ] {
         switch(options.type) {
@@ -247,101 +266,71 @@ export class Renderer {
                 return getPlaneVerticesIndices(options.size, options.position);
         }
     }
-    private generateAxisObjects() {
-        const cols = 12;
-        const rows = 12;
-        const size = 200;
-        const offset = size / 2;
+    private generateGimbal() {
+      const lineSize = 75;
+      const bubbleSize = 8;
 
-        // generate xz axis
-        const xzAxisVao = new VertexArrayObject(this.webGl2RenderingContext);
-        const xzAxisVertices: Vertex[] = [];
-        const xzAxisIndices: number[] = [];
+      this.gimbal = {
+        enabled: true,
+        lines: new VertexArrayObject(this.webGl2RenderingContext),
+        bubbles: new VertexArrayObject(this.webGl2RenderingContext)
+      }
 
-        for (let z = 0; z < rows + 1; z++) {
-            xzAxisVertices.push(
-                new Vertex([ -offset, 0, z * (size / rows) - offset ], [ 1, 1, 1 ], [ 0, 0 ]),
-                new Vertex([ size - offset, 0, z * (size / rows) - offset ], [ 1, 1, 1 ], [ 0, 0 ])
-            );
-            const indexOffset = xzAxisIndices.length;
-            xzAxisIndices.push(indexOffset, 1 + indexOffset);
-        }
-        for (let x = 0; x < cols + 1; x++) {
-            xzAxisVertices.push(
-                new Vertex([ x * (size / rows) - offset, 0, -offset ], [ 1, 1, 1 ], [ 0, 0 ]),
-                new Vertex([ x * (size / rows) - offset, 0, size - offset ], [ 1, 1, 1 ], [ 0, 0 ])
-            );
-            const indexOffset = xzAxisIndices.length;
-            xzAxisIndices.push(indexOffset, 1 + indexOffset);
-        }
-        xzAxisVao.addVertices(xzAxisVertices);
-        xzAxisVao.addIndices(xzAxisIndices);
-        this.axis.push({
-            orientation: [ 1, 0, 1 ],
-            enabled: true,
-            vao: xzAxisVao,
-            color: [ 1, 0, 0 ]
-        });
+      this.gimbal.lines.addVertices([
+        // x
+        new Vertex( [ 0, 0, 0 ], { color: [ 255, 0, 0 ] } ),
+        new Vertex( [ lineSize, 0, 0 ], { color: [ 255, 0, 0 ] } ),
+        // y
+        new Vertex( [ 0, 1, 0 ], { color: [ 0, 0, 255 ] } ),
+        new Vertex( [ 0, lineSize, 0 ], { color: [ 0, 0, 255 ] } ),
+        // z
+        new Vertex( [ 0, 0, 0 ], { color: [ 0, 255, 0 ] } ),
+        new Vertex( [ 0, 0, lineSize ], { color: [ 0, 255, 0 ] } )
+      ]);
+      this.gimbal.lines.addIndices([
+        0, 1,
+        2, 3,
+        4, 5
+      ]);
+    }
+    private generateGrid() {
+      const cols = 500;
+      const rows = 500;
+      const size = 10000;
+      const offset = size / 2;
 
-        // generate xy axis
-        const xyAxisVao = new VertexArrayObject(this.webGl2RenderingContext);
-        const xyAxisVertices: Vertex[] = [];
-        const xyAxisIndices: number[] = [];
+      const vao = new VertexArrayObject(this.webGl2RenderingContext);
+      const vertices: Vertex[] = [];
+      const indices: number[] = [];
 
-        for (let y = 0; y < rows + 1; y++) {
-            xyAxisVertices.push(
-                new Vertex([ -offset, y * (size / rows) - offset, 0 ], [ 1, 1, 1 ], [ 0, 0 ]),
-                new Vertex([ size - offset, y * (size / rows) - offset, 0 ], [ 1, 1, 1 ], [ 0, 0 ])
-            );
-            const indexOffset = xyAxisIndices.length;
-            xyAxisIndices.push(indexOffset, 1 + indexOffset);
-        }
-        for (let x = 0; x < cols + 1; x++) {
-            xyAxisVertices.push(
-                new Vertex([ x * (size / rows) - offset, -offset, 0 ], [ 1, 1, 1 ], [ 0, 0 ]),
-                new Vertex([ x * (size / rows) - offset, size - offset, 0 ], [ 1, 1, 1 ], [ 0, 0 ])
-            );
-            const indexOffset = xyAxisIndices.length;
-            xyAxisIndices.push(indexOffset, 1 + indexOffset);
-        }
-        xyAxisVao.addVertices(xyAxisVertices);
-        xyAxisVao.addIndices(xyAxisIndices);
-        this.axis.push({
-            orientation: [ 1, 1, 0 ],
-            enabled: true,
-            vao: xyAxisVao,
-            color: [ 0, 1, 0 ]
-        });
+      const options: VertexCreateOptions = {
+        color: [ 230, 230, 230 ]
+      }
 
-        // generate yz axis
-        const yzAxisVao = new VertexArrayObject(this.webGl2RenderingContext);
-        const yzAxisVertices: Vertex[] = [];
-        const yzAxisIndices: number[] = [];
-
-        for (let y = 0; y < rows + 1; y++) {
-            yzAxisVertices.push(
-                new Vertex([ 0, -offset, y * (size / rows) - offset ], [ 1, 1, 1 ], [ 0, 0 ]),
-                new Vertex([ 0, size - offset, y * (size / rows) - offset ], [ 1, 1, 1 ], [ 0, 0 ])
-            );
-            const indexOffset = yzAxisIndices.length;
-            yzAxisIndices.push(indexOffset, 1 + indexOffset);
-        }
-        for (let z = 0; z < cols + 1; z++) {
-            yzAxisVertices.push(
-                new Vertex([ 0, z * (size / rows) - offset, -offset ], [ 1, 1, 1 ], [ 0, 0 ]),
-                new Vertex([ 0, z * (size / rows) - offset, size - offset ], [ 1, 1, 1 ], [ 0, 0 ])
-            );
-            const indexOffset = yzAxisIndices.length;
-            yzAxisIndices.push(indexOffset, 1 + indexOffset);
-        }
-        yzAxisVao.addVertices(yzAxisVertices);
-        yzAxisVao.addIndices(yzAxisIndices);
-        this.axis.push({
-            orientation: [ 0, 1, 1 ],
-            enabled: true,
-            vao: yzAxisVao,
-            color: [ 0, 0, 1 ]
-        });
+      for (let z = 0; z < rows + 1; z++) {
+        vertices.push(
+          new Vertex([ -offset, 0, z * (size / rows) - offset ], options),
+          new Vertex([ size - offset, 0, z * (size / rows) - offset ], options)
+        );
+        const indexOffset = indices.length;
+        indices.push(indexOffset, 1 + indexOffset);
+      }
+      for (let x = 0; x < cols + 1; x++) {
+        vertices.push(
+          new Vertex([ x * (size / rows) - offset, 0, -offset ], options),
+          new Vertex([ x * (size / rows) - offset, 0, size - offset ], options)
+        );
+        const indexOffset = indices.length;
+        indices.push(indexOffset, 1 + indexOffset);
+      }
+      vao.addVertices(vertices);
+      vao.addIndices(indices);
+      this.grid = {
+        orientation: [ 1, 0, 1 ],
+        enabled: true,
+        vao,
+        color: [ 255, 255, 255 ]
+      }
     }
 
     //#region Camera
@@ -357,10 +346,13 @@ export class Renderer {
         this.camera.orbit = degrees;
         this.markAsDirty();
     }
-    setCameraClipPlanes(near: number, far: number) {
-        this.camera.near = near;
-        this.camera.far = far;
-        this.markAsDirty();
+    setCameraNearClipPlane(near: number) {
+      this.camera.near = near;
+      this.markAsDirty();
+    }
+    setCameraFarClipPlane(far: number) {
+      this.camera.far = far;
+      this.markAsDirty();
     }
     setCameraFieldOfView(degrees: number) {
         this.camera.fov = degrees;
