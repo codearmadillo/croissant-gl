@@ -1,7 +1,7 @@
 import {Vertex} from "../types/graphics";
 import {vec2, vec3} from "gl-matrix";
 
-export function getCubeVerticesIndices(size: vec3, position: vec3, color: vec3): [ Vertex[], number[] ] {
+export function getCubeVerticesIndices(size: vec3, position: vec3 = [ 0, 0, 0 ]): [ Vertex[], number[] ] {
   return [
     [
       // bottom
@@ -58,7 +58,7 @@ export function getCubeVerticesIndices(size: vec3, position: vec3, color: vec3):
   ];
 }
 
-export function getPlaneVerticesIndices(size: vec2, position: vec3, color: vec3): [ Vertex[], number[] ] {
+export function getPlaneVerticesIndices(size: vec2, position: vec3 = [ 0, 0, 0 ]): [ Vertex[], number[] ] {
 
   return [
     [

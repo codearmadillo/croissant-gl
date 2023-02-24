@@ -12,6 +12,7 @@ export interface ShaderProgram {
   unbind(): void;
   bootstrap(webGL2RenderingContext: WebGL2RenderingContext): void;
   getUniformLocation(name: string): WebGLUniformLocation;
+  destroy(): void;
 }
 
 export class Vertex {

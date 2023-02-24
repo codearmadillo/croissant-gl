@@ -5,28 +5,26 @@ export function resolveEditorValue() {
     return v;
   }
   return `const croissantGl = window.croissantGl;
+const canvas = document.getElementById("mainCanvas");
 
-// You can create new context using 'croissantGl.createContext(canvas)'
-const context = window.croissantGlContext;
+// Create new rendering context
+const context = croissantGl.createContext(canvas);
 
 // Bootstrap
 croissantGl.bootstrap(context);
 croissantGl.scene.setClearColor(context, [ 240, 240, 240 ]);
 
+// Setup camera
 croissantGl.camera.setDistance(context, 250);
 croissantGl.camera.setOrbitAngle(context, 45);
-croissantGl.camera.setHeight(context, 50);
+croissantGl.camera.setHeight(context, 100);
 
-croissantGl.scene.showAxes(context, true, false, false);
-
-croissantGl.object.create(context, {
-    type: "cube",
-    size: [ 25, 25, 25 ],
-    position: [ 0, 0, 0 ],
-    rotation: [ 0, 0, 0 ],
-    scale: [ 1, 1, 1 ],
-    color: [ 1, 1, 1 ]
-});`;
+// Create cube
+const cube = croissantGl.object.create(context, {
+    type: "plane",
+    size: [ 200, 200 ]
+});
+croissantGl.object.setMaterialColor(context, cube, [ 255, 255, 255 ]);`;
 }
 export function storeEditorValue(value: string) {
   localStorage.setItem(key, value);

@@ -15,12 +15,17 @@ export class CroissantGlContext {
   private canvas: HTMLCanvasElement;
   private webGl2RenderingContext: WebGL2RenderingContext;
   private bootstrapped = false;
+  private contextId: number;
   public get ready() {
     return this.bootstrapped;
   }
+  public get id() {
+    return this.contextId;
+  }
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(canvas: HTMLCanvasElement, contextId: number) {
     this.canvas = canvas;
+    this.contextId = contextId;
     this.webGl2RenderingContext = this.canvas?.getContext("webgl2") as WebGL2RenderingContext;
     this.eventBroker = new EventBroker();
     this.objectBroker = new ObjectBroker();

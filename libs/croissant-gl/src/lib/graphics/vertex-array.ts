@@ -41,4 +41,7 @@ export class VertexArray {
     this.webGl2RenderingContext.vertexAttribPointer(2, 2, this.webGl2RenderingContext.FLOAT, false, Vertex.bytesize, 6 * SizeOf.FLOAT);
     this.webGl2RenderingContext.enableVertexAttribArray(2);
   }
+  destroy() {
+    this.webGl2RenderingContext.deleteBuffer(this.buffer);
+  }
 }

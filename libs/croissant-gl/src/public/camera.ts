@@ -50,8 +50,9 @@ export function setFieldOfView(context: number, angleInDegrees: number) {
 
 /**
  * Returns current camera info
+ * @param context CroissantGl context
  */
-export function info(context: number, ): CameraInfo {
+export function info(context: number): CameraInfo {
     return contextBroker.getOrThrow(context)?.renderer.getCameraInfo();
 }
 

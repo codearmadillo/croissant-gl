@@ -1,13 +1,10 @@
 import {ShaderProgram} from "../types/graphics";
 
-export class Shader implements ShaderProgram {
+export abstract class Shader implements ShaderProgram {
   private _uniformLocations: Map<string, WebGLUniformLocation> = new Map();
   private _shaders: Map<GLenum, WebGLProgram> = new Map();
   private _program: WebGLProgram | null = null;
   private _webGl2RenderingContext: WebGL2RenderingContext;
-
-  private _vertexShaderSource: string;
-  private _fragmentShaderSource: string;
 
   public get program() {
     return this._program;
@@ -16,10 +13,8 @@ export class Shader implements ShaderProgram {
     this._program = value;
   }
 
-  constructor(vertexShaderSource: string, fragmentShaderSource: string) {
-    this._vertexShaderSource = vertexShaderSource;
-    this._fragmentShaderSource = fragmentShaderSource;
-  }
+  protected abstract getVertexShaderSource(): string;
+  protected abstract getFragmentShaderSource(): string;
 
   protected compile(): void {
     this.program = this._webGl2RenderingContext.createProgram();
@@ -56,8 +51,8 @@ export class Shader implements ShaderProgram {
   }
   public bootstrap(webGL2RenderingContext: WebGL2RenderingContext) {
     this._webGl2RenderingContext = webGL2RenderingContext;
-    this.defineSource(this._fragmentShaderSource, this._webGl2RenderingContext.FRAGMENT_SHADER);
-    this.defineSource(this._vertexShaderSource, this._webGl2RenderingContext.VERTEX_SHADER);
+    this.defineSource(this.getFragmentShaderSource(), this._webGl2RenderingContext.FRAGMENT_SHADER);
+    this.defineSource(this.getVertexShaderSource(), this._webGl2RenderingContext.VERTEX_SHADER);
     this.compile();
   }
   public bind() {
@@ -76,5 +71,8 @@ export class Shader implements ShaderProgram {
       }
     }
     return this._uniformLocations.get(name) as WebGLUniformLocation ?? null;
+  }
+  public destroy() {
+    this._webGl2RenderingContext.deleteProgram(this._program);
   }
 }

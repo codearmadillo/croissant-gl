@@ -53,4 +53,9 @@ export class VertexArrayObject {
     // this.webGl2RenderingContext.drawElements(this.webGl2RenderingContext.TRIANGLES, this.ibo.elements, this.webGl2RenderingContext.UNSIGNED_SHORT, 0);
     this.webGl2RenderingContext.bindVertexArray(null);
   }
+  destroy() {
+    this.ibo?.destroy();
+    this.vbo?.destroy();
+    this.webGl2RenderingContext.deleteVertexArray(this.vao);
+  }
 }

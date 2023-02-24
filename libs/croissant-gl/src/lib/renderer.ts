@@ -1,5 +1,4 @@
 import {VertexArrayObject} from "./graphics/vertex-array-object";
-import {DrawableType} from "./graphics/drawable-type";
 import {getCubeVerticesIndices, getPlaneVerticesIndices} from "./graphics/drawables";
 import {ShaderType, Vertex} from "./types/graphics";
 import {MAX_OBJECTS, RENDERER_UPDATE_RATE} from "./constants";
@@ -14,6 +13,7 @@ import {ObjectBroker} from "./brokers/object-broker";
 import {ObjectPropertiesBroker} from "./brokers/object-properties-broker";
 import {ShaderBroker} from "./brokers/shader-broker";
 import {TextureBroker} from "./brokers/texture-broker";
+import {ObjectCreateOptions} from "./types/drawables";
 
 export class Renderer {
 
@@ -41,6 +41,7 @@ export class Renderer {
 
     public light: Light;
 
+    private interval: any;
     private dirty = true;
     public stats: RendererStatistics = {
         passes: 0,
@@ -61,9 +62,9 @@ export class Renderer {
     }
 
     //#region Entities
-    entityCreated(entity: number, type: DrawableType) {
+    entityCreated(entity: number, options: ObjectCreateOptions) {
         const vao = new VertexArrayObject(this.webGl2RenderingContext);
-        const [ vertices, indices ] = this.getVerticesIndices(type);
+        const [ vertices, indices ] = this.getVerticesIndices(options);
         vao.addIndices(indices);
         vao.addVertices(vertices);
 
@@ -71,6 +72,7 @@ export class Renderer {
         this.entityModelMatrix[entity] = mat4.create();
     }
     entityDestroyed(entity: number) {
+        this.entityVao[entity]!.destroy();
         this.entityVao[entity] = null;
         this.entityModelMatrix[entity] = null;
     }
@@ -88,9 +90,24 @@ export class Renderer {
     }
 
     loop() {
-        setInterval(() => {
+        this.interval = setInterval(() => {
             this.renderFrame();
         }, 1000 / RENDERER_UPDATE_RATE);
+    }
+    breakLoop() {
+        clearInterval(this.interval);
+    }
+    finalize() {
+      // Clear objects
+      for (let i = 0; i < MAX_OBJECTS; i++) {
+        if (this.objectBroker.exists(i)) {
+          this.entityDestroyed(i);
+        }
+      }
+      // Clear axis VAOs
+      this.axis.forEach((axis) => {
+          axis.vao.destroy();
+      });
     }
     //#endregion
 
@@ -157,7 +174,7 @@ export class Renderer {
             shader.bind();
 
             // Bind material
-            const color = material.color;
+            const color = [ material.color[0] / 255, material.color[1] / 255, material.color[2] / 255 ];
             this.webGl2RenderingContext.uniform3fv(shader.getUniformLocation("u_vertexColor"), color);
 
             // Disable texture by default
@@ -222,12 +239,12 @@ export class Renderer {
         axis.vao.drawLines();
       });
     }
-    private getVerticesIndices(type: DrawableType): [ Vertex[], number[] ] {
-        switch(type.type) {
+    private getVerticesIndices(options: ObjectCreateOptions): [ Vertex[], number[] ] {
+        switch(options.type) {
             case "cube":
-                return getCubeVerticesIndices(type.size, type.position, type.color);
+                return getCubeVerticesIndices(options.size, options.position);
             case "plane":
-                return getPlaneVerticesIndices(type.size, type.position, type.color);
+                return getPlaneVerticesIndices(options.size, options.position);
         }
     }
     private generateAxisObjects() {

@@ -7,6 +7,31 @@ import {contextBroker} from "../lib/context-broker";
 export function createContext(canvas: HTMLCanvasElement) {
   return contextBroker.create(canvas);
 }
+export function destroyContext(context: number) {
+  // Get context
+  const ctx = contextBroker.getOrThrow(context);
+
+  // Close renderer loop
+  ctx.renderer.breakLoop();
+
+  // Finalize object properties
+  ctx.objectPropertiesBroker.finalize();
+
+  // Finalize textures
+  ctx.textureBroker.finalize();
+
+  // Finalize shaders
+  ctx.shaderBroker.finalize();
+
+  // Finalize renderer
+  ctx.renderer.finalize();
+
+  // Finalize objects
+  ctx.objectBroker.finalize();
+
+  // Release context
+  contextBroker.destroy(ctx.id);
+}
 
 /**
  * Bootstraps renderer to provided canvas and starts the renderer.

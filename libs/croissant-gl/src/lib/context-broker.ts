@@ -17,11 +17,11 @@ class ContextBroker {
   create(canvas: HTMLCanvasElement): number {
     this.alive++;
     const contextId = this.queue.shift() as number;
-    this.contexts[contextId] = new CroissantGlContext(canvas);
+    this.contexts[contextId] = new CroissantGlContext(canvas, contextId);
     return contextId;
   }
-  clear(entity: number) {
-    this.queue.push(entity);
+  destroy(context: number) {
+    this.queue.push(context);
     this.alive--;
   }
   getOrThrow(context: number): CroissantGlContext {

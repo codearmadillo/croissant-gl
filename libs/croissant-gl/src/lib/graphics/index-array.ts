@@ -17,4 +17,7 @@ export class IndexArray {
     this.webGl2RenderingContext.bindBuffer(this.webGl2RenderingContext.ELEMENT_ARRAY_BUFFER, this.buffer);
     this.webGl2RenderingContext.bufferData(this.webGl2RenderingContext.ELEMENT_ARRAY_BUFFER, this.indices, this.webGl2RenderingContext.STATIC_DRAW);
   }
+  destroy() {
+    this.webGl2RenderingContext.deleteBuffer(this.buffer);
+  }
 }

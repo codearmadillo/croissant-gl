@@ -22,7 +22,6 @@ export class AppComponent implements AfterViewInit {
       enabled: true
     }
   }
-  private context: number;
   private debounce: any;
 
   @HostBinding("class") get class() {
@@ -30,13 +29,11 @@ export class AppComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.context = croissantGl.createContext(document.getElementById("mainCanvas") as HTMLCanvasElement);
     this.onCodeRun();
   }
 
   onCodeRun() {
     (window as any).croissantGl = croissantGl;
-    (window as any).croissantGlContext = this.context;
     eval(this.codeModel.value);
   }
 

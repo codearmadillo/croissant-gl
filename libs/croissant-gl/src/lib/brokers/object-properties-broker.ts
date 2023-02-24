@@ -1,9 +1,9 @@
-import {DrawableType} from "../graphics/drawable-type";
 import {quat, vec3} from "gl-matrix";
 import {MAX_OBJECTS} from "../constants";
 import {EntityMaterial, EntityMeta, EntityTransform} from "../types/entity";
 import {ShaderType} from "../types/graphics";
 import {Texture} from "../types/texture";
+import {ObjectCreateOptions} from "../types/drawables";
 
 export class ObjectPropertiesBroker {
     private entityTransform: (EntityTransform | null)[] = [];
@@ -17,19 +17,24 @@ export class ObjectPropertiesBroker {
             this.resetEntityPointer(i);
         }
     }
+    finalize() {
+      for (let i = 0; i < MAX_OBJECTS; i++) {
+        this.resetEntityPointer(i);
+      }
+    }
     isDirty() {
         return this.dirty.size > 0;
     }
-    entityCreated(entity: number, type: DrawableType) {
+    entityCreated(entity: number, type: ObjectCreateOptions) {
         this.entityTransform[entity] = {
-            rotation: type.rotation,
-            scale: type.scale,
+            rotation: type.rotation ?? [ 0, 0, 0 ],
+            scale: type.scale ?? [ 1, 1, 1 ],
             translation: vec3.create(),
             rotationQuat: quat.create()
         }
         this.setTransformRotationQuat(entity);
         this.entityMaterial[entity] = {
-            color: type.color,
+            color: [ 255, 255, 255 ],
             shader: ShaderType.OBJECT_SHADER
         }
         this.entityMeta[entity] = {
@@ -40,6 +45,7 @@ export class ObjectPropertiesBroker {
     }
     entityDestroyed(entity: number) {
         this.resetEntityPointer(entity);
+        this.markEntityAsDirty(entity);
     }
     entityRendered(entity: number) {
         this.markEntityAsPristine(entity);
@@ -80,14 +86,6 @@ export class ObjectPropertiesBroker {
     setScale(entity: number, scale: vec3) {
         this.entityTransform[entity]!.scale = scale;
         this.markEntityAsDirty(entity);
-    }
-    enable(entity: number) {
-        this.entityMeta[entity]!.enabled = true;
-        this.dirty.add(entity);
-    }
-    disable(entity: number) {
-        this.entityMeta[entity]!.enabled = false;
-        this.dirty.add(entity);
     }
     getType(entity: number): string | null {
         if (this.entityMeta[entity] === null) {
@@ -142,6 +140,27 @@ export class ObjectPropertiesBroker {
         return;
       }
       this.entityMaterial[entity]!.texture = texture;
+      this.markEntityAsDirty(entity);
+    }
+
+    /**
+     * Removes texture from all entities
+     * @param texture Texture
+    */
+    unsetMaterialTexture(texture: Texture) {
+      for (let i = 0; i < MAX_OBJECTS; i++) {
+        if (this.entityMaterial[i] !== null && this.entityMaterial[i]?.texture === texture) {
+          this.entityMaterial[i]!.texture = null;
+          this.markEntityAsDirty(i);
+        }
+      }
+    }
+    setMaterialColor(entity: number, color: vec3) {
+      if (this.entityMaterial[entity] === null) {
+        return;
+      }
+      this.entityMaterial[entity]!.color = color;
+      this.markEntityAsDirty(entity);
     }
     isEntityEnabled(entity: number) {
         return this.entityMeta[entity]!.enabled ?? false;

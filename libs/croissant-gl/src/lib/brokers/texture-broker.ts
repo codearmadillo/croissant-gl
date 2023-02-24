@@ -50,9 +50,20 @@ export class TextureBroker {
 
     return texture;
   }
+  finalize() {
+    for (let i = 0; i < MAX_TEXTURES; i++) {
+      if (!this.queue.includes(i)) {
+          this.destroy(i);
+      }
+    }
+  }
   destroy(texture: Texture) {
+    this._webGl2RenderingContext.deleteTexture(this.textures[texture]);
+
     this.queue.push(texture);
     this.alive--;
+
+    this.markAsDirty();
   }
   get(texture: Texture) {
     return this.textures[texture];
