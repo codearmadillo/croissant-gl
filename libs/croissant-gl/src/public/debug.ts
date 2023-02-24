@@ -1,14 +1,15 @@
 import {DebugInfo} from "../lib/types/debug";
-import {objectBroker} from "../lib/brokers/object-broker";
-import {renderer} from "../lib/renderer";
+import {contextBroker} from "../lib/context-broker";
 
 /**
  * Returns information about current application state
+ * @param context CroissantGl context
  */
-export function info(): DebugInfo {
+export function info(context: number): DebugInfo {
+    const ctx = contextBroker.getOrThrow(context);
     return {
-        entities: objectBroker.entityCount,
-        passes: renderer.stats.passes,
-        averageFrameTimeMs: renderer.stats.totalRenderTimeInMs / renderer.stats.passes
+        entities: ctx?.objectBroker.entityCount,
+        passes: ctx?.renderer.stats.passes,
+        averageFrameTimeMs: ctx?.renderer.stats.totalRenderTimeInMs / ctx?.renderer.stats.passes
     }
 }

@@ -1,53 +1,53 @@
 import {DrawableType} from "../lib/graphics/drawable-type";
-import {objectBroker} from "../lib/brokers/object-broker";
-import {objectPropertiesBroker} from "../lib/brokers/object-properties-broker";
-import {renderer} from "../lib/renderer";
 import {ObjectInfo} from "../lib/types/object";
 import {vec3} from "gl-matrix";
 import {Texture} from "../lib/types/texture";
+import {contextBroker} from "../lib/context-broker";
 
-export function create(type: DrawableType): number {
-    const entity = objectBroker.create();
+export function create(context: number, type: DrawableType): number {
+  const ctx = contextBroker.getOrThrow(context);
+    const entity = ctx.objectBroker.create();
 
-    objectPropertiesBroker.entityCreated(entity, type);
-    renderer.entityCreated(entity, type);
+    ctx.objectPropertiesBroker.entityCreated(entity, type);
+    ctx.renderer.entityCreated(entity, type);
 
     return entity;
 }
-export function info(object: number): ObjectInfo {
+export function info(context: number, object: number): ObjectInfo {
+    const ctx = contextBroker.getOrThrow(context);
     return {
         id: object,
-        type: objectPropertiesBroker.getType(object),
-        translation: objectPropertiesBroker.getTranslation(object),
-        rotation: objectPropertiesBroker.getRotation(object),
-        scale: objectPropertiesBroker.getScale(object),
-        enabled: objectPropertiesBroker.isEntityEnabled(object)
+        type: ctx.objectPropertiesBroker.getType(object),
+        translation: ctx.objectPropertiesBroker.getTranslation(object),
+        rotation: ctx.objectPropertiesBroker.getRotation(object),
+        scale: ctx.objectPropertiesBroker.getScale(object),
+        enabled: ctx.objectPropertiesBroker.isEntityEnabled(object)
     }
 }
-export function setTranslation(object: number, translation: vec3) {
-    objectPropertiesBroker.setTranslation(object, translation);
+export function setTranslation(context: number, object: number, translation: vec3) {
+    contextBroker.getOrThrow(context)?.objectPropertiesBroker.setTranslation(object, translation);
 }
-export function setRotation(object: number, rotation: vec3) {
-    objectPropertiesBroker.setRotation(object, rotation);
+export function setRotation(context: number, object: number, rotation: vec3) {
+    contextBroker.getOrThrow(context)?.objectPropertiesBroker.setRotation(object, rotation);
 }
-export function setScale(object: number, scale: vec3) {
-    objectPropertiesBroker.setScale(object, scale);
+export function setScale(context: number, object: number, scale: vec3) {
+    contextBroker.getOrThrow(context)?.objectPropertiesBroker.setScale(object, scale);
 }
-export function translate(object: number, translation: vec3) {
-    objectPropertiesBroker.translate(object, translation);
+export function translate(context: number, object: number, translation: vec3) {
+    contextBroker.getOrThrow(context)?.objectPropertiesBroker.translate(object, translation);
 }
-export function rotate(object: number, rotation: vec3) {
-    objectPropertiesBroker.rotate(object, rotation);
+export function rotate(context: number, object: number, rotation: vec3) {
+    contextBroker.getOrThrow(context)?.objectPropertiesBroker.rotate(object, rotation);
 }
-export function scale(object: number, scale: vec3) {
-    objectPropertiesBroker.scale(object, scale);
+export function scale(context: number, object: number, scale: vec3) {
+    contextBroker.getOrThrow(context)?.objectPropertiesBroker.scale(object, scale);
 }
-export function enable(object: number) {
-    objectPropertiesBroker.enable(object);
+export function enable(context: number, object: number) {
+    contextBroker.getOrThrow(context)?.objectPropertiesBroker.enable(object);
 }
-export function disable(object: number) {
-    objectPropertiesBroker.disable(object);
+export function disable(context: number, object: number) {
+    contextBroker.getOrThrow(context)?.objectPropertiesBroker.disable(object);
 }
-export function setTexture(object: number, texture: Texture | null) {
-    objectPropertiesBroker.setMaterialTexture(object, texture);
+export function setTexture(context: number, object: number, texture: Texture | null) {
+    contextBroker.getOrThrow(context)?.objectPropertiesBroker.setMaterialTexture(object, texture);
 }

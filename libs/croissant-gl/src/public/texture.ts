@@ -1,13 +1,13 @@
 import {defaultTextureOptions, Texture, TextureOptions} from "../lib/types/texture";
-import {textureBroker} from "../lib/brokers/texture-broker";
+import {contextBroker} from "../lib/context-broker";
 
-export function create(image: string, options: Partial<TextureOptions> = defaultTextureOptions) {
+export function create(context: number, image: string, options: Partial<TextureOptions> = defaultTextureOptions) {
   const combinedOptions = {
     ...defaultTextureOptions,
     ...options
   }
-  return textureBroker.create(image, combinedOptions);
+  return contextBroker.getOrThrow(context).textureBroker.create(image, combinedOptions);
 }
-export function destroy(texture: Texture) {
-  textureBroker.destroy(texture);
+export function destroy(context: number, texture: Texture) {
+  contextBroker.getOrThrow(context).textureBroker.destroy(texture);
 }

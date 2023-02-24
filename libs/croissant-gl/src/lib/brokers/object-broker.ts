@@ -1,6 +1,6 @@
 import {MAX_OBJECTS} from "../constants";
 
-class ObjectBroker {
+export class ObjectBroker {
     private queue: number[] = [];
     private alive = 0;
     public get entityCount() {
@@ -32,4 +32,3 @@ class ObjectBroker {
         }
     }
 }
-export const objectBroker = new ObjectBroker();

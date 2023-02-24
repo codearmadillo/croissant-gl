@@ -10,7 +10,7 @@ export enum ShaderType {
 export interface ShaderProgram {
   bind(): void;
   unbind(): void;
-  bootstrap(): void;
+  bootstrap(webGL2RenderingContext: WebGL2RenderingContext): void;
   getUniformLocation(name: string): WebGLUniformLocation;
 }
 

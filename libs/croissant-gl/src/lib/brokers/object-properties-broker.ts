@@ -5,7 +5,7 @@ import {EntityMaterial, EntityMeta, EntityTransform} from "../types/entity";
 import {ShaderType} from "../types/graphics";
 import {Texture} from "../types/texture";
 
-class ObjectPropertiesBroker {
+export class ObjectPropertiesBroker {
     private entityTransform: (EntityTransform | null)[] = [];
     private entityMaterial: (EntityMaterial | null)[] = [];
     private entityMeta: (EntityMeta | null)[] = [];
@@ -159,4 +159,3 @@ class ObjectPropertiesBroker {
         this.entityTransform[entity]!.rotationQuat = quat.fromEuler(quat.create(), this.entityTransform[entity]!.rotation[0], this.entityTransform[entity]!.rotation[1], this.entityTransform[entity]!.rotation[2]);
     }
 }
-export const objectPropertiesBroker = new ObjectPropertiesBroker();

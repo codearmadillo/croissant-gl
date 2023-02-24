@@ -1,13 +1,14 @@
 import { Vertex } from "../types/graphics";
-import {gl} from "./context";
 import {SizeOf} from "../types/sizeof";
 
 export class VertexArray {
   private readonly buffer: WebGLBuffer | null;
   private readonly vertices: Vertex[];
-  constructor(vertices: Vertex[]) {
+  private readonly webGl2RenderingContext: WebGL2RenderingContext;
+  constructor(vertices: Vertex[], webGl2RenderingContext: WebGL2RenderingContext) {
+    this.webGl2RenderingContext = webGl2RenderingContext;
     this.vertices = vertices;
-    this.buffer = gl().createBuffer();
+    this.buffer = this.webGl2RenderingContext.createBuffer();
     if (this.buffer === null) {
       throw new Error(`Tried creating VBO but createBuffer failed`);
     }
@@ -25,19 +26,19 @@ export class VertexArray {
     });
 
     // Bind buffer
-    gl().bindBuffer(gl().ARRAY_BUFFER, this.buffer);
-    gl().bufferData(gl().ARRAY_BUFFER, floatArray, gl().STATIC_DRAW);
+    this.webGl2RenderingContext.bindBuffer(this.webGl2RenderingContext.ARRAY_BUFFER, this.buffer);
+    this.webGl2RenderingContext.bufferData(this.webGl2RenderingContext.ARRAY_BUFFER, floatArray, this.webGl2RenderingContext.STATIC_DRAW);
 
     // Position
-    gl().vertexAttribPointer(0, 3, gl().FLOAT, false, Vertex.bytesize, 0);
-    gl().enableVertexAttribArray(0);
+    this.webGl2RenderingContext.vertexAttribPointer(0, 3, this.webGl2RenderingContext.FLOAT, false, Vertex.bytesize, 0);
+    this.webGl2RenderingContext.enableVertexAttribArray(0);
 
     // Normals
-    gl().vertexAttribPointer(1, 3, gl().FLOAT, false, Vertex.bytesize, 3 * SizeOf.FLOAT);
-    gl().enableVertexAttribArray(1);
+    this.webGl2RenderingContext.vertexAttribPointer(1, 3, this.webGl2RenderingContext.FLOAT, false, Vertex.bytesize, 3 * SizeOf.FLOAT);
+    this.webGl2RenderingContext.enableVertexAttribArray(1);
 
     // Texture Coordinates
-    gl().vertexAttribPointer(2, 2, gl().FLOAT, false, Vertex.bytesize, 6 * SizeOf.FLOAT);
-    gl().enableVertexAttribArray(2);
+    this.webGl2RenderingContext.vertexAttribPointer(2, 2, this.webGl2RenderingContext.FLOAT, false, Vertex.bytesize, 6 * SizeOf.FLOAT);
+    this.webGl2RenderingContext.enableVertexAttribArray(2);
   }
 }

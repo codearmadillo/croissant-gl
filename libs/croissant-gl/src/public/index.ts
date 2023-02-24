@@ -1,46 +1,38 @@
-import {croissantBackend} from "../lib/backend";
 import {EventType} from "../lib/types/events";
-import {eventBroker} from "../lib/brokers/event-broker";
+import {contextBroker} from "../lib/context-broker";
 
 //////////////////////////////////////////////////////////
 // TOP-LEVEL API
 //////////////////////////////////////////////////////////
+export function createContext(canvas: HTMLCanvasElement) {
+  return contextBroker.create(canvas);
+}
+
 /**
  * Bootstraps renderer to provided canvas and starts the renderer.
+ * @param context CroissantGl context
  * @param canvas Canvas to bootstrap renderer context to
  */
-export function bootstrap(canvas: HTMLCanvasElement) {
-  croissantBackend.bootstrap(canvas);
-}
-
-/**
- * Stops renderer. The renderer context is not cleared, only rendering to canvas to suspended.
- */
-export function stop() {
-  croissantBackend.stop();
-}
-
-/**
- * Restarts rendering to canvas.
- */
-export function start() {
-  croissantBackend.start();
+export function bootstrap(context: number) {
+  contextBroker.getOrThrow(context)?.bootstrap();
 }
 
 /**
  * Returns `boolean` indicating whether or not is rendering context ready.
+ * @param context CroissantGl context
  */
-export function ready() {
-  return croissantBackend.ready;
+export function ready(context: number) {
+  return contextBroker.getOrThrow(context).ready;
 }
 
 /**
  * Adds event listener that fires on renderer event
+ * @param context CroissantGl context
  * @param eventType Type of event
  * @param callback Callback to be called on event
  */
-export function on(eventType: EventType, callback: (...args: any[]) => any) {
-  eventBroker.registerCallback(eventType, callback);
+export function on(context: number, eventType: EventType, callback: (...args: any[]) => any) {
+  contextBroker.getOrThrow(context)?.eventBroker.registerCallback(eventType, callback);
 }
 
 //////////////////////////////////////////////////////////

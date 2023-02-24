@@ -3,20 +3,19 @@ import {DrawableType} from "./graphics/drawable-type";
 import {getCubeVerticesIndices, getPlaneVerticesIndices} from "./graphics/drawables";
 import {ShaderType, Vertex} from "./types/graphics";
 import {MAX_OBJECTS, RENDERER_UPDATE_RATE} from "./constants";
-import {gl} from "./graphics/context";
-import {objectBroker} from "./brokers/object-broker";
-import {objectPropertiesBroker} from "./brokers/object-properties-broker";
 import {glMatrix, mat4, vec3} from "gl-matrix";
-import {defaultLight} from "./graphics/light";
+import {Light} from "./graphics/light";
 import {Camera, CameraInfo} from "./types/camera";
 import {Axis, RendererStatistics} from "./types/renderer";
-import {shaderBroker} from "./brokers/shader-broker";
 import {EntityMaterial} from "./types/entity";
-import {textureBroker} from "./brokers/texture-broker";
 import {Texture} from "./types/texture";
 import {isNullOrUndefined} from "./helpers/type.helpers";
+import {ObjectBroker} from "./brokers/object-broker";
+import {ObjectPropertiesBroker} from "./brokers/object-properties-broker";
+import {ShaderBroker} from "./brokers/shader-broker";
+import {TextureBroker} from "./brokers/texture-broker";
 
-class Renderer {
+export class Renderer {
 
     private camera: Camera = {
         focusPoint: [ 0, 0, 0 ],
@@ -33,6 +32,14 @@ class Renderer {
     private axis: Axis[] = [];
     private projection: mat4;
     private view: mat4;
+    private readonly webGl2RenderingContext: WebGL2RenderingContext;
+
+    private readonly objectBroker: ObjectBroker;
+    private readonly objectPropertiesBroker: ObjectPropertiesBroker;
+    private readonly shaderBroker: ShaderBroker;
+    private readonly textureBroker: TextureBroker;
+
+    public light: Light;
 
     private dirty = true;
     public stats: RendererStatistics = {
@@ -40,16 +47,22 @@ class Renderer {
         totalRenderTimeInMs: 0
     }
 
-    constructor() {
-        for (let i = 0; i < MAX_OBJECTS; i++) {
-            this.entityVao[i] = null;
-            this.entityModelMatrix[i] = null;
-        }
+    constructor(webGl2RenderingContext: WebGL2RenderingContext, objectBroker: ObjectBroker, objectPropertiesBroker: ObjectPropertiesBroker, shaderBroker: ShaderBroker, textureBroker: TextureBroker) {
+      this.webGl2RenderingContext = webGl2RenderingContext;
+      this.objectBroker = objectBroker;
+      this.objectPropertiesBroker = objectPropertiesBroker;
+      this.shaderBroker = shaderBroker;
+      this.textureBroker = textureBroker;
+
+      for (let i = 0; i < MAX_OBJECTS; i++) {
+          this.entityVao[i] = null;
+          this.entityModelMatrix[i] = null;
+      }
     }
 
     //#region Entities
     entityCreated(entity: number, type: DrawableType) {
-        const vao = new VertexArrayObject();
+        const vao = new VertexArrayObject(this.webGl2RenderingContext);
         const [ vertices, indices ] = this.getVerticesIndices(type);
         vao.addIndices(indices);
         vao.addVertices(vertices);
@@ -64,10 +77,12 @@ class Renderer {
     //#endregion
 
     //#region Lifecycle
-    async bootstrap() {
-        gl().enable(gl().DEPTH_TEST);
-        gl().clearColor(1, 1, 1, 1);
-        gl().lineWidth(1);
+    bootstrap() {
+        this.webGl2RenderingContext.enable(this.webGl2RenderingContext.DEPTH_TEST);
+        this.webGl2RenderingContext.clearColor(1, 1, 1, 1);
+        this.webGl2RenderingContext.lineWidth(1);
+
+        this.light = new Light();
 
         this.generateAxisObjects();
     }
@@ -96,11 +111,11 @@ class Renderer {
     }
 
     setClearColor(rgb: vec3) {
-      gl().clearColor(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255, 1.0);
+      this.webGl2RenderingContext.clearColor(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255, 1.0);
     }
 
     private getCalculatedProjectionMatrix() {
-        return mat4.perspective(mat4.create(), glMatrix.toRadian(this.camera.fov), gl().canvas.width / gl().canvas.height, this.camera.near, this.camera.far);
+        return mat4.perspective(mat4.create(), glMatrix.toRadian(this.camera.fov), this.webGl2RenderingContext.canvas.width / this.webGl2RenderingContext.canvas.height, this.camera.near, this.camera.far);
     }
 
     private getCalculatedViewMatrix() {
@@ -113,74 +128,75 @@ class Renderer {
 
     private renderFrame() {
         // only render frame if camera or any objects are dirty
-        if (!objectPropertiesBroker.isDirty() && !textureBroker.isDirty() && !defaultLight.isDirty() && !this.dirty) {
+        if (!this.objectPropertiesBroker.isDirty() && !this.textureBroker.isDirty() && !this.light.isDirty() && !this.dirty) {
             return;
         }
         const startTimeMs = new Date().getTime();
 
-        gl().clear(gl().COLOR_BUFFER_BIT | gl().DEPTH_BUFFER_BIT);
-        gl().viewport(0, 0, gl().canvas.width, gl().canvas.height);
+        this.webGl2RenderingContext.clear(this.webGl2RenderingContext.COLOR_BUFFER_BIT | this.webGl2RenderingContext.DEPTH_BUFFER_BIT);
+        this.webGl2RenderingContext.viewport(0, 0, this.webGl2RenderingContext.canvas.width, this.webGl2RenderingContext.canvas.height);
 
         // Calculate projection/view for render pass
         this.projection = this.getCalculatedProjectionMatrix();
         this.view = this.getCalculatedViewMatrix();
 
         // Iterate through objects
-        objectBroker.each((entity: number) => {
-            if (!objectPropertiesBroker.isEntityEnabled(entity)) {
+        this.objectBroker.each((entity: number) => {
+            if (!this.objectPropertiesBroker.isEntityEnabled(entity)) {
                 return;
             }
 
             // Recalculate model if entity is dirty
-            if (objectPropertiesBroker.isEntityDirty(entity)) {
-                mat4.fromRotationTranslationScale(this.entityModelMatrix[entity] as mat4, objectPropertiesBroker.getRotationQuaternion(entity), objectPropertiesBroker.getTranslation(entity) as vec3, objectPropertiesBroker.getScale(entity) as vec3);
+            if (this.objectPropertiesBroker.isEntityDirty(entity)) {
+                mat4.fromRotationTranslationScale(this.entityModelMatrix[entity] as mat4, this.objectPropertiesBroker.getRotationQuaternion(entity), this.objectPropertiesBroker.getTranslation(entity) as vec3, this.objectPropertiesBroker.getScale(entity) as vec3);
             }
 
             // Bind shader
-            const material = objectPropertiesBroker.getMaterial(entity) as EntityMaterial;
-            const shader = shaderBroker.get(material.shader);
+            const material = this.objectPropertiesBroker.getMaterial(entity) as EntityMaterial;
+            const shader = this.shaderBroker.get(material.shader);
             shader.bind();
 
             // Bind material
             const color = material.color;
-            gl().uniform3fv(shader.getUniformLocation("u_vertexColor"), color);
+            this.webGl2RenderingContext.uniform3fv(shader.getUniformLocation("u_vertexColor"), color);
 
             // Disable texture by default
-            gl().uniform1i(shader.getUniformLocation("u_materialTextureUsed"), 0);
+            this.webGl2RenderingContext.uniform1i(shader.getUniformLocation("u_materialTextureUsed"), 0);
 
             // Bind texture if any
             if (isNullOrUndefined(material.texture)) {
               // Bind albedo (doesn't always mean it is albedo texture though...)
-              const glTexture = textureBroker.get(material.texture as Texture) as WebGLTexture;
+              const glTexture = this.textureBroker.get(material.texture as Texture) as WebGLTexture;
               if (glTexture !== null) {
-                gl().uniform1i(shader.getUniformLocation("u_materialTextureUsed"), 1);
-                gl().uniform1i(shader.getUniformLocation("u_materialTexture"), glTexture as GLint);
-                gl().activeTexture(gl().TEXTURE0);
-                gl().bindTexture(gl().TEXTURE_2D, glTexture);
+                this.webGl2RenderingContext.uniform1i(shader.getUniformLocation("u_materialTextureUsed"), 1);
+                this.webGl2RenderingContext.uniform1i(shader.getUniformLocation("u_materialTexture"), glTexture as GLint);
+                this.webGl2RenderingContext.activeTexture(this.webGl2RenderingContext.TEXTURE0);
+                this.webGl2RenderingContext.bindTexture(this.webGl2RenderingContext.TEXTURE_2D, glTexture);
               }
             }
 
             // Bind light
-            defaultLight.bind(shader);
+            this.webGl2RenderingContext.uniform3fv(shader.getUniformLocation("u_lightPosition"), this.light.getPosition());
+            this.webGl2RenderingContext.uniform3fv(shader.getUniformLocation("u_lightColor"), this.light.getColor());
 
             // Bind MVP matrices
-            gl().uniformMatrix4fv(shader.getUniformLocation("u_projection"), false, this.projection);
-            gl().uniformMatrix4fv(shader.getUniformLocation("u_view"), false, this.view);
-            gl().uniformMatrix4fv(shader.getUniformLocation("u_model"), false, this.entityModelMatrix[entity] as mat4);
+            this.webGl2RenderingContext.uniformMatrix4fv(shader.getUniformLocation("u_projection"), false, this.projection);
+            this.webGl2RenderingContext.uniformMatrix4fv(shader.getUniformLocation("u_view"), false, this.view);
+            this.webGl2RenderingContext.uniformMatrix4fv(shader.getUniformLocation("u_model"), false, this.entityModelMatrix[entity] as mat4);
 
             // Bind VAO and perform draw call
             this.entityVao[entity]?.bind();
             this.entityVao[entity]?.drawElements();
-            gl().bindVertexArray(null);
+            this.webGl2RenderingContext.bindVertexArray(null);
 
             // Cleanup
             if (material.texture !== null) {
-              gl().activeTexture(gl().TEXTURE0);
-              gl().bindTexture(gl().TEXTURE_2D, null);
+              this.webGl2RenderingContext.activeTexture(this.webGl2RenderingContext.TEXTURE0);
+              this.webGl2RenderingContext.bindTexture(this.webGl2RenderingContext.TEXTURE_2D, null);
             }
 
             // Entity was re-rendered - mark it as pristine
-            objectPropertiesBroker.entityRendered(entity);
+            this.objectPropertiesBroker.entityRendered(entity);
         });
         // render grid
         this.renderAxis();
@@ -191,18 +207,18 @@ class Renderer {
         this.stats.totalRenderTimeInMs = new Date().getTime() - startTimeMs;
     }
     private renderAxis() {
-      const uiShader = shaderBroker.get(ShaderType.UI_SHADER);
+      const uiShader = this.shaderBroker.get(ShaderType.UI_SHADER);
       uiShader.bind();
 
-      gl().uniformMatrix4fv(uiShader.getUniformLocation("u_projection"), false, this.projection);
-      gl().uniformMatrix4fv(uiShader.getUniformLocation("u_view"), false, this.view);
-      gl().uniformMatrix4fv(uiShader.getUniformLocation("u_model"), false, mat4.create());
+      this.webGl2RenderingContext.uniformMatrix4fv(uiShader.getUniformLocation("u_projection"), false, this.projection);
+      this.webGl2RenderingContext.uniformMatrix4fv(uiShader.getUniformLocation("u_view"), false, this.view);
+      this.webGl2RenderingContext.uniformMatrix4fv(uiShader.getUniformLocation("u_model"), false, mat4.create());
 
       this.axis.forEach((axis) => {
         if (!axis.enabled) {
           return;
         }
-        gl().uniform3fv(uiShader.getUniformLocation("u_vertexColor"), axis.color);
+        this.webGl2RenderingContext.uniform3fv(uiShader.getUniformLocation("u_vertexColor"), axis.color);
         axis.vao.drawLines();
       });
     }
@@ -221,7 +237,7 @@ class Renderer {
         const offset = size / 2;
 
         // generate xz axis
-        const xzAxisVao = new VertexArrayObject();
+        const xzAxisVao = new VertexArrayObject(this.webGl2RenderingContext);
         const xzAxisVertices: Vertex[] = [];
         const xzAxisIndices: number[] = [];
 
@@ -251,7 +267,7 @@ class Renderer {
         });
 
         // generate xy axis
-        const xyAxisVao = new VertexArrayObject();
+        const xyAxisVao = new VertexArrayObject(this.webGl2RenderingContext);
         const xyAxisVertices: Vertex[] = [];
         const xyAxisIndices: number[] = [];
 
@@ -281,7 +297,7 @@ class Renderer {
         });
 
         // generate yz axis
-        const yzAxisVao = new VertexArrayObject();
+        const yzAxisVao = new VertexArrayObject(this.webGl2RenderingContext);
         const yzAxisVertices: Vertex[] = [];
         const yzAxisIndices: number[] = [];
 
@@ -359,7 +375,7 @@ class Renderer {
     }
     private markAsPristine() {
         this.dirty = false;
-        textureBroker.markAsPristine();
+        this.textureBroker.markAsPristine();
+        this.light.markAsPristine();
     }
 }
-export const renderer = new Renderer();
