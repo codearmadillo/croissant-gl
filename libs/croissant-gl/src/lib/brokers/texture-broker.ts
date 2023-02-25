@@ -17,38 +17,41 @@ export class TextureBroker {
   isDirty() {
     return this.dirty;
   }
-  create(imagePath: string, options: TextureOptions): Texture {
+  createAsync(imagePath: string, options: TextureOptions): Promise<Texture> {
     this.alive++;
     const texture = this.queue.shift() as Texture;
 
-    // Create WebGl2 texture
-    const glTexture = this._webGl2RenderingContext.createTexture();
-    this.textures[texture] = glTexture;
-    this._webGl2RenderingContext.bindTexture(this._webGl2RenderingContext.TEXTURE_2D, glTexture);
-
-    // set default texture
-    this._webGl2RenderingContext.texImage2D(this._webGl2RenderingContext.TEXTURE_2D, 0, this._webGl2RenderingContext.RGBA, 1, 1, 0, this._webGl2RenderingContext.RGBA, this._webGl2RenderingContext.UNSIGNED_BYTE, new Uint8Array([ 0, 0, 255, 255 ]));
-
-    // load texture
-    this.loadTextureImage(imagePath).then((image) => {
+    return new Promise<Texture>((resolve) => {
+      // Create WebGl2 texture
+      const glTexture = this._webGl2RenderingContext.createTexture();
+      this.textures[texture] = glTexture;
       this._webGl2RenderingContext.bindTexture(this._webGl2RenderingContext.TEXTURE_2D, glTexture);
-      this._webGl2RenderingContext.texImage2D(this._webGl2RenderingContext.TEXTURE_2D, 0, this._webGl2RenderingContext.RGBA, this._webGl2RenderingContext.RGBA, this._webGl2RenderingContext.UNSIGNED_BYTE, image);
+
+      // set default texture
+      this._webGl2RenderingContext.texImage2D(this._webGl2RenderingContext.TEXTURE_2D, 0, this._webGl2RenderingContext.RGBA, 1, 1, 0, this._webGl2RenderingContext.RGBA, this._webGl2RenderingContext.UNSIGNED_BYTE, new Uint8Array([ 0, 0, 255, 255 ]));
+
+      // load texture
+      this.loadTextureImage(imagePath).then((image) => {
+        this._webGl2RenderingContext.bindTexture(this._webGl2RenderingContext.TEXTURE_2D, glTexture);
+        this._webGl2RenderingContext.texImage2D(this._webGl2RenderingContext.TEXTURE_2D, 0, this._webGl2RenderingContext.RGBA, this._webGl2RenderingContext.RGBA, this._webGl2RenderingContext.UNSIGNED_BYTE, image);
+        this._webGl2RenderingContext.bindTexture(this._webGl2RenderingContext.TEXTURE_2D, null);
+        this.markAsDirty();
+      }).catch((e) => {
+        console.error(`Failed to load '${imagePath}'`, e);
+      });
+
+      // setup parameters
+      this._webGl2RenderingContext.texParameteri(this._webGl2RenderingContext.TEXTURE_2D, this._webGl2RenderingContext.TEXTURE_WRAP_S, this.getParsedWebGl2TextureOption(options.textureWrapS) ?? this._webGl2RenderingContext.REPEAT);
+      this._webGl2RenderingContext.texParameteri(this._webGl2RenderingContext.TEXTURE_2D, this._webGl2RenderingContext.TEXTURE_WRAP_T, this.getParsedWebGl2TextureOption(options.textureWrapT) ?? this._webGl2RenderingContext.REPEAT);
+      this._webGl2RenderingContext.texParameteri(this._webGl2RenderingContext.TEXTURE_2D, this._webGl2RenderingContext.TEXTURE_MIN_FILTER, this.getParsedWebGl2TextureOption(options.minificationFilter) ?? this._webGl2RenderingContext.NEAREST);
+      this._webGl2RenderingContext.texParameteri(this._webGl2RenderingContext.TEXTURE_2D, this._webGl2RenderingContext.TEXTURE_MAG_FILTER, this.getParsedWebGl2TextureOption(options.magnificationFilter) ?? this._webGl2RenderingContext.LINEAR);
+
+      // unbind texture
       this._webGl2RenderingContext.bindTexture(this._webGl2RenderingContext.TEXTURE_2D, null);
-      this.markAsDirty();
-    }).catch((e) => {
-      console.error(`Failed to load '${imagePath}'`, e);
+
+      // resolve
+      resolve(texture);
     });
-
-    // setup parameters
-    this._webGl2RenderingContext.texParameteri(this._webGl2RenderingContext.TEXTURE_2D, this._webGl2RenderingContext.TEXTURE_WRAP_S, this.getParsedWebGl2TextureOption(options.textureWrapS) ?? this._webGl2RenderingContext.REPEAT);
-    this._webGl2RenderingContext.texParameteri(this._webGl2RenderingContext.TEXTURE_2D, this._webGl2RenderingContext.TEXTURE_WRAP_T, this.getParsedWebGl2TextureOption(options.textureWrapT) ?? this._webGl2RenderingContext.REPEAT);
-    this._webGl2RenderingContext.texParameteri(this._webGl2RenderingContext.TEXTURE_2D, this._webGl2RenderingContext.TEXTURE_MIN_FILTER, this.getParsedWebGl2TextureOption(options.minificationFilter) ?? this._webGl2RenderingContext.NEAREST);
-    this._webGl2RenderingContext.texParameteri(this._webGl2RenderingContext.TEXTURE_2D, this._webGl2RenderingContext.TEXTURE_MAG_FILTER, this.getParsedWebGl2TextureOption(options.magnificationFilter) ?? this._webGl2RenderingContext.LINEAR);
-
-    // unbind texture
-    this._webGl2RenderingContext.bindTexture(this._webGl2RenderingContext.TEXTURE_2D, null);
-
-    return texture;
   }
   finalize() {
     for (let i = 0; i < MAX_TEXTURES; i++) {

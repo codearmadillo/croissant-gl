@@ -7,12 +7,12 @@ import {contextBroker} from "../lib/context-broker";
  * @param imageUrl URL of image to load
  * @param options Texture options
  */
-export function create(context: number, imageUrl: string, options: Partial<TextureOptions> = defaultTextureOptions) {
+export async function create(context: number, imageUrl: string, options: Partial<TextureOptions> = defaultTextureOptions): Promise<number> {
   const combinedOptions = {
     ...defaultTextureOptions,
     ...options
   }
-  return contextBroker.getOrThrow(context).textureBroker.create(imageUrl, combinedOptions);
+  return contextBroker.getOrThrow(context).textureBroker.createAsync(imageUrl, combinedOptions);
 }
 
 /**

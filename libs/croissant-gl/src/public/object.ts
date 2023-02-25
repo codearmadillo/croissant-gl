@@ -8,14 +8,13 @@ import {Texture} from "../lib/types/texture";
  * @param context CroissantGl context
  * @param options Create options
  */
-export function create(context: number, options: ObjectCreateOptions) {
+export async function create(context: number, options: ObjectCreateOptions): Promise<number> {
   const ctx = contextBroker.getOrThrow(context);
-  const entity = ctx.objectBroker.create();
 
-  ctx.objectPropertiesBroker.entityCreated(entity, options);
-  ctx.renderer.entityCreated(entity, options);
-
-  return entity;
+  return ctx.objectBroker.createAsync(async (entity) => {
+    ctx.objectPropertiesBroker.entityCreated(entity, options);
+    await ctx.renderer.entityCreated(entity, options);
+  });
 }
 
 /**

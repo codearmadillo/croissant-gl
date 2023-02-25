@@ -63,9 +63,9 @@ export class Renderer {
     }
 
     //#region Entities
-    entityCreated(entity: number, options: ObjectCreateOptions) {
+    async entityCreated(entity: number, options: ObjectCreateOptions) {
         const vao = new VertexArrayObject(this.webGl2RenderingContext);
-        const [ vertices, indices ] = this.getVerticesIndices(options);
+        const [ vertices, indices ] = await this.getVerticesIndices(options);
         vao.addIndices(indices);
         vao.addVertices(vertices);
 
@@ -156,7 +156,10 @@ export class Renderer {
         this.projection = this.getCalculatedProjectionMatrix();
         this.view = this.getCalculatedViewMatrix(this.camera.distance, this.camera.orbit, this.camera.height, this.camera.focusPoint);
 
-        // Iterate through objects
+        // Iterate through objects'
+        if (!this.objectBroker.any()) {
+          console.log("no objects to render");
+        }
         this.objectBroker.each((entity: number) => {
             if (!this.objectPropertiesBroker.isEntityEnabled(entity)) {
                 return;
@@ -256,7 +259,7 @@ export class Renderer {
 
       this.grid.vao.drawLines();
     }
-    private getVerticesIndices(options: ObjectCreateOptions): [ Vertex[], number[] ] {
+    private async getVerticesIndices(options: ObjectCreateOptions): Promise<[ Vertex[], number[] ]> {
         switch(options.type) {
             case "cube":
                 return getCubeVerticesIndices(options.size, options.position);

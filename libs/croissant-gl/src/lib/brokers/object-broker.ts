@@ -1,6 +1,7 @@
 import {MAX_OBJECTS} from "../constants";
 
 export class ObjectBroker {
+    private locked: Set<number> = new Set();
     private queue: number[] = [];
     private alive = 0;
     public get entityCount() {
@@ -14,6 +15,18 @@ export class ObjectBroker {
     create(): number {
         this.alive++;
         return this.queue.shift() as number;
+    }
+    async createAsync(callback: (entity: number) => Promise<void> | void) {
+        // get entity from queue, and lock it
+        const entity = this.queue.shift() as number;
+        this.locked.add(entity);
+        // callback
+        await callback(entity);
+        // entity is now ready, unlock it and increase entity count
+        this.locked.delete(entity);
+        this.alive++;
+        // return entity
+        return entity;
     }
     destroy(entity: number) {
         this.queue.push(entity);
@@ -35,9 +48,12 @@ export class ObjectBroker {
      */
     each(callback: (entity: number) => void) {
         for (let i = 0; i < MAX_OBJECTS; i++) {
-            if (this.queue.indexOf(i) === -1) {
+            if (this.queue.indexOf(i) === -1 && !this.locked.has(i)) {
                 callback(i);
             }
         }
+    }
+    any() {
+      return this.queue.length + this.locked.size !== MAX_OBJECTS;
     }
 }
