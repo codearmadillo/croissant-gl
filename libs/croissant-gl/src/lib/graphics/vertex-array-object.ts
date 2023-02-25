@@ -38,10 +38,10 @@ export class VertexArrayObject {
   }
   drawElements() {
     if (this.vbo === null || this.ibo === null) {
-      throw new Error(`Failed to draw - IBO or VBO missing`);
+      console.error(`Failed to draw - IBO or VBO missing`);
     }
     this.webGl2RenderingContext.bindVertexArray(this.vao);
-    this.webGl2RenderingContext.drawElements(this.webGl2RenderingContext.TRIANGLES, this.ibo.elements, this.webGl2RenderingContext.UNSIGNED_SHORT, 0);
+    this.webGl2RenderingContext.drawElements(this.webGl2RenderingContext.TRIANGLES, this.ibo!.elements, this.webGl2RenderingContext.UNSIGNED_SHORT, 0);
     this.webGl2RenderingContext.bindVertexArray(null);
   }
   drawLines() {

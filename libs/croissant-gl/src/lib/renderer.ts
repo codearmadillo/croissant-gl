@@ -2,7 +2,7 @@ import {VertexArrayObject} from "./graphics/vertex-array-object";
 import {getCubeVerticesIndices, getPlaneVerticesIndices} from "./graphics/drawables";
 import {ShaderType, Vertex, VertexCreateOptions} from "./types/graphics";
 import {MAX_OBJECTS, RENDERER_UPDATE_RATE} from "./constants";
-import {glMatrix, mat4, vec3, vec4} from "gl-matrix";
+import {glMatrix, mat4, vec2, vec3, vec4} from "gl-matrix";
 import {Light} from "./graphics/light";
 import {Camera, CameraInfo} from "./types/camera";
 import {Axis, Gimbal, RendererStatistics} from "./types/renderer";
@@ -143,7 +143,6 @@ export class Renderer {
     }
 
     private renderFrame() {
-        // only render frame if camera or any objects are dirty
         if (!this.objectPropertiesBroker.isDirty() && !this.textureBroker.isDirty() && !this.light.isDirty() && !this.dirty) {
             return;
         }
@@ -241,7 +240,6 @@ export class Renderer {
       this.webGl2RenderingContext.uniformMatrix4fv(uiShader.getUniformLocation("u_model"), false, mat4.create());
 
       this.gimbal.lines.drawLines();
-      this.gimbal.bubbles.drawElements();
     }
     private renderGrid() {
       if (!this.grid.enabled) {
