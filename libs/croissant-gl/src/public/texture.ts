@@ -21,6 +21,6 @@ export async function create(context: number, imageUrl: string, options: Partial
  * @param texture Texture to destroy
  */
 export function destroy(context: number, texture: Texture) {
-  contextBroker.getOrThrow(context).objectPropertiesBroker.unsetMaterialTexture(texture);
+  contextBroker.getOrThrow(context).renderer.unsetEntityMaterialTexture(texture);
   contextBroker.getOrThrow(context).textureBroker.destroy(texture);
 }

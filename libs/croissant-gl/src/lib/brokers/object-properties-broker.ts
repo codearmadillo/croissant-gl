@@ -7,7 +7,6 @@ import {ObjectCreateOptions} from "../types/drawables";
 
 export class ObjectPropertiesBroker {
     private entityTransform: (EntityTransform | null)[] = [];
-    private entityMaterial: (EntityMaterial | null)[] = [];
     private entityMeta: (EntityMeta | null)[] = [];
     // Indices which are dirty and need to be recalculated when binding to context
     private dirty: Set<number> = new Set();
@@ -33,10 +32,6 @@ export class ObjectPropertiesBroker {
             rotationQuat: quat.create()
         }
         this.setTransformRotationQuat(entity);
-        this.entityMaterial[entity] = {
-            color: [ 255, 255, 255 ],
-            shader: ShaderType.OBJECT_SHADER
-        }
         this.entityMeta[entity] = {
             type: type.type,
             enabled: true
@@ -52,7 +47,6 @@ export class ObjectPropertiesBroker {
     }
     private resetEntityPointer(entity: number) {
         this.entityTransform[entity] = null;
-        this.entityMaterial[entity] = null;
         this.entityMeta[entity] = null;
     }
     translate(entity: number, translation: vec3) {
@@ -128,39 +122,6 @@ export class ObjectPropertiesBroker {
             this.entityTransform[entity]!.scale[1],
             this.entityTransform[entity]!.scale[2]
         ]
-    }
-    getMaterial(entity: number): EntityMaterial | null {
-        if (this.entityMaterial[entity] === null) {
-            return null;
-        }
-        return this.entityMaterial[entity]!;
-    }
-    setMaterialTexture(entity: number, texture: Texture | null) {
-      if (this.entityMaterial[entity] === null) {
-        return;
-      }
-      this.entityMaterial[entity]!.texture = texture;
-      this.markEntityAsDirty(entity);
-    }
-
-    /**
-     * Removes texture from all entities
-     * @param texture Texture
-    */
-    unsetMaterialTexture(texture: Texture) {
-      for (let i = 0; i < MAX_OBJECTS; i++) {
-        if (this.entityMaterial[i] !== null && this.entityMaterial[i]?.texture === texture) {
-          this.entityMaterial[i]!.texture = null;
-          this.markEntityAsDirty(i);
-        }
-      }
-    }
-    setMaterialColor(entity: number, color: vec3) {
-      if (this.entityMaterial[entity] === null) {
-        return;
-      }
-      this.entityMaterial[entity]!.color = color;
-      this.markEntityAsDirty(entity);
     }
     isEntityEnabled(entity: number) {
         return this.entityMeta[entity]!.enabled ?? false;

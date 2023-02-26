@@ -1,5 +1,6 @@
 import {Vertex} from "../types/graphics";
 import {vec2, vec3} from "gl-matrix";
+import {ObjLoader} from "../loaders/obj-loader";
 
 export function getCubeVerticesIndices(size: vec3, position: vec3 = [ 0, 0, 0 ]): [ Vertex[], number[] ] {
   return [
@@ -59,9 +60,32 @@ export function getCubeVerticesIndices(size: vec3, position: vec3 = [ 0, 0, 0 ])
 }
 
 export function getPlaneVerticesIndices(size: vec2, position: vec3 = [ 0, 0, 0 ]): [ Vertex[], number[] ] {
-
   return [
-    [ // [ 0, 1, 0 ], [ 0, 0 ]
+    [
+      new Vertex([ -size[0] / 2 + position[0], position[1],  -size[1] / 2 + position[1] ], { normals: [ 0, 1, 0 ], textureCoordinates: [ 0, 0 ] }),
+      new Vertex([ size[0] / 2 + position[0],  position[1],  -size[1] / 2 + position[1] ], { normals: [ 0, 1, 0 ], textureCoordinates: [ 1, 0 ] }),
+      new Vertex([ size[0] / 2 + position[0],  position[1],  size[1] / 2 + position[1] ], { normals: [ 0, 1, 0 ], textureCoordinates: [ 1, 1 ] }),
+      new Vertex([ -size[0] / 2 + position[0], position[1],  size[1] / 2 + position[1] ], { normals: [ 0, 1, 0 ], textureCoordinates: [ 0, 1 ] }),
+    ],
+    [
+      0, 1, 2,
+      0, 2, 3,
+    ]
+  ]
+}
+
+export async function getObjMeshVerticesIndices(file: string): Promise<[ Vertex[], number[] ]> {
+  // Loader
+  await ObjLoader.load(file);
+  // Load OBJ file
+
+
+
+  // Temporary code for plane
+  const size = [ 100, 100 ];
+  const position = [ 0, 5, 0 ];
+  return [
+    [
       new Vertex([ -size[0] / 2 + position[0], position[1],  -size[1] / 2 + position[1] ], { normals: [ 0, 1, 0 ], textureCoordinates: [ 0, 0 ] }),
       new Vertex([ size[0] / 2 + position[0],  position[1],  -size[1] / 2 + position[1] ], { normals: [ 0, 1, 0 ], textureCoordinates: [ 1, 0 ] }),
       new Vertex([ size[0] / 2 + position[0],  position[1],  size[1] / 2 + position[1] ], { normals: [ 0, 1, 0 ], textureCoordinates: [ 1, 1 ] }),

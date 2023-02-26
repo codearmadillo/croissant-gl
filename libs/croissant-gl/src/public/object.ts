@@ -91,13 +91,13 @@ export function scale(context: number, object: number, scale: vec3) {
 }
 
 /**
- * Sets new material color on object
+ * Sets new material color on object. This action will change material color on all materials associated with entity
  * @param context CroissantGl context
  * @param object Object to set material color on
  * @param color New color in rgb format (0-255 range)
  */
 export function setMaterialColor(context: number, object: number, color: vec3) {
-  contextBroker.getOrThrow(context)?.objectPropertiesBroker.setMaterialColor(object, color);
+  contextBroker.getOrThrow(context)?.renderer.setEntityMaterialColor(object, color);
 }
 
 /**
@@ -107,5 +107,5 @@ export function setMaterialColor(context: number, object: number, color: vec3) {
  * @param texture New texture
  */
 export function setMaterialTexture(context: number, object: number, texture: Texture | null) {
-  contextBroker.getOrThrow(context)?.objectPropertiesBroker.setMaterialTexture(object, texture);
+  contextBroker.getOrThrow(context)?.renderer.setEntityMaterialTexture(object, texture);
 }
