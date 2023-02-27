@@ -22,6 +22,9 @@ export class CroissantGlContext {
   public get id() {
     return this.contextId;
   }
+  public get renderingContext() {
+      return this.webGl2RenderingContext;
+  }
 
   constructor(canvas: HTMLCanvasElement, contextId: number) {
     this.canvas = canvas;

@@ -2,6 +2,8 @@ import {vec3} from "gl-matrix";
 import {contextBroker} from "../lib/context-broker";
 import {ObjectCreateOptions} from "../lib/types/drawables";
 import {Texture} from "../lib/types/texture";
+import {VertexGroupsFactory} from "../lib/factories/vertex-groups.factory";
+import {ObjParser} from "../lib/parsers/obj-parser";
 
 /**
  * Creates new object of provided type
@@ -9,12 +11,24 @@ import {Texture} from "../lib/types/texture";
  * @param options Create options
  */
 export async function create(context: number, options: ObjectCreateOptions): Promise<number> {
-  const ctx = contextBroker.getOrThrow(context);
+    const ctx = contextBroker.getOrThrow(context);
 
-  return ctx.objectBroker.createAsync(async (entity) => {
-    ctx.objectPropertiesBroker.entityCreated(entity, options);
-    await ctx.renderer.entityCreated(entity, options);
-  });
+    return ctx.objectBroker.createAsync(async (entity) => {
+        ctx.objectPropertiesBroker.entityCreated(entity, options);
+        // create vertex groups
+        if (options.type === "plane") {
+            await ctx.renderer.entityCreated(entity, await VertexGroupsFactory.getPlaneVertexGroups(options, ctx.renderingContext));
+        }
+        if (options.type === "cube") {
+            await ctx.renderer.entityCreated(entity, await VertexGroupsFactory.getCubeVertexGroups(options, ctx.renderingContext));
+        }
+        if (options.type === "objMesh") {
+            // parse mesh
+            const objFile = await ObjParser.parse(options.file);
+            // get vertex groups
+            await ctx.renderer.entityCreated(entity, await VertexGroupsFactory.getObjMeshVertexGroups(options, objFile, ctx.renderingContext));
+        }
+    });
 }
 
 /**

@@ -65,9 +65,9 @@ export class Renderer {
     }
 
     //#region Entities
-    async entityCreated(entity: number, options: ObjectCreateOptions) {
+    async entityCreated(entity: number, vertexGroups: VertexGroup[]) {
         this.entityModelMatrix[entity] = mat4.create();
-        this.entityVertexGroups[entity] = await VertexGroupsFactory.getVertexGroups(options, this.webGl2RenderingContext);
+        this.entityVertexGroups[entity] = vertexGroups;
     }
     entityDestroyed(entity: number) {
         this.entityModelMatrix[entity] = null;
@@ -88,7 +88,6 @@ export class Renderer {
         this.generateGrid();
         this.generateGimbal();
     }
-
     loop() {
         this.interval = setInterval(() => {
             this.renderFrame();
