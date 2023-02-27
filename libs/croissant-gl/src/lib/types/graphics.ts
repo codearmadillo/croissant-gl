@@ -15,9 +15,9 @@ export interface ShaderProgram {
 }
 
 export interface VertexCreateOptions {
-  normals?: vec3;
-  textureCoordinates?: vec2;
-  color?: vec3;
+  normals?: vec3 | null;
+  textureCoordinates?: vec2 | null;
+  color?: vec3 | null;
 }
 
 export class Vertex {

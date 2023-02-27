@@ -38,6 +38,12 @@ export class ObjParser {
             materialSource: null,
             count: 0
         }
+        // Keep track of offsets - when having multiple objects, the vertex/normal/tC offset is maintained e.g. face 1 of object 2 may have vertices 15, 16, 17, 18 (even though in context of object these are 0, 1, 2, 3)
+        const offset = {
+            vertex: 0,
+            normals: 0,
+            texCoords: 0
+        }
         // Keep track of captured material
         let usedMaterial: string | null = null;
         // Parse line by line
@@ -58,7 +64,17 @@ export class ObjParser {
                     texCoords: [],
                     faces: []
                 });
+
+                // when new file is encountered, update offsets
+                if (objFile.count > 0) {
+                    // add last object to offset
+                    offset.vertex += objFile.objects[objFile.count - 1].vertices.length;
+                    offset.normals += objFile.objects[objFile.count - 1].normals.length;
+                    offset.texCoords += objFile.objects[objFile.count - 1].texCoords.length;
+                }
+
                 objFile.count++;
+
                 return;
             }
             // Establish index - cannot read line if no object is currently bound
@@ -80,8 +96,9 @@ export class ObjParser {
 
             // Normals
             if (line.startsWith("vn ")) {
-                const normalVec: vec3 = [ parseFloat(explodedValues[0]), parseFloat(explodedValues[1]), parseFloat(explodedValues[2]) ];
-                objFile.objects[index].normals.push(vec3.normalize(vec3.create(), normalVec));
+                const normalVec: vec3 = [ parseFloat(explodedValues[0]), parseFloat(explodedValues[1]), parseFloat(explodedValues[2]) ]
+                const normalizedVector = vec3.normalize(vec3.create(), normalVec);
+                objFile.objects[index].normals.push([ normalizedVector[0], normalizedVector[1], normalizedVector[2] ]);
                 return;
             }
 
@@ -97,6 +114,7 @@ export class ObjParser {
 
             // Faces
             if (line.startsWith("f ")) {
+                // if there already is a face with the same material, use it instead
                 const face: MeshFace = {
                     materialName: usedMaterial as string,
                     debug: line,
@@ -110,15 +128,18 @@ export class ObjParser {
                     valueString = valueString.trim();
                     const value = valueString.split("/");
                     // If no / are present, the value is vertex only
-                    face.vertices[i] = parseInt(value[0].trim(), 10);
-                    face.textureCoordinates[i] = isEmptyOrWhitespace(value[1]) ? null : parseInt(value[1].trim(), 10);
-                    face.normals[i] = isEmptyOrWhitespace(value[2]) ? null : parseInt(value[2].trim(), 10)
+                    // Subtract -1 as *.obj files are 1-based
+                    face.vertices[i] = parseInt(value[0].trim(), 10) - 1 - offset.vertex;
+                    face.textureCoordinates[i] = isEmptyOrWhitespace(value[1]) ? null : parseInt(value[1].trim(), 10) - 1 - offset.texCoords;
+                    face.normals[i] = isEmptyOrWhitespace(value[2]) ? null : parseInt(value[2].trim(), 10) - 1 - offset.normals;
                 });
 
                 objFile.objects[index].faces.push(face);
+
                 return;
             }
         });
+
         // Return parsed file
         return objFile;
     }
