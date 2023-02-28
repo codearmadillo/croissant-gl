@@ -21,12 +21,17 @@ layout (location = 3) in vec3 a_VertexColor;
 uniform mat4 u_model;
 uniform mat4 u_view;
 uniform mat4 u_projection;
-uniform vec3 u_materialColor;
+
+uniform vec3 u_materialDiffuseColor;
+uniform vec3 u_materialAmbientColor;
+uniform vec3 u_materialSpecularColor;
+uniform int u_materialIllumination;
+uniform int u_materialSpecularExponent;
 
 out vec4 v_Color;
 
 void main() {
-  v_Color = vec4(u_materialColor * a_VertexColor, 1.0);
+  v_Color = vec4(u_materialDiffuseColor * a_VertexColor, 1.0);
   gl_Position = u_projection * u_view * u_model * vec4(a_Position.xyz, 1.0);
 }
 `;

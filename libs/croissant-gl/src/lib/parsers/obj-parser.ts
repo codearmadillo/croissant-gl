@@ -1,5 +1,5 @@
-import {vec3, vec4} from "gl-matrix";
-import {Mesh, MeshFace, MeshMaterial} from "../types/mesh";
+import {ReadonlyVec3, vec3, vec4} from "gl-matrix";
+import {Mesh, MeshFace, MeshMaterial, MeshMaterialIllumination} from "../types/mesh";
 import {isEmptyOrWhitespace} from "../helpers/type.helpers";
 
 export class ObjParser {
@@ -27,7 +27,59 @@ export class ObjParser {
     }
     private static async parseMaterialFile(fileContents: string): Promise<MeshMaterial[]> {
         // https://people.computing.clemson.edu/~dhouse/courses/405/docs/brief-mtl-file-format.html#:~:text=Material%20Library%20File%20(.mtl),mtl%20extension.
-        return [];
+        const materials: MeshMaterial[] = [];
+
+        fileContents.split("\n").forEach((line) => {
+            if (line.includes("newmtl")) {
+                materials.push({
+                    name: line.split(" ").filter((i) => i)!.pop()!.trim(),
+                    specularExponent: 0,
+                    illumination: 0,
+                    ambient: vec3.create(),
+                    diffuse: vec3.create(),
+                    specular: vec3.create()
+                });
+                return;
+            }
+            if (materials.length === 0) {
+                return;
+            }
+            const index = materials.length - 1;
+
+            // Specular exponent
+            if (line.toLowerCase().includes("ns ")) {
+                materials[index].specularExponent = parseFloat(line.split(" ")[1].trim());
+                return;
+            }
+
+            // Illumination
+            if (line.toLowerCase().includes("illum ")) {
+                materials[index].illumination = parseInt(line.split(" ")[1].trim()) as MeshMaterialIllumination;
+                return;
+            }
+
+            // Ambient/Diffuse/Specular
+            if (line.toLowerCase().includes("ka ") || line.toLowerCase().includes("kd ") || line.toLowerCase().includes("ks ")) {
+                const explodedLine = line.split(" ");
+                const vectorValue = [ parseFloat(explodedLine[1]), parseFloat(explodedLine[2]), parseFloat(explodedLine[3]) ];
+                const multipliedVectorValue = vec3.multiply(vec3.create(), vectorValue as vec3, [ 255, 255, 255 ]);
+
+                if (line.toLowerCase().includes("ka ")) {
+                    materials[index].ambient = [ multipliedVectorValue[0], multipliedVectorValue[1], multipliedVectorValue[2] ];
+                }
+                if (line.toLowerCase().includes("kd ")) {
+                    materials[index].diffuse = [ multipliedVectorValue[0], multipliedVectorValue[1], multipliedVectorValue[2] ];
+                }
+                if (line.toLowerCase().includes("ks ")) {
+                    materials[index].specular = [ multipliedVectorValue[0], multipliedVectorValue[1], multipliedVectorValue[2] ];
+                }
+
+                return;
+            }
+
+        });
+
+        return materials;
     }
     private static async parseObjFile(fileContents: string): Promise<Mesh> {
         // // Docs: https://en.wikipedia.org/wiki/Wavefront_.obj_file

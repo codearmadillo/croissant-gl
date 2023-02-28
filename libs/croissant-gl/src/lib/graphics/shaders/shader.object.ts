@@ -64,7 +64,12 @@ uniform mat4 u_view;
 uniform mat4 u_projection;
 uniform vec3 u_lightPosition;
 uniform vec3 u_lightColor;
-uniform vec3 u_materialColor;
+
+uniform vec3 u_materialDiffuseColor;
+uniform vec3 u_materialAmbientColor;
+uniform vec3 u_materialSpecularColor;
+uniform int u_materialIllumination;
+uniform int u_materialSpecularExponent;
 
 out vec4 v_Color;
 out vec3 v_Normal;
@@ -74,7 +79,7 @@ out vec3 v_LightColor;
 out vec2 v_textureCoordinates;
 
 void main() {
-  v_Color = vec4(u_materialColor * a_VertexColor, 1.0);
+  v_Color = vec4(u_materialDiffuseColor * a_VertexColor, 1.0);
   v_FragPos = vec3(u_model * vec4(a_Position.xyz, 1.0));
   v_Normal = a_Normal;
   v_LightPosition = u_lightPosition;

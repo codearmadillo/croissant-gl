@@ -155,11 +155,14 @@ export class Renderer {
 
         // render entities
         this.renderEntities();
+
         // render renderer ui
         this.renderGrid();
         this.renderGimbal();
+
         // mark renderer as pristine
         this.markAsPristine();
+
         // statistics
         this.stats.passes++;
         this.stats.totalRenderTimeInMs = new Date().getTime() - startTimeMs;
@@ -182,8 +185,19 @@ export class Renderer {
           const shader = this.shaderBroker.get(group.material.shader);
           shader.bind();
 
-          const color = [ group.material.color[0] / 255, group.material.color[1] / 255, group.material.color[2] / 255 ];
-          this.webGl2RenderingContext.uniform3fv(shader.getUniformLocation("u_materialColor"), color);
+          // Bind material color information
+          {
+            const diffuseColor = [ group.material.diffuse[0] / 255, group.material.diffuse[1] / 255, group.material.diffuse[2] / 255 ];
+            const ambientColor = [ group.material.ambient[0] / 255, group.material.ambient[1] / 255, group.material.ambient[2] / 255 ];
+            const specularColor = [ group.material.specular[0] / 255, group.material.specular[1] / 255, group.material.specular[2] / 255 ];
+
+            this.webGl2RenderingContext.uniform3fv(shader.getUniformLocation("u_materialDiffuseColor"), diffuseColor)
+            this.webGl2RenderingContext.uniform3fv(shader.getUniformLocation("u_materialAmbientColor"), ambientColor);
+            this.webGl2RenderingContext.uniform3fv(shader.getUniformLocation("u_materialSpecularColor"), specularColor);
+
+            this.webGl2RenderingContext.uniform1i(shader.getUniformLocation("u_materialIllumination"), group.material.illumination);
+            this.webGl2RenderingContext.uniform1i(shader.getUniformLocation("u_materialSpecularExponent"), group.material.specularExponent);
+          }
 
           // Disable texture by default
           this.webGl2RenderingContext.uniform1i(shader.getUniformLocation("u_materialTextureUsed"), 0);
@@ -195,6 +209,8 @@ export class Renderer {
               this.webGl2RenderingContext.uniform1i(shader.getUniformLocation("u_materialTexture"), glTexture as GLint);
               this.webGl2RenderingContext.activeTexture(this.webGl2RenderingContext.TEXTURE0);
               this.webGl2RenderingContext.bindTexture(this.webGl2RenderingContext.TEXTURE_2D, glTexture);
+            } else {
+                this.webGl2RenderingContext.uniform1i(shader.getUniformLocation("u_materialTextureUsed"), 0);
             }
           }
 
@@ -235,7 +251,7 @@ export class Renderer {
       this.webGl2RenderingContext.disable(this.webGl2RenderingContext.DEPTH_TEST);
 
       this.webGl2RenderingContext.uniformMatrix4fv(uiShader.getUniformLocation("u_view"), false, this.getCalculatedViewMatrix(200, this.camera.orbit, this.camera.height, [ 0, 0, 0 ]));
-      this.webGl2RenderingContext.uniform3fv(uiShader.getUniformLocation("u_materialColor"), [ 1, 1, 1 ]);
+      this.webGl2RenderingContext.uniform3fv(uiShader.getUniformLocation("u_materialDiffuseColor"), [ 1, 1, 1 ]);
       this.webGl2RenderingContext.uniformMatrix4fv(uiShader.getUniformLocation("u_projection"), false, this.projection);
       this.webGl2RenderingContext.uniformMatrix4fv(uiShader.getUniformLocation("u_model"), false, mat4.create());
 
@@ -251,7 +267,7 @@ export class Renderer {
 
       this.webGl2RenderingContext.enable(this.webGl2RenderingContext.DEPTH_TEST);
 
-      this.webGl2RenderingContext.uniform3fv(uiShader.getUniformLocation("u_materialColor"), [ this.grid.color[0] / 255, this.grid.color[1] / 255, this.grid.color[2] / 255 ]);
+      this.webGl2RenderingContext.uniform3fv(uiShader.getUniformLocation("u_materialDiffuseColor"), [ this.grid.color[0] / 255, this.grid.color[1] / 255, this.grid.color[2] / 255 ]);
       this.webGl2RenderingContext.uniformMatrix4fv(uiShader.getUniformLocation("u_projection"), false, this.projection);
       this.webGl2RenderingContext.uniformMatrix4fv(uiShader.getUniformLocation("u_view"), false, this.view);
       this.webGl2RenderingContext.uniformMatrix4fv(uiShader.getUniformLocation("u_model"), false, mat4.create());
@@ -376,7 +392,7 @@ export class Renderer {
             return;
         }
         this.entityVertexGroups[entity]?.forEach((group) => {
-          group.material.color = color;
+          group.material.diffuse = color;
         });
         this.objectPropertiesBroker.markEntityAsDirty(entity);
     }

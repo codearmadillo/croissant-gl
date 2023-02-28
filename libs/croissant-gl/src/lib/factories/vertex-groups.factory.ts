@@ -16,7 +16,11 @@ export class VertexGroupsFactory {
             {
                 vao,
                 material: {
-                    color: [ 170, 170, 170 ],
+                    diffuse: [ 170, 170, 170 ],
+                    specular: [ 255, 255, 255 ],
+                    ambient: [ 255, 255, 255 ],
+                    specularExponent: 0,
+                    illumination: 0,
                     shader: ShaderType.OBJECT_SHADER,
                     texture: null
                 }
@@ -33,7 +37,11 @@ export class VertexGroupsFactory {
             {
                 vao,
                 material: {
-                    color: [ 170, 170, 170 ],
+                    diffuse: [ 170, 170, 170 ],
+                    specular: [ 255, 255, 255 ],
+                    ambient: [ 255, 255, 255 ],
+                    specularExponent: 0,
+                    illumination: 0,
                     shader: ShaderType.OBJECT_SHADER,
                     texture: null
                 }
@@ -41,8 +49,7 @@ export class VertexGroupsFactory {
         ];
     }
     public static async getObjMeshVertexGroups(options: ObjMeshCreateOptions, parsedObjFile: Mesh, glContext: WebGL2RenderingContext): Promise<VertexGroup[]> {
-        // parse mesh into vertex groups
-        // for now, don't merge materials - just convert faces
+        // TODO: Merge faces with identical materials
         const groups: VertexGroup[] = [];
 
         parsedObjFile.objects.forEach((object) => {
@@ -71,8 +78,7 @@ export class VertexGroupsFactory {
                     }));
                 });
 
-                // HARDCODED - NEEDS CHANGE
-                // build indices - triangulate polygons
+                // TODO: Triangulation
                 if (face.vertices.length === 3) {
                     indices = [ 0, 1, 2 ];
                 } else if (face.vertices.length > 3) {
@@ -87,11 +93,26 @@ export class VertexGroupsFactory {
                 // create group
                 const group: VertexGroup = {
                     material: {
-                        color: [ 255, 255, 255 ],
+                        diffuse: [ 170, 170, 170 ],
+                        specular: [ 255, 255, 255 ],
+                        ambient: [ 255, 255, 255 ],
+                        specularExponent: 0,
+                        illumination: 0,
                         shader: ShaderType.OBJECT_SHADER,
                         texture: null
                     },
                     vao
+                }
+
+                // find material and override default material values
+                const material = parsedObjFile.materials.find((mat) => mat.name === face.materialName);
+
+                if (!isNullOrUndefined(material)) {
+                    group.material.diffuse = material!.diffuse;
+                    group.material.specular = material!.specular;
+                    group.material.ambient = material!.ambient;
+                    group.material.specularExponent = material!.specularExponent;
+                    group.material.illumination = material!.illumination;
                 }
 
                 groups.push(group);
