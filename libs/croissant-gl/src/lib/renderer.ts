@@ -387,22 +387,26 @@ export class Renderer {
     }
     //#endregion
 
-    setEntityMaterialColor(entity: number, color: vec3) {
+    setEntityMaterialColor(entity: number, color: vec3, materialName: string | null) {
         if (isNullOrUndefined(this.entityVertexGroups[entity])) {
             return;
         }
         this.entityVertexGroups[entity]?.forEach((group) => {
-          group.material.diffuse = color;
+            if (isNullOrUndefined(materialName) || group.material.name === materialName) {
+                group.material.diffuse = color;
+            }
         });
         this.objectPropertiesBroker.markEntityAsDirty(entity);
     }
 
-    setEntityMaterialTexture(entity: number, texture: Texture | null) {
+    setEntityMaterialTexture(entity: number, texture: Texture | null, materialName: string | null) {
       if (isNullOrUndefined(this.entityVertexGroups[entity])) {
         return;
       }
       this.entityVertexGroups[entity]?.forEach((group) => {
-        group.material.texture = texture;
+          if (isNullOrUndefined(materialName) || group.material.name === materialName) {
+              group.material.texture = texture;
+          }
       });
       this.objectPropertiesBroker.markEntityAsDirty(entity);
     }

@@ -22,7 +22,8 @@ export class VertexGroupsFactory {
                     specularExponent: 0,
                     illumination: 0,
                     shader: ShaderType.OBJECT_SHADER,
-                    texture: null
+                    texture: null,
+                    name: null
                 }
             }
         ];
@@ -43,7 +44,8 @@ export class VertexGroupsFactory {
                     specularExponent: 0,
                     illumination: 0,
                     shader: ShaderType.OBJECT_SHADER,
-                    texture: null
+                    texture: null,
+                    name: null
                 }
             }
         ];
@@ -99,7 +101,8 @@ export class VertexGroupsFactory {
                         specularExponent: 0,
                         illumination: 0,
                         shader: ShaderType.OBJECT_SHADER,
-                        texture: null
+                        texture: null,
+                        name: null
                     },
                     vao
                 }
@@ -108,6 +111,7 @@ export class VertexGroupsFactory {
                 const material = parsedObjFile.materials.find((mat) => mat.name === face.materialName);
 
                 if (!isNullOrUndefined(material)) {
+                    group.material.name = material!.name;
                     group.material.diffuse = material!.diffuse;
                     group.material.specular = material!.specular;
                     group.material.ambient = material!.ambient;

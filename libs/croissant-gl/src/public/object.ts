@@ -109,9 +109,10 @@ export function scale(context: number, object: number, scale: vec3) {
  * @param context CroissantGl context
  * @param object Object to set material color on
  * @param color New color in rgb format (0-255 range)
+ * @param materialName Name of material to set color on. This is useful when having named materials exported from e.g. Blender
  */
-export function setMaterialColor(context: number, object: number, color: vec3) {
-  contextBroker.getOrThrow(context)?.renderer.setEntityMaterialColor(object, color);
+export function setMaterialColor(context: number, object: number, color: vec3, materialName: string | null = null) {
+  contextBroker.getOrThrow(context)?.renderer.setEntityMaterialColor(object, color, materialName);
 }
 
 /**
@@ -119,7 +120,8 @@ export function setMaterialColor(context: number, object: number, color: vec3) {
  * @param context CroissantGl context
  * @param object Object to set material texture on
  * @param texture New texture
+ * @param materialName Name of material to set texture on. This is useful when having named materials exported from e.g. Blender
  */
-export function setMaterialTexture(context: number, object: number, texture: Texture | null) {
-  contextBroker.getOrThrow(context)?.renderer.setEntityMaterialTexture(object, texture);
+export function setMaterialTexture(context: number, object: number, texture: Texture | null, materialName: string | null = null) {
+  contextBroker.getOrThrow(context)?.renderer.setEntityMaterialTexture(object, texture, materialName);
 }

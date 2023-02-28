@@ -11,4 +11,5 @@ export interface VertexGroupMaterial {
     specular: vec3;
     shader: ShaderType;
     texture?: Texture | null;
+    name: string | null;
 }
